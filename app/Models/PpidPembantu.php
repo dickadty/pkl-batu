@@ -25,4 +25,6 @@ class PpidPembantu extends Model
     {
         return $this->belongsTo(KategoriPpid::class, 'kategori_ppidid');
     }
+
+    
 }
