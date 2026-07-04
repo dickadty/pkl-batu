@@ -26,5 +26,8 @@ class PpidPembantu extends Model
         return $this->belongsTo(KategoriPpid::class, 'kategori_ppidid');
     }
 
-    
+    public function dokumentasi()
+    {
+        return $this->hasMany(Dokumentasi::class, 'ppid_pembantuid', 'id');
+    }
 }
