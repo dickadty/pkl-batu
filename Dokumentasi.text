@@ -1,0 +1,46 @@
+CARA MENJALANKAN
+npm install
+npm run dev
+php artisan serve
+
+List Perbaikan Backend
+1. Fitur Multi Dashboard [Warga, Admin Pembantu, Admin Utama]
+
+Admin Utama
+1. Fitur Berita
+2. Fitur Dokumentasi
+3. Fitur Ringkasan Informasi
+5. Fitur Laporan Publik
+6. Fitur Pesan
+7. Fitur Add Admin Pembantu
+8. Fitur Validasi Data
+
+Admin Pembantu
+1. ...
+
+Warga
+1. Tampilan Berita
+2. Tampilan Informasi
+3. ...
+
+List Done Backend
+Admin Utama
+1,2,3,7,8
+Admin Pembantu
+-
+Warga
+1,2
+
+
+List Perbaikan FrontEnd
+1. Ubah Tampilan Dashboard Admin agar lebih menarik bisa dari assets atau cari di lain
+2. Buat Management Layouts, Componetnya sesuai Clean Arsitektur
+3. Buat Tampilan Warga 
+
+
+List Done FrontEnd
+
+Admin
+..
+
+Warga
