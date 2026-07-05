@@ -46,6 +46,10 @@ return [
             'driver' => 'session',
             'provider' => 'admins',
         ],
+        'public' => [
+            'driver' => 'session',
+            'provider' => 'user_public',
+        ],
     ],
 
     /*
@@ -73,6 +77,10 @@ return [
         'admins' => [
             'driver' => 'eloquent',
             'model' => App\Models\Authorization::class,
+        ],
+        'user_public' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\UserPublic::class,
         ],
 
         // 'users' => [

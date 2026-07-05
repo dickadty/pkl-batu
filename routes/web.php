@@ -8,6 +8,8 @@ use App\Http\Controllers\Public\InformasiController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\BeritaController;
 use App\Http\Controllers\Public\BeritaController as PublicBeritaController;
+use App\Http\Controllers\Public\AuthController as PublicAuthController;
+use App\Http\Controllers\Public\PermohonanController as PublicPermohonanController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -99,3 +101,23 @@ Route::get('/berita', [PublicBeritaController::class, 'index'])
 
 Route::get('/berita/{id}', [PublicBeritaController::class, 'show'])
     ->name('public.berita.show');
+
+Route::get('/warga/login', [PublicAuthController::class, 'showLogin'])
+    ->name('login');
+
+Route::post('/warga/login', [PublicAuthController::class, 'login'])
+    ->name('public.login.process');
+
+Route::post('/warga/logout', [PublicAuthController::class, 'logout'])
+    ->name('public.logout');
+
+Route::middleware('auth:public')->group(function () {
+    Route::get('/permohonan', [PublicPermohonanController::class, 'create'])
+        ->name('public.permohonan.create');
+
+    Route::post('/permohonan', [PublicPermohonanController::class, 'store'])
+        ->name('public.permohonan.store');
+
+    Route::get('/permohonan/riwayat', [PublicPermohonanController::class, 'index'])
+        ->name('public.permohonan.index');
+});

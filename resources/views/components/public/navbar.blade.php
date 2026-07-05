@@ -37,12 +37,31 @@
                 <a href="#" class="text-slate-600 hover:text-blue-700">
                     Kontak
                 </a>
+
+                <a href="{{ route('public.permohonan.create') }}"
+                    class="{{ request()->routeIs('public.permohonan.*') ? 'text-blue-700' : 'text-slate-600 hover:text-blue-700' }}">
+                    Ajukan Permohonan
+                </a>
+
+                @if (Auth::guard('public')->check())
+                    <form action="{{ route('public.logout') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="text-slate-600 hover:text-blue-700">
+                            Logout Warga
+                        </button>
+                    </form>
+                @else
+                    <a href="{{ route('login') }}" class="text-slate-600 hover:text-blue-700">
+                        Login Warga
+                    </a>
+                @endif
             </nav>
 
             <a href="{{ route('admin.login') }}"
                 class="hidden md:inline-flex px-4 py-2 rounded-lg bg-blue-700 text-white text-sm font-medium hover:bg-blue-800">
                 Login Admin
             </a>
+
         </div>
     </div>
 </header>
