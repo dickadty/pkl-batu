@@ -14,12 +14,6 @@ use App\Http\Controllers\Public\BeritaController as PublicBeritaController;
 use App\Http\Controllers\Public\InformasiController;
 use App\Http\Controllers\Public\PermohonanController as PublicPermohonanController;
 
-<<<<<<< HEAD
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-Route::redirect('/', '/permohonan');
-=======
 /*
 |--------------------------------------------------------------------------
 | Halaman Utama
@@ -28,9 +22,8 @@ Route::redirect('/', '/permohonan');
 */
 
 Route::get('/', function () {
-    return view('welcome');
-});
->>>>>>> b8f9f33800371bd4cf8af2197e4a6e66b4cd5bb0
+    return view('pages.public.Beranda');
+})->name('beranda');
 
 /*
 |--------------------------------------------------------------------------
