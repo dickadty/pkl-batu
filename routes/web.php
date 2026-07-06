@@ -14,7 +14,7 @@ use App\Http\Controllers\Public\PermohonanController as PublicPermohonanControll
 // Route::get('/', function () {
 //     return view('welcome');
 // });
-Route::redirect('/', '/admin/login');
+Route::redirect('/', '/permohonan');
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])
