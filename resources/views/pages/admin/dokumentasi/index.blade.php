@@ -1,82 +1,160 @@
 @extends('layouts.admin')
 
-@section('content')
-    <div class="p-6">
-        <div class="flex items-center justify-between mb-6">
-            <h1 class="text-2xl font-bold">Daftar Informasi Publik</h1>
+@section('title', 'Daftar Informasi Publik')
 
-            <a href="{{ route('admin.informasi-publik.create') }}" class="px-4 py-2 bg-blue-600 text-white rounded">
+@section('content')
+
+    <div class="breadcrumb-custom">
+        Informasi & Dokumentasi &nbsp; &gt; &nbsp; Daftar Informasi Publik
+    </div>
+
+    <div class="panel-card">
+
+        <div class="panel-card-header">
+            <span>Daftar Informasi Publik</span>
+
+            <a href="{{ route('admin.informasi-publik.create') }}" class="btn btn-red btn-sm">
+                <i class="bi bi-plus-circle"></i>
                 Tambah Informasi
             </a>
         </div>
 
-        @if (session('success'))
-            <div class="mb-4 p-3 bg-green-100 text-green-700 rounded">
-                {{ session('success') }}
-            </div>
-        @endif
+        <div class="section-title">
+            Data Informasi Publik
+        </div>
 
-        <div class="bg-white rounded shadow overflow-x-auto">
-            <table class="w-full border-collapse">
-                <thead>
-                    <tr class="bg-gray-100 text-left">
-                        <th class="p-3 border">No</th>
-                        <th class="p-3 border">Nama Informasi</th>
-                        <th class="p-3 border">PPID</th>
-                        <th class="p-3 border">Tahun</th>
-                        <th class="p-3 border">Sifat</th>
-                        <th class="p-3 border">Status</th>
-                        <th class="p-3 border">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($dokumentasi as $item)
+        <div class="p-4">
+
+            @if(session('success'))
+                <div class="alert alert-success">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            <div class="row mb-3">
+                <div class="col-md-4 ms-auto">
+                    <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Cari PPID Pembantu">
+                </div>
+            </div
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle">
+                    <thead class="table-light">
                         <tr>
-                            <td class="p-3 border">{{ $loop->iteration }}</td>
-                            <td class="p-3 border">{{ $item->nama }}</td>
-                            <td class="p-3 border">{{ $item->ppidPembantu->nama ?? '-' }}</td>
-                            <td class="p-3 border">{{ $item->tahun ?? '-' }}</td>
-                            <td class="p-3 border">{{ $item->sifat ?? '-' }}</td>
-                            <td class="p-3 border">
-                                @if ($item->is_verifikasi == 1)
-                                    <span class="px-2 py-1 bg-green-100 text-green-700 rounded">Terverifikasi</span>
-                                @else
-                                    <span class="px-2 py-1 bg-yellow-100 text-yellow-700 rounded">Menunggu</span>
-                                @endif
-                            </td>
-                            <td class="p-3 border">
-                                <div class="flex gap-2">
-                                    @if ((int) $admin->role === 1 && $item->is_verifikasi == 0)
-                                        <form method="POST"
-                                            action="{{ route('admin.informasi-publik.verifikasi', $item->id) }}">
-                                            @csrf
-                                            @method('PATCH')
-                                            <button class="px-3 py-1 bg-green-600 text-white rounded">
-                                                Verifikasi
-                                            </button>
-                                        </form>
+                            <th width="60">No</th>
+                            <th>Nama Informasi</th>
+                            <th>PPID Pembantu</th>
+                            <th width="90">Tahun</th>
+                            <th width="130">Sifat</th>
+                            <th width="140">Status</th>
+                            <th width="180" class="text-center">Aksi</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @forelse($dokumentasi as $item)
+
+                            <tr>
+
+                                <td>{{ $loop->iteration }}</td>
+
+                                <td>
+                                    <strong>{{ $item->nama }}</strong>
+                                </td>
+
+                                <td>
+                                    {{ $item->ppidPembantu->nama ?? '-' }}
+                                </td>
+
+                                <td>
+                                    {{ $item->tahun ?? '-' }}
+                                </td>
+
+                                <td>
+                                    {{ $item->sifat ?? '-' }}
+                                </td>
+
+                                <td>
+
+                                    @if($item->is_verifikasi)
+
+                                        <span class="badge bg-success">
+                                            Terverifikasi
+                                        </span>
+
+                                    @else
+
+                                        <span class="badge bg-warning text-dark">
+                                            Menunggu
+                                        </span>
+
                                     @endif
 
-                                    <form method="POST" action="{{ route('admin.informasi-publik.destroy', $item->id) }}"
+                                </td>
+
+                                <td class="text-center">
+
+                                    @if((int)$admin->role === 1 && $item->is_verifikasi == 0)
+
+                                        <form
+                                            action="{{ route('admin.informasi-publik.verifikasi',$item->id) }}"
+                                            method="POST"
+                                            class="d-inline">
+
+                                            @csrf
+                                            @method('PATCH')
+
+                                            <button class="btn btn-success btn-sm">
+                                                <i class="bi bi-check-circle"></i>
+                                            </button>
+
+                                        </form>
+
+                                    @endif
+
+                                    <form
+                                        action="{{ route('admin.informasi-publik.destroy',$item->id) }}"
+                                        method="POST"
+                                        class="d-inline"
                                         onsubmit="return confirm('Hapus informasi ini?')">
+
                                         @csrf
                                         @method('DELETE')
-                                        <button class="px-3 py-1 bg-red-600 text-white rounded">
-                                            Hapus
+
+                                        <button class="btn btn-danger btn-sm">
+                                            <i class="bi bi-trash"></i>
                                         </button>
+
                                     </form>
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="7" class="p-4 text-center text-gray-500">
-                                Belum ada informasi publik.
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+
+                                </td>
+
+                            </tr>
+
+                        @empty
+
+                            <tr>
+
+                                <td colspan="7" class="text-center text-muted py-4">
+                                    Belum ada informasi publik.
+                                </td>
+
+                            </tr>
+
+                        @endforelse
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
         </div>
+
     </div>
+
 @endsection
