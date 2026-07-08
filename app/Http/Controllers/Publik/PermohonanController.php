@@ -1,49 +1,45 @@
 <?php
 
-namespace App\Http\Controllers\Public;
+namespace App\Http\Controllers\Publik;
 
 use App\Http\Controllers\Controller;
-use App\Models\Permohonan;
+use App\Services\Publik\AuthService;
+use App\Services\Publik\PermohonanService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class PermohonanController extends Controller
 {
+    public function __construct(
+        protected AuthService $authService,
+        protected PermohonanService $permohonanService
+    ) {}
+
     public function index()
     {
-        $user = Auth::guard('public')->user();
+        $user = $this->authService->getLoggedUser();
 
-        $permohonan = Permohonan::where('user_publikid', $user->id)
-            ->latest('id')
-            ->get();
+        $permohonan = $this->permohonanService->getByUser($user);
 
         return view('pages.public.permohonan.index', compact('permohonan'));
     }
 
     public function create()
     {
-        $user = Auth::guard('public')->user();
+        $user = $this->authService->getLoggedUser();
 
         return view('pages.public.permohonan.create', compact('user'));
     }
 
     public function store(Request $request)
     {
-        $user = Auth::guard('public')->user();
+        $user = $this->authService->getLoggedUser();
 
         $validated = $request->validate([
             'rincian' => 'required|string|max:500',
             'tujuan' => 'required|string|max:500',
         ]);
 
-        Permohonan::create([
-            'no_pemohon' => time(),
-            'tanggal' => now()->toDateString(),
-            'rincian' => $validated['rincian'],
-            'tujuan' => $validated['tujuan'],
-            'status' => 'Diajukan',
-            'user_publikid' => $user->id,
-        ]);
+        $this->permohonanService->createForUser($user, $validated);
 
         return redirect()
             ->route('public.permohonan.index')

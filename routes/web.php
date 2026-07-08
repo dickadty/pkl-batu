@@ -9,21 +9,11 @@ use App\Http\Controllers\Admin\DokumentasiController as AdminInformasiPublikCont
 use App\Http\Controllers\Admin\PermohonanController as AdminPermohonanController;
 use App\Http\Controllers\Admin\PpidPembantuController;
 
-use App\Http\Controllers\Public\AuthController as PublicAuthController;
-use App\Http\Controllers\Public\BeritaController as PublicBeritaController;
-use App\Http\Controllers\Public\InformasiController;
-use App\Http\Controllers\Public\PermohonanController as PublicPermohonanController;
+use App\Http\Controllers\Publik\AuthController as PublikAuthController;
+use App\Http\Controllers\Publik\BeritaController as PublikBeritaController;
+use App\Http\Controllers\Publik\InformasiController;
+use App\Http\Controllers\Publik\PermohonanController as PublikPermohonanController;
 
-/*
-|--------------------------------------------------------------------------
-| Halaman Utama
-|--------------------------------------------------------------------------
-| Route halaman awal website.
-*/
-
-Route::get('/', function () {
-    return view('welcome');
-});
 
 /*
 |--------------------------------------------------------------------------
@@ -50,10 +40,10 @@ Route::get('/informasi/{id}/download', [InformasiController::class, 'download'])
 | Data berasal dari tabel berita.
 */
 
-Route::get('/berita', [PublicBeritaController::class, 'index'])
+Route::get('/berita', [PublikBeritaController::class, 'index'])
     ->name('public.berita.index');
 
-Route::get('/berita/{id}', [PublicBeritaController::class, 'show'])
+Route::get('/berita/{id}', [PublikBeritaController::class, 'show'])
     ->name('public.berita.show');
 
 /*
@@ -64,13 +54,13 @@ Route::get('/berita/{id}', [PublicBeritaController::class, 'show'])
 | Route name login dipakai oleh middleware auth Laravel.
 */
 
-Route::get('/warga/login', [PublicAuthController::class, 'showLogin'])
+Route::get('/warga/login', [PublikAuthController::class, 'showLogin'])
     ->name('login');
 
-Route::post('/warga/login', [PublicAuthController::class, 'login'])
+Route::post('/warga/login', [PublikAuthController::class, 'login'])
     ->name('public.login.process');
 
-Route::post('/warga/logout', [PublicAuthController::class, 'logout'])
+Route::post('/warga/logout', [PublikAuthController::class, 'logout'])
     ->name('public.logout');
 
 /*
@@ -82,13 +72,13 @@ Route::post('/warga/logout', [PublicAuthController::class, 'logout'])
 */
 
 Route::middleware('auth:public')->group(function () {
-    Route::get('/permohonan', [PublicPermohonanController::class, 'create'])
+    Route::get('/permohonan', [PublikPermohonanController::class, 'create'])
         ->name('public.permohonan.create');
 
-    Route::post('/permohonan', [PublicPermohonanController::class, 'store'])
+    Route::post('/permohonan', [PublikPermohonanController::class, 'store'])
         ->name('public.permohonan.store');
 
-    Route::get('/permohonan/riwayat', [PublicPermohonanController::class, 'index'])
+    Route::get('/permohonan/riwayat', [PublikPermohonanController::class, 'index'])
         ->name('public.permohonan.index');
 });
 
@@ -159,6 +149,22 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
             Route::delete('/ppid-pembantu/{id}', [PpidPembantuController::class, 'destroy'])
                 ->name('ppid-pembantu.destroy');
+        });
+
+        /*
+|--------------------------------------------------------------------------
+| Admin Utama: Register Akun Admin
+|--------------------------------------------------------------------------
+| Hanya admin utama yang boleh membuat akun admin baru.
+| Akun admin disimpan ke tabel authorization.
+*/
+
+        Route::middleware('admin.role:1')->group(function () {
+            Route::get('/akun-admin/tambah', [AuthController::class, 'showRegister'])
+                ->name('akun-admin.create');
+
+            Route::post('/akun-admin/tambah', [AuthController::class, 'register'])
+                ->name('akun-admin.store');
         });
 
         /*

@@ -3,16 +3,18 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Berita;
+use App\Services\Admin\BeritaService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 class BeritaController extends Controller
 {
+    public function __construct(
+        protected BeritaService $beritaService
+    ) {}
+
     public function index()
     {
-        $berita = Berita::latest('id')->get();
+        $berita = $this->beritaService->getAllForAdmin();
 
         return view('pages.admin.berita.index', compact('berita'));
     }
@@ -30,20 +32,10 @@ class BeritaController extends Controller
             'gambar' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
-        if ($request->hasFile('gambar')) {
-            $file = $request->file('gambar');
-
-            $filename = time() . '_' .
-                Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) .
-                '.' .
-                $file->getClientOriginalExtension();
-
-            $validated['gambar'] = $file->storeAs('berita', $filename, 'public');
-        }
-
-        $validated['tanggal'] = time();
-
-        Berita::create($validated);
+        $this->beritaService->create(
+            $validated,
+            $request->file('gambar')
+        );
 
         return redirect()
             ->route('admin.berita.index')
@@ -52,13 +44,7 @@ class BeritaController extends Controller
 
     public function destroy($id)
     {
-        $berita = Berita::findOrFail($id);
-
-        if ($berita->gambar && Storage::disk('public')->exists($berita->gambar)) {
-            Storage::disk('public')->delete($berita->gambar);
-        }
-
-        $berita->delete();
+        $this->beritaService->delete((int) $id);
 
         return back()->with('success', 'Berita berhasil dihapus.');
     }

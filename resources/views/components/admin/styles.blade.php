@@ -1,7 +1,13 @@
 <style>
+    :root{
+    --sidebar-width: 300px;
+    --topbar-height: 60px;
+}
+
     body {
         background: #e9e9e9;
-        font-family: Arial, Helvetica, sans-serif;
+        font-family: font-family: 'Open Sans', sans-serif;
+
     }
 
     .admin-wrapper {
@@ -9,16 +15,7 @@
         min-height: 100vh;
     }
 
-    .sidebar {
-        width: 260px;
-        background: #ffffff;
-        border-right: 1px solid #ddd;
-        position: fixed;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        overflow-y: auto;
-    }
+    
 
     .brand-panel {
         background: linear-gradient(135deg, #f44336, #d81b60, #ff9800);
@@ -28,7 +25,7 @@
     }
 
     .brand-title {
-        font-size: 22px;
+        font-size: 27px;
         font-weight: bold;
         margin-top: 8px;
     }
@@ -36,6 +33,7 @@
     .brand-subtitle {
         font-size: 11px;
         line-height: 1.2;
+        font-weight: normal;
     }
 
     .user-panel {
@@ -46,9 +44,21 @@
     .nav-label {
         background: #eeeeee;
         color: #333;
-        font-size: 12px;
-        font-weight: bold;
+        font-size: 13px;
+        font-weight: bolder;
         padding: 8px 16px;
+    }
+
+    .sidebar {
+        width: var(--sidebar-width);
+        top: 70px;
+        background: #ffffff;
+        border-right: 1px solid #ddd;
+        position: fixed;
+        height:calc(100vh - var(--topbar-height));
+        bottom: 0;
+        left: 0;
+        overflow-y: auto;
     }
 
     .sidebar-menu {
@@ -62,8 +72,8 @@
         color: #222;
         text-decoration: none;
         padding: 12px 18px;
-        font-weight: 600;
-        font-size: 14px;
+        font-weight: bolder;
+        font-size: 17px;
     }
 
     .sidebar-menu a:hover,
@@ -77,8 +87,8 @@
     }
 
     .sidebar-menu .submenu a {
-        font-weight: normal;
-        font-size: 13px;
+        font-weight: 600;
+        font-size: 15px;
         padding: 8px 12px;
     }
 
@@ -88,19 +98,20 @@
         width: 100%;
         padding: 14px;
         font-size: 12px;
-        color: #333;
+        color: #444444;
         background: #fff;
         border-top: 1px solid #eee;
     }
 
     .main {
-        margin-left: 260px;
-        width: calc(100% - 260px);
-        min-height: 100vh;
+        margin-left: var(--sidebar-width);
+        width: calc(100% - var(--sidebar-width));
+        margin-top: var(--topbar-height);
+        min-height: calc(100vh - var(--topbar-height));
     }
 
     .topbar {
-        height: 66px;
+        height: 77px;
         background: #ff1f1f;
         color: white;
         display: flex;
@@ -108,11 +119,16 @@
         justify-content: space-between;
         padding: 0 24px;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+        position:fixed;
+        top:0;
+        left:0;
+        right:0;
+        z-index:1000;
     }
 
     .topbar-title {
         font-weight: bold;
-        font-size: 18px;
+        font-size: 20px;
     }
 
     .topbar-title span {
@@ -125,7 +141,7 @@
 
     .breadcrumb-custom {
         color: #666;
-        font-size: 14px;
+        font-size: 19px;
         margin-bottom: 14px;
         text-transform: uppercase;
     }
@@ -139,7 +155,7 @@
 
     .panel-card-header {
         padding: 18px 20px;
-        font-size: 18px;
+        font-size: 20px;
         font-weight: 500;
         border-bottom: 1px solid #eee;
         display: flex;
@@ -161,7 +177,7 @@
 
     .form-material label {
         font-weight: bold;
-        font-size: 13px;
+        font-size: 17px;
         color: #444;
         margin-bottom: 6px;
     }
@@ -173,7 +189,7 @@
         border-radius: 0;
         box-shadow: none;
         padding-left: 0;
-        font-size: 14px;
+        font-size: 15px;
     }
 
     .form-material .form-control:focus,
@@ -192,4 +208,5 @@
         background: #d81f1f;
         color: white;
     }
+    
 </style>

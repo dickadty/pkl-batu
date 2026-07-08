@@ -1,29 +1,34 @@
 @php
     use App\Models\Permohonan;
+    use Illuminate\Support\Facades\Auth;
+    use Illuminate\Support\Facades\Route;
 
     $admin = Auth::guard('admin')->user();
 
     $role = (int) ($admin->role ?? 0);
 
-    $roleLabel = $role === 1 ? 'PPID Utama' : 'PPID Pembantu';
+    $isAdminUtama = $role === 1;
+    $isAdminPembantu = $role === 2;
+
+    $roleLabel = $isAdminUtama ? 'PPID Utama' : 'PPID Pembantu';
 
     $jumlahPermohonanBaru = 0;
     $jumlahValidasiMasuk = 0;
     $jumlahPermohonanPembantu = 0;
 
-    if ($admin) {
-        if ($role === 1) {
-            $jumlahPermohonanBaru = Permohonan::whereIn('status', ['Diajukan', 'Diproses'])->count();
+    if ($admin && $isAdminUtama) {
+        $jumlahPermohonanBaru = Permohonan::whereIn('status', ['Diajukan', 'Diproses'])->count();
 
-            $jumlahValidasiMasuk = Permohonan::where('status', 'Menunggu Validasi Admin Utama')->count();
-        }
-
-        if ($role === 2) {
-            $jumlahPermohonanPembantu = Permohonan::where('ppid_pembantuid', $admin->ppid_pembantuid)
-                ->whereIn('status', ['Diteruskan ke PPID Pembantu', 'Revisi PPID Pembantu'])
-                ->count();
-        }
+        $jumlahValidasiMasuk = Permohonan::where('status', 'Menunggu Validasi Admin Utama')->count();
     }
+
+    if ($admin && $isAdminPembantu) {
+        $jumlahPermohonanPembantu = Permohonan::where('ppid_pembantuid', $admin->ppid_pembantuid)
+            ->whereIn('status', ['Diteruskan ke PPID Pembantu', 'Revisi PPID Pembantu'])
+            ->count();
+    }
+
+    $totalNotifikasiAdminUtama = $jumlahPermohonanBaru + $jumlahValidasiMasuk;
 @endphp
 
 <aside class="sidebar">
@@ -60,8 +65,8 @@
             Dashboard
         </a>
 
-        {{-- Menu khusus Admin Utama --}}
-        @if ($role === 1)
+        {{-- Menu Admin Utama: PPID Pembantu --}}
+        @if ($isAdminUtama)
             <a href="{{ route('admin.ppid-pembantu.index') }}"
                 class="{{ request()->routeIs('admin.ppid-pembantu.*') ? 'active' : '' }}">
                 <i class="bi bi-people-fill"></i>
@@ -75,6 +80,21 @@
 
                 <a href="{{ route('admin.ppid-pembantu.index') }}">
                     Daftar PPID Pembantu
+                </a>
+            </div>
+        @endif
+
+        {{-- Menu Admin Utama: Akun Admin --}}
+        @if ($isAdminUtama && Route::has('admin.akun-admin.create'))
+            <a href="{{ route('admin.akun-admin.create') }}"
+                class="{{ request()->routeIs('admin.akun-admin.*') ? 'active' : '' }}">
+                <i class="bi bi-person-plus-fill"></i>
+                Akun Admin
+            </a>
+
+            <div class="submenu">
+                <a href="{{ route('admin.akun-admin.create') }}">
+                    Tambah Akun Admin
                 </a>
             </div>
         @endif
@@ -114,15 +134,15 @@
         </div>
 
         {{-- Permohonan untuk Admin Utama --}}
-        @if ($role === 1)
+        @if ($isAdminUtama)
             <a href="{{ route('admin.permohonan.index') }}"
                 class="{{ request()->routeIs('admin.permohonan.*') ? 'active' : '' }}">
                 <i class="bi bi-inbox-fill"></i>
                 Permohonan Informasi
 
-                @if ($jumlahPermohonanBaru + $jumlahValidasiMasuk > 0)
+                @if ($totalNotifikasiAdminUtama > 0)
                     <span class="badge bg-danger ms-auto">
-                        {{ $jumlahPermohonanBaru + $jumlahValidasiMasuk }}
+                        {{ $totalNotifikasiAdminUtama }}
                     </span>
                 @endif
             </a>
@@ -145,7 +165,7 @@
         @endif
 
         {{-- Permohonan untuk Admin Pembantu --}}
-        @if ($role === 2)
+        @if ($isAdminPembantu)
             <a href="{{ route('admin.permohonan.index') }}"
                 class="{{ request()->routeIs('admin.permohonan.*') ? 'active' : '' }}">
                 <i class="bi bi-envelope-paper-fill"></i>
@@ -190,8 +210,8 @@
         </a>
     </nav>
 
-    <div class="sidebar-footer">
+    {{-- <div class="sidebar-footer">
         Copyright © 2018 <b style="color:red;">PKL PTI - FILKOM UB 2018.</b><br>
         <b>Support:</b> Brawijaya University
-    </div>
+    </div> --}}
 </aside>

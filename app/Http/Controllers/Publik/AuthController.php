@@ -1,16 +1,20 @@
 <?php
 
-namespace App\Http\Controllers\Public;
+namespace App\Http\Controllers\Publik;
 
 use App\Http\Controllers\Controller;
+use App\Services\Publik\AuthService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
+    public function __construct(
+        protected AuthService $authService
+    ) {}
+
     public function showLogin()
     {
-        if (Auth::guard('public')->check()) {
+        if ($this->authService->isLoggedIn()) {
             return redirect()->route('public.permohonan.create');
         }
 
@@ -24,11 +28,7 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        $credentials['is_aktif'] = 1;
-
-        if (Auth::guard('public')->attempt($credentials)) {
-            $request->session()->regenerate();
-
+        if ($this->authService->attemptLogin($credentials, $request)) {
             return redirect()
                 ->intended(route('public.permohonan.create'))
                 ->with('success', 'Login berhasil.');
@@ -43,10 +43,7 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        Auth::guard('public')->logout();
-
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        $this->authService->logout($request);
 
         return redirect()
             ->route('public.informasi.index')

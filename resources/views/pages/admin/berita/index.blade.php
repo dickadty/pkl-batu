@@ -24,6 +24,15 @@
                 </div>
             @endif
 
+            <div class="row mb-3">
+                <div class="col-md-4 ms-auto">
+                    <input
+                        type="text"
+                        class="form-control"
+                        placeholder="Cari Berita">
+                </div>
+            </div>
+
             <div class="table-responsive">
                 <table class="table table-bordered align-middle">
                     <thead class="table-light">

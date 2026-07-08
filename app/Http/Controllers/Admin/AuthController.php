@@ -3,14 +3,18 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Services\Admin\AuthService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
+    public function __construct(
+        protected AuthService $authService
+    ) {}
+
     public function showLogin()
     {
-        if (Auth::guard('admin')->check()) {
+        if ($this->authService->isAdminLoggedIn()) {
             return redirect()->route('admin.dashboard');
         }
 
@@ -24,9 +28,7 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        if (Auth::guard('admin')->attempt($credentials)) {
-            $request->session()->regenerate();
-
+        if ($this->authService->attemptLogin($credentials, $request)) {
             return redirect()
                 ->route('admin.dashboard')
                 ->with('success', 'Login berhasil.');
@@ -39,12 +41,39 @@ class AuthController extends Controller
             ->onlyInput('username');
     }
 
+    public function showRegister()
+    {
+        $admin = $this->authService->getLoggedAdmin();
+
+        $this->authService->ensureAdminUtama($admin);
+
+        $ppidPembantu = $this->authService->getPpidPembantuList();
+
+        return view('pages.admin.auth.register', compact('admin', 'ppidPembantu'));
+    }
+
+    public function register(Request $request)
+    {
+        $admin = $this->authService->getLoggedAdmin();
+
+        $validated = $request->validate([
+            'username' => 'required|string|max:100|unique:authorization,username',
+            'email' => 'nullable|email|max:100|unique:authorization,email',
+            'password' => 'required|string|min:6|confirmed',
+            'role' => 'required|in:1,2',
+            'ppid_pembantuid' => 'nullable|exists:ppid_pembantu,id',
+        ]);
+
+        $this->authService->createAdminAccount($admin, $validated);
+
+        return redirect()
+            ->route('admin.dashboard')
+            ->with('success', 'Akun admin berhasil dibuat.');
+    }
+
     public function logout(Request $request)
     {
-        Auth::guard('admin')->logout();
-
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        $this->authService->logout($request);
 
         return redirect()
             ->route('admin.login')

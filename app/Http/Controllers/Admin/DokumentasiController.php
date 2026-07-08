@@ -3,26 +3,21 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Dokumentasi;
-use App\Models\PpidPembantu;
+use App\Services\Admin\InformasiPublikService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 class DokumentasiController extends Controller
 {
+    public function __construct(
+        protected InformasiPublikService $informasiPublikService
+    ) {}
+
     public function index()
     {
         $admin = Auth::guard('admin')->user();
 
-        $query = Dokumentasi::with('ppidPembantu')->latest('id');
-
-        if ((int) $admin->role === 2) {
-            $query->where('ppid_pembantuid', $admin->ppid_pembantuid);
-        }
-
-        $dokumentasi = $query->get();
+        $dokumentasi = $this->informasiPublikService->getForAdmin($admin);
 
         return view('pages.admin.dokumentasi.index', compact('dokumentasi', 'admin'));
     }
@@ -31,7 +26,7 @@ class DokumentasiController extends Controller
     {
         $admin = Auth::guard('admin')->user();
 
-        $ppidPembantu = PpidPembantu::orderBy('nama')->get();
+        $ppidPembantu = $this->informasiPublikService->getPpidPembantuList();
 
         return view('pages.admin.dokumentasi.create', compact('admin', 'ppidPembantu'));
     }
@@ -49,24 +44,14 @@ class DokumentasiController extends Controller
             'file' => 'required|file|mimes:pdf,doc,docx,xls,xlsx,png,jpg,jpeg|max:5120',
         ]);
 
-        if ((int) $admin->role === 2) {
-            $validated['ppid_pembantuid'] = $admin->ppid_pembantuid;
-            $validated['is_verifikasi'] = 0;
-        } else {
-            $validated['is_verifikasi'] = 1;
-        }
-
-        $file = $request->file('file');
-        $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
-
-        $validated['file'] = $file->storeAs('dokumentasi', $filename, 'public');
-        $validated['tanggal'] = time();
-        $validated['slug'] = Str::slug($validated['nama']) . '-' . time();
-
-        Dokumentasi::create($validated);
+        $this->informasiPublikService->create(
+            $validated,
+            $request->file('file'),
+            $admin
+        );
 
         return redirect()
-            ->route('admin.dokumentasi.index')
+            ->route('admin.informasi-publik.index')
             ->with('success', 'Dokumentasi berhasil diunggah.');
     }
 
@@ -74,15 +59,7 @@ class DokumentasiController extends Controller
     {
         $admin = Auth::guard('admin')->user();
 
-        if ((int) $admin->role !== 1) {
-            abort(403, 'Akses ditolak.');
-        }
-
-        $dokumentasi = Dokumentasi::findOrFail($id);
-
-        $dokumentasi->update([
-            'is_verifikasi' => 1,
-        ]);
+        $this->informasiPublikService->verify((int) $id, $admin);
 
         return back()->with('success', 'Informasi publik berhasil diverifikasi.');
     }
@@ -91,19 +68,7 @@ class DokumentasiController extends Controller
     {
         $admin = Auth::guard('admin')->user();
 
-        $query = Dokumentasi::query();
-
-        if ((int) $admin->role === 2) {
-            $query->where('ppid_pembantuid', $admin->ppid_pembantuid);
-        }
-
-        $dokumentasi = $query->findOrFail($id);
-
-        if ($dokumentasi->file && Storage::disk('public')->exists($dokumentasi->file)) {
-            Storage::disk('public')->delete($dokumentasi->file);
-        }
-
-        $dokumentasi->delete();
+        $this->informasiPublikService->delete((int) $id, $admin);
 
         return back()->with('success', 'Informasi publik berhasil dihapus.');
     }

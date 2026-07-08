@@ -31,6 +31,15 @@
                 </div>
             @endif
 
+            <div class="row mb-3">
+                <div class="col-md-4 ms-auto">
+                    <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Cari PPID Pembantu">
+                </div>
+            </div>
+
             <div class="table-responsive">
                 <table class="table table-bordered table-hover align-middle">
                     <thead class="table-light">
@@ -92,9 +101,11 @@
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
                                     @else
-                                        <button type="button" class="btn btn-warning btn-sm" disabled>
-                                            <i class="bi bi-pencil-square"></i>
-                                        </button>
+                                        <button class="btn btn-outline-warning btn-sm">
+
+<i class="bi bi-pencil"></i>
+
+</button>
                                     @endif
 
                                     @if (\Illuminate\Support\Facades\Route::has('admin.ppid-pembantu.destroy'))
