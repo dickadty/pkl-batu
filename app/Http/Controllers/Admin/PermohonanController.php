@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Services\PermohonanService;
+use App\Services\Admin\PermohonanService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 

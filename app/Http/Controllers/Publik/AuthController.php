@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Publik;
 
 use App\Http\Controllers\Controller;
 use App\Services\Publik\AuthService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class AuthController extends Controller
 {
@@ -12,26 +14,42 @@ class AuthController extends Controller
         protected AuthService $authService
     ) {}
 
-    public function showLogin()
+    public function showLogin(): View|RedirectResponse
     {
         if ($this->authService->isLoggedIn()) {
-            return redirect()->route('public.permohonan.create');
+            return redirect()
+                ->route('public.permohonan.create');
         }
 
         return view('pages.public.auth.login');
     }
 
-    public function login(Request $request)
-    {
+    public function login(
+        Request $request
+    ): RedirectResponse {
         $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|string',
+            'email' => [
+                'required',
+                'email',
+            ],
+            'password' => [
+                'required',
+                'string',
+            ],
         ]);
 
-        if ($this->authService->attemptLogin($credentials, $request)) {
+        if ($this->authService->attemptLogin(
+            $credentials,
+            $request
+        )) {
             return redirect()
-                ->intended(route('public.permohonan.create'))
-                ->with('success', 'Login berhasil.');
+                ->intended(
+                    route('public.permohonan.create')
+                )
+                ->with(
+                    'success',
+                    'Login berhasil.'
+                );
         }
 
         return back()
@@ -41,12 +59,41 @@ class AuthController extends Controller
             ->onlyInput('email');
     }
 
-    public function logout(Request $request)
+    public function showRegister(): View|RedirectResponse
     {
+        if ($this->authService->isLoggedIn()) {
+            return redirect()
+                ->route('public.permohonan.create');
+        }
+
+        return view(
+            'pages.public.auth.register'
+        );
+    }
+
+    public function register(
+        Request $request
+    ): RedirectResponse {
+        $this->authService->register($request);
+
+        return redirect()
+            ->route('public.permohonan.create')
+            ->with(
+                'success',
+                'Registrasi berhasil. Anda sudah login.'
+            );
+    }
+
+    public function logout(
+        Request $request
+    ): RedirectResponse {
         $this->authService->logout($request);
 
         return redirect()
             ->route('public.informasi.index')
-            ->with('success', 'Logout berhasil.');
+            ->with(
+                'success',
+                'Logout berhasil.'
+            );
     }
 }

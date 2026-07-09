@@ -10,6 +10,7 @@
                     <div class="font-bold text-slate-900 leading-tight">
                         PPID Kota Batu
                     </div>
+
                     <div class="text-xs text-slate-500">
                         Pejabat Pengelola Informasi dan Dokumentasi
                     </div>
@@ -17,7 +18,8 @@
             </a>
 
             <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
-                <a href="{{ url('/') }}" class="text-slate-600 hover:text-blue-700">
+                <a href="{{ url('/') }}"
+                    class="{{ request()->is('/') ? 'text-blue-700' : 'text-slate-600 hover:text-blue-700' }}">
                     Beranda
                 </a>
 
@@ -30,11 +32,13 @@
                     class="{{ request()->routeIs('public.berita.*') ? 'text-blue-700' : 'text-slate-600 hover:text-blue-700' }}">
                     Berita
                 </a>
+
                 <a href="#" class="text-slate-600 hover:text-blue-700">
                     Profil PPID
                 </a>
 
-                <a href="#" class="text-slate-600 hover:text-blue-700">
+                <a href="{{ route('public.pesan.create') }}"
+                    class="{{ request()->routeIs('public.pesan.*') ? 'text-blue-700' : 'text-slate-600 hover:text-blue-700' }}">
                     Kontak
                 </a>
 
@@ -42,10 +46,15 @@
                     class="{{ request()->routeIs('public.permohonan.*') ? 'text-blue-700' : 'text-slate-600 hover:text-blue-700' }}">
                     Ajukan Permohonan
                 </a>
+                <a href="{{ route('public.faq.index') }}"
+                    class="{{ request()->routeIs('public.faq.*') ? 'text-blue-700' : 'text-slate-600 hover:text-blue-700' }}">
+                    FAQ
+                </a>
 
                 @if (Auth::guard('public')->check())
                     <form action="{{ route('public.logout') }}" method="POST">
                         @csrf
+
                         <button type="submit" class="text-slate-600 hover:text-blue-700">
                             Logout Warga
                         </button>
@@ -61,7 +70,6 @@
                 class="hidden md:inline-flex px-4 py-2 rounded-lg bg-blue-700 text-white text-sm font-medium hover:bg-blue-800">
                 Login Admin
             </a>
-
         </div>
     </div>
 </header>
