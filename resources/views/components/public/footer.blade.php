@@ -1,4 +1,4 @@
-<footer class="px-6 md:px-16 lg:px-24 xl:px-32 pt-8 w-full bg-blue-950 text-slate-300">
+<footer class="px-6 md:px-16 lg:px-24 xl:px-32 pt-8 w-full bg-green-950 text-slate-300">
     <div class="flex flex-col md:flex-row justify-between w-full gap-10 border-b border-gray-500/30 pb-6">
         <div class="md:max-w-96">
             <h2 class="text-xl font-bold text-white">

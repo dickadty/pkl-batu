@@ -97,15 +97,13 @@
                                 <td class="text-center">
                                     @if (\Illuminate\Support\Facades\Route::has('admin.ppid-pembantu.edit'))
                                         <a href="{{ route('admin.ppid-pembantu.edit', $item->id) }}"
-                                            class="btn btn-warning btn-sm">
-                                            <i class="bi bi-pencil-square"></i>
+                                            class="btn btn-outline-warning btn-sm">
+                                        <i class="bi bi-pencil"></i>
                                         </a>
                                     @else
                                         <button class="btn btn-outline-warning btn-sm">
-
-<i class="bi bi-pencil"></i>
-
-</button>
+                                        <i class="bi bi-pencil"></i>
+                                        </button>
                                     @endif
 
                                     @if (\Illuminate\Support\Facades\Route::has('admin.ppid-pembantu.destroy'))

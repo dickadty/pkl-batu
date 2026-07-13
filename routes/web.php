@@ -21,9 +21,10 @@ use App\Http\Controllers\Public\PermohonanController as PublicPermohonanControll
 | Route halaman awal website.
 */
 
-Route::get('/', function () {
-    return view('pages.public.Beranda');
-})->name('beranda');
+use App\Http\Controllers\Public\HomeController;
+
+Route::get('/', [HomeController::class, 'index'])
+    ->name('beranda');
 
 /*
 |--------------------------------------------------------------------------
@@ -55,7 +56,6 @@ Route::get('/berita', [PublicBeritaController::class, 'index'])
 
 Route::get('/berita/{id}', [PublicBeritaController::class, 'show'])
     ->name('public.berita.show');
-
 /*
 |--------------------------------------------------------------------------
 | Route Publik: Login Warga

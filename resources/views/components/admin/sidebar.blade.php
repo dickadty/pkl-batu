@@ -1,41 +1,16 @@
 @php
-    use App\Models\Permohonan;
-
     $admin = Auth::guard('admin')->user();
-
-    $role = (int) ($admin->role ?? 0);
-
-    $roleLabel = $role === 1 ? 'PPID Utama' : 'PPID Pembantu';
-
-    $jumlahPermohonanBaru = 0;
-    $jumlahValidasiMasuk = 0;
-    $jumlahPermohonanPembantu = 0;
-
-    if ($admin) {
-        if ($role === 1) {
-            $jumlahPermohonanBaru = Permohonan::whereIn('status', ['Diajukan', 'Diproses'])->count();
-
-            $jumlahValidasiMasuk = Permohonan::where('status', 'Menunggu Validasi Admin Utama')->count();
-        }
-
-        if ($role === 2) {
-            $jumlahPermohonanPembantu = Permohonan::where('ppid_pembantuid', $admin->ppid_pembantuid)
-                ->whereIn('status', ['Diteruskan ke PPID Pembantu', 'Revisi PPID Pembantu'])
-                ->count();
-        }
-    }
+    $roleLabel = (int) ($admin->role ?? 0) === 1 ? 'PPID Utama' : 'PPID Pembantu';
 @endphp
 
 <aside class="sidebar">
+
     <div class="brand-panel">
         <div class="d-flex align-items-center gap-2">
             <div style="width:42px;height:42px;background:white;border-radius:4px;"></div>
 
             <div>
-                <div class="brand-title">
-                    PPID KOTA BATU
-                </div>
-
+                <div class="brand-title">PPID KOTA BATU</div>
                 <div class="brand-subtitle">
                     PEJABAT PENGELOLA INFORMASI DAN DOKUMENTASI
                 </div>
@@ -60,15 +35,21 @@
             Dashboard
         </a>
 
-        {{-- Menu khusus Admin Utama --}}
-        @if ($role === 1)
-            <a href="{{ route('admin.ppid-pembantu.index') }}"
-                class="{{ request()->routeIs('admin.ppid-pembantu.*') ? 'active' : '' }}">
-                <i class="bi bi-people-fill"></i>
-                PPID Pembantu
+        {{-- PPID Pembantu --}}
+        @if ((int) ($admin->role ?? 0) === 1)
+            <a href="javascript:void(0)"
+               class="menu-toggle {{ request()->routeIs('admin.ppid-pembantu.*') ? 'active' : '' }}"
+               data-target="submenu-ppid"
+               aria-expanded="false">
+                <span class="menu-label">
+                    <i class="bi bi-people-fill"></i>
+                    <span>PPID Pembantu</span>
+                </span>
+
+                <i class="bi bi-chevron-down arrow"></i>
             </a>
 
-            <div class="submenu">
+            <div class="submenu {{ request()->routeIs('admin.ppid-pembantu.*') ? 'open' : '' }}" id="submenu-ppid">
                 <a href="{{ route('admin.ppid-pembantu.create') }}">
                     Tambah PPID Pembantu
                 </a>
@@ -79,14 +60,20 @@
             </div>
         @endif
 
-        {{-- Informasi dan Dokumentasi --}}
-        <a href="{{ route('admin.informasi-publik.index') }}"
-            class="{{ request()->routeIs('admin.informasi-publik.*') ? 'active' : '' }}">
-            <i class="bi bi-file-earmark-text-fill"></i>
-            Informasi & Dokumentasi
+        {{-- Informasi Publik --}}
+        <a href="javascript:void(0)"
+           class="menu-toggle {{ request()->routeIs('admin.informasi-publik.*') ? 'active' : '' }}"
+           data-target="submenu-informasi"
+           aria-expanded="false">
+            <span class="menu-label">
+                <i class="bi bi-file-earmark-text-fill"></i>
+                <span>Informasi & Dokumentasi</span>
+            </span>
+
+            <i class="bi bi-chevron-down arrow"></i>
         </a>
 
-        <div class="submenu">
+        <div class="submenu {{ request()->routeIs('admin.informasi-publik.*') ? 'open' : '' }}" id="submenu-informasi">
             <a href="{{ route('admin.informasi-publik.create') }}">
                 Tambah Informasi
             </a>
@@ -97,101 +84,59 @@
         </div>
 
         {{-- Berita --}}
-        <a href="{{ route('admin.berita.index') }}"
-            class="{{ request()->routeIs('admin.berita.*') ? 'active' : '' }}">
-            <i class="bi bi-newspaper"></i>
-            Berita
+        <a href="javascript:void(0)"
+           class="menu-toggle {{ request()->routeIs('admin.berita.*') ? 'active' : '' }}"
+           data-target="submenu-berita"
+           aria-expanded="false">
+            <span class="menu-label">
+                <i class="bi bi-newspaper"></i>
+                <span>Berita</span>
+            </span>
+
+            <i class="bi bi-chevron-down arrow"></i>
         </a>
 
-        <div class="submenu">
+        <div class="submenu {{ request()->routeIs('admin.berita.*') ? 'open' : '' }}" id="submenu-berita">
             <a href="{{ route('admin.berita.create') }}">
                 Tambah Berita
             </a>
-
             <a href="{{ route('admin.berita.index') }}">
                 Daftar Berita
             </a>
         </div>
 
-        {{-- Permohonan untuk Admin Utama --}}
-        @if ($role === 1)
-            <a href="{{ route('admin.permohonan.index') }}"
-                class="{{ request()->routeIs('admin.permohonan.*') ? 'active' : '' }}">
-                <i class="bi bi-inbox-fill"></i>
-                Permohonan Informasi
+        {{-- Ringkasan Informasi --}}
+        <a href="javascript:void(0)"
+           class="menu-toggle {{ request()->routeIs('admin.informasi-publik.*') ? 'active' : '' }}"
+           data-target="submenu-informasi"
+           aria-expanded="false">
+            <span class="menu-label">
+                <i class="bi bi-file-earmark-text-fill"></i>
+                <span>Informasi & Dokumentasi</span>
+            </span>
 
-                @if ($jumlahPermohonanBaru + $jumlahValidasiMasuk > 0)
-                    <span class="badge bg-danger ms-auto">
-                        {{ $jumlahPermohonanBaru + $jumlahValidasiMasuk }}
-                    </span>
-                @endif
+            <i class="bi bi-chevron-down arrow"></i>
+        </a>
+
+        <div class="submenu {{ request()->routeIs('admin.informasi-publik.*') ? 'open' : '' }}" id="submenu-informasi">
+            <a href="{{ route('admin.informasi-publik.create') }}">
+                Tambah Informasi
             </a>
 
-            <div class="submenu">
-                <a href="{{ route('admin.permohonan.index') }}">
-                    Daftar Permohonan
-                </a>
-
-                <a href="{{ route('admin.permohonan.index') }}">
-                    Menunggu Validasi
-
-                    @if ($jumlahValidasiMasuk > 0)
-                        <span class="badge bg-warning text-dark ms-2">
-                            {{ $jumlahValidasiMasuk }}
-                        </span>
-                    @endif
-                </a>
-            </div>
-        @endif
-
-        {{-- Permohonan untuk Admin Pembantu --}}
-        @if ($role === 2)
-            <a href="{{ route('admin.permohonan.index') }}"
-                class="{{ request()->routeIs('admin.permohonan.*') ? 'active' : '' }}">
-                <i class="bi bi-envelope-paper-fill"></i>
-                Permohonan dari PPID Utama
-
-                @if ($jumlahPermohonanPembantu > 0)
-                    <span class="badge bg-danger ms-auto">
-                        {{ $jumlahPermohonanPembantu }}
-                    </span>
-                @endif
+            <a href="{{ route('admin.informasi-publik.index') }}">
+                Daftar Informasi
             </a>
-
-            <div class="submenu">
-                <a href="{{ route('admin.permohonan.index') }}">
-                    Laporan Masuk
-
-                    @if ($jumlahPermohonanPembantu > 0)
-                        <span class="badge bg-danger ms-2">
-                            {{ $jumlahPermohonanPembantu }}
-                        </span>
-                    @endif
-                </a>
-            </div>
-        @endif
-
-        {{-- Menu lanjutan --}}
-        <a href="#">
-            <i class="bi bi-clipboard2-fill"></i>
-            Ringkasan Informasi
-            <span class="ms-auto">+</span>
-        </a>
-
-        <a href="#">
-            <i class="bi bi-bell-fill"></i>
-            Laporan Publik
-            <span class="ms-auto">+</span>
-        </a>
-
-        <a href="#">
-            <i class="bi bi-envelope-fill"></i>
-            Pesan Masuk
-        </a>
+        </div>
+        
     </nav>
 
+
     <div class="sidebar-footer">
-        Copyright © 2018 <b style="color:red;">PKL PTI - FILKOM UB 2018.</b><br>
+        Copyright © 2018
+        <b style="color:red;">PKL PTI - FILKOM UB 2018.</b>
+        <br>
+
         <b>Support:</b> Brawijaya University
     </div>
+
 </aside>

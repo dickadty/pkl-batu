@@ -4,14 +4,16 @@
 
 @section('content')
 
-    @include('sections.hero')
+    @include('components.public.sections.hero')
 
-    @include('sections.informasi')
+    @include('components.public.sections.card informasi')
 
-    @include('sections.statistik')
+     @include('components.public.sections.berita')
 
-    @include('sections.laporan')
+    @include('components.public.sections.statistik')
 
-    @include('sections.link-terkait')
+    @include('components.public.sections.laporan')
+
+    @include('components.public.sections.link-terkait')
 
 @endsection

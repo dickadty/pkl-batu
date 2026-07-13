@@ -18,12 +18,14 @@
 </head>
 
 <body>
+     @include('components.admin.topbar')
+     
     <div class="admin-wrapper">
 
         @include('components.admin.sidebar')
 
         <main class="main">
-            @include('components.admin.topbar')
+           
 
             <div class="content">
                 @yield('content')
