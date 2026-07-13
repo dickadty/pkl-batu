@@ -8,7 +8,7 @@
 
     @include('components.public.sections.card informasi')
 
-     @include('components.public.sections.berita')
+    @include('components.public.sections.berita')
 
     @include('components.public.sections.statistik')
 

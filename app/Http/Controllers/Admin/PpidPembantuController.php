@@ -3,45 +3,34 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\PpidPembantu;
-use App\Models\KategoriPpid;
+use App\Services\Admin\PpidPembantuService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 
 class PpidPembantuController extends Controller
 {
+    public function __construct(
+        protected PpidPembantuService $ppidPembantuService
+    ) {}
 
     public function index()
     {
-        $ppidPembantu = \App\Models\PpidPembantu::with('kategoriPpid')
-            ->orderBy('id')
-            ->get();
+        $ppidPembantu = $this->ppidPembantuService->getAllWithKategori();
 
         return view('pages.admin.ppid-pembantu.index', compact('ppidPembantu'));
     }
 
     public function create()
     {
-        $kategori = KategoriPpid::orderBy('kategori')->get();
+        $kategori = $this->ppidPembantuService->getKategoriList();
 
         return view('pages.admin.ppid-pembantu.create', compact('kategori'));
     }
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'nama' => 'required|string|max:100',
-            'keterangan' => 'nullable|string|max:500',
-            'kategori_ppidid' => 'nullable|integer',
-            'linkweb' => 'nullable|string|max:100',
-            'telp' => 'nullable|string|max:15',
-            'alamat' => 'nullable|string|max:50',
-            'icon' => 'nullable|string|max:50',
-        ]);
+        $validated = $this->validatePpidPembantu($request);
 
-        $validated['slug'] = Str::slug($validated['nama']);
-
-        PpidPembantu::create($validated);
+        $this->ppidPembantuService->create($validated);
 
         return redirect()
             ->route('admin.ppid-pembantu.create')
@@ -50,29 +39,24 @@ class PpidPembantuController extends Controller
 
     public function edit($id)
     {
-        $ppidPembantu = PpidPembantu::findOrFail($id);
-        $kategori = KategoriPpid::orderBy('kategori')->get();
+        $ppidPembantu = $this->ppidPembantuService->findById((int) $id);
 
-        return view('pages.admin.ppid-pembantu.edit', compact('ppidPembantu', 'kategori'));
+        $kategori = $this->ppidPembantuService->getKategoriList();
+
+        return view('pages.admin.ppid-pembantu.edit', compact(
+            'ppidPembantu',
+            'kategori'
+        ));
     }
 
     public function update(Request $request, $id)
     {
-        $ppidPembantu = PpidPembantu::findOrFail($id);
+        $validated = $this->validatePpidPembantu($request);
 
-        $validated = $request->validate([
-            'nama' => 'required|string|max:100',
-            'keterangan' => 'nullable|string|max:500',
-            'kategori_ppidid' => 'nullable|integer',
-            'linkweb' => 'nullable|string|max:100',
-            'telp' => 'nullable|string|max:15',
-            'alamat' => 'nullable|string|max:50',
-            'icon' => 'nullable|string|max:50',
-        ]);
-
-        $validated['slug'] = Str::slug($validated['nama']);
-
-        $ppidPembantu->update($validated);
+        $ppidPembantu = $this->ppidPembantuService->update(
+            (int) $id,
+            $validated
+        );
 
         return redirect()
             ->route('admin.ppid-pembantu.edit', $ppidPembantu->id)
@@ -81,11 +65,23 @@ class PpidPembantuController extends Controller
 
     public function destroy($id)
     {
-        $ppidPembantu = PpidPembantu::findOrFail($id);
-        $ppidPembantu->delete();
+        $this->ppidPembantuService->delete((int) $id);
 
         return redirect()
             ->route('admin.ppid-pembantu.index')
             ->with('success', 'Data PPID Pembantu berhasil dihapus.');
+    }
+
+    private function validatePpidPembantu(Request $request): array
+    {
+        return $request->validate([
+            'nama' => 'required|string|max:100',
+            'keterangan' => 'nullable|string|max:500',
+            'kategori_ppidid' => 'nullable|integer',
+            'linkweb' => 'nullable|string|max:100',
+            'telp' => 'nullable|string|max:15',
+            'alamat' => 'nullable|string|max:50',
+            'icon' => 'nullable|string|max:50',
+        ]);
     }
 }

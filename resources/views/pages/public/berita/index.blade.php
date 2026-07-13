@@ -25,9 +25,9 @@
         @endforeach
     </div>
 
-    <div class="mt-8">
-        {{ $berita->links() }}
-    </div>
+            <div class="mt-8">
+                {{ $berita->links() }}
+            </div>
         </section>
-    </div>
+            </div>
 @endsection

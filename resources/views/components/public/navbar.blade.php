@@ -134,7 +134,19 @@
     </div>
 
     <button type="button" class="hidden md:block px-5 py-2 text-sm font-medium text-white active:scale-95 transition-all rounded-full" style="background-color:#033927">
-        Login
+         @if (Auth::guard('public')->check())
+                    <form action="{{ route('public.logout') }}" method="POST">
+                        @csrf
+
+                        <button type="submit" class="text-slate-50">
+                            Logout
+                        </button>
+                    </form>
+                @else
+                    <a href="{{ route('login') }}" class="text-slate-50">
+                        Login
+                    </a>
+                @endif
     </button>
     <button type="button" id="open-menu" class="md:hidden text-[#033927] active:scale-90 transition">
         <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16"/><path d="M4 12h16"/><path d="M4 19h16"/></svg>
