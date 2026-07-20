@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Permohonan extends Model
 {
@@ -32,21 +34,43 @@ class Permohonan extends Model
         'tanggal_jawab_pembantu',
 
         'catatan_revisi',
+        'tanggal_revisi',
         'tanggal_validasi',
     ];
 
-    public function userPublic()
+    public function userPublic(): BelongsTo
     {
-        return $this->belongsTo(UserPublic::class, 'user_publikid');
+        return $this->belongsTo(
+            UserPublic::class,
+            'user_publikid',
+            'id'
+        );
     }
 
-    public function admin()
+    public function admin(): BelongsTo
     {
-        return $this->belongsTo(Authorization::class, 'adminid');
+        return $this->belongsTo(
+            Authorization::class,
+            'adminid',
+            'id'
+        );
     }
 
-    public function ppidPembantu()
+    public function ppidPembantu(): BelongsTo
     {
-        return $this->belongsTo(PpidPembantu::class, 'ppid_pembantuid');
+        return $this->belongsTo(
+            PpidPembantu::class,
+            'ppid_pembantuid',
+            'id'
+        );
+    }
+
+    public function tenggatNotifikasi(): HasMany
+    {
+        return $this->hasMany(
+            PermohonanTenggatNotifikasi::class,
+            'permohonan_id',
+            'id'
+        );
     }
 }

@@ -1,5 +1,8 @@
 @props([
     'viewUrl' => null,
+    'viewMethod' => 'GET',
+    'viewConfirmation' => null,
+
     'downloadUrl' => null,
     'editUrl' => null,
     'verifyUrl' => null,
@@ -19,6 +22,12 @@
     $availableActions = collect([$viewUrl, $downloadUrl, $editUrl, $verifyUrl, $deleteUrl])
         ->filter()
         ->count();
+
+    $normalizedViewMethod = strtoupper(trim((string) $viewMethod));
+
+    $viewUsesLink = $normalizedViewMethod === 'GET';
+
+    $viewFormMethod = $normalizedViewMethod === 'GET' ? 'GET' : 'POST';
 @endphp
 
 @if ($availableActions > 0)
@@ -40,43 +49,95 @@
             dark:border-gray-700
             dark:bg-gray-900
         ">
-        {{-- Lihat detail --}}
         @if ($viewUrl)
             <div class="px-0.5">
-                <a href="{{ $viewUrl }}" title="{{ $viewLabel }}" aria-label="{{ $viewLabel }}"
-                    class="
-                        group
-                        inline-flex
-                        h-9
-                        w-9
-                        items-center
-                        justify-center
-                        rounded-lg
-                        text-gray-500
-                        transition
-                        duration-200
-                        hover:bg-gray-100
-                        hover:text-gray-800
-                        focus:outline-none
-                        focus:ring-2
-                        focus:ring-gray-500/20
-                        dark:text-gray-400
-                        dark:hover:bg-gray-800
-                        dark:hover:text-white
-                    ">
-                    <svg class="h-5 w-5 transition-transform duration-200 group-hover:scale-110" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                @if ($viewUsesLink)
+                    <a href="{{ $viewUrl }}" title="{{ $viewLabel }}" aria-label="{{ $viewLabel }}"
+                        class="
+                            group
+                            inline-flex
+                            h-9
+                            w-9
+                            items-center
+                            justify-center
+                            rounded-lg
+                            text-gray-500
+                            transition
+                            duration-200
+                            hover:bg-gray-100
+                            hover:text-gray-800
+                            focus:outline-none
+                            focus:ring-2
+                            focus:ring-gray-500/20
+                            dark:text-gray-400
+                            dark:hover:bg-gray-800
+                            dark:hover:text-white
+                        ">
+                        <svg class="
+                                h-5
+                                w-5
+                                transition-transform
+                                duration-200
+                                group-hover:scale-110
+                            "
+                            fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
 
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                    </svg>
-                </a>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                    </a>
+                @else
+                    <form action="{{ $viewUrl }}" method="{{ $viewFormMethod }}" class="m-0 p-0"
+                        @if ($viewConfirmation) onsubmit="return confirm(@js($viewConfirmation))" @endif>
+                        @csrf
+
+                        @if ($normalizedViewMethod !== 'POST')
+                            @method($normalizedViewMethod)
+                        @endif
+
+                        <button type="submit" title="{{ $viewLabel }}" aria-label="{{ $viewLabel }}"
+                            class="
+                                group
+                                inline-flex
+                                h-9
+                                w-9
+                                items-center
+                                justify-center
+                                rounded-lg
+                                text-gray-500
+                                transition
+                                duration-200
+                                hover:bg-gray-100
+                                hover:text-gray-800
+                                focus:outline-none
+                                focus:ring-2
+                                focus:ring-gray-500/20
+                                dark:text-gray-400
+                                dark:hover:bg-gray-800
+                                dark:hover:text-white
+                            ">
+                            <svg class="
+                                    h-5
+                                    w-5
+                                    transition-transform
+                                    duration-200
+                                    group-hover:scale-110
+                                "
+                                fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                        </button>
+                    </form>
+                @endif
             </div>
         @endif
 
-        {{-- Download --}}
         @if ($downloadUrl)
             <div class="px-0.5">
                 <a href="{{ $downloadUrl }}" title="{{ $downloadLabel }}" aria-label="{{ $downloadLabel }}"
@@ -100,8 +161,14 @@
                         dark:hover:bg-green-500/15
                         dark:hover:text-green-400
                     ">
-                    <svg class="h-5 w-5 transition-transform duration-200 group-hover:scale-110" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                    <svg class="
+                            h-5
+                            w-5
+                            transition-transform
+                            duration-200
+                            group-hover:scale-110
+                        "
+                        fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M12 3v12m0 0l-4-4m4 4 4-4M5 21h14a2 2 0 002-2v-3M3 16v3a2 2 0 002 2" />
                     </svg>
@@ -109,7 +176,6 @@
             </div>
         @endif
 
-        {{-- Edit --}}
         @if ($editUrl)
             <div class="px-0.5">
                 <a href="{{ $editUrl }}" title="{{ $editLabel }}" aria-label="{{ $editLabel }}"
@@ -133,8 +199,14 @@
                         dark:hover:bg-blue-500/15
                         dark:hover:text-blue-400
                     ">
-                    <svg class="h-5 w-5 transition-transform duration-200 group-hover:scale-110" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                    <svg class="
+                            h-5
+                            w-5
+                            transition-transform
+                            duration-200
+                            group-hover:scale-110
+                        "
+                        fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5" />
 
@@ -145,7 +217,6 @@
             </div>
         @endif
 
-        {{-- Verifikasi --}}
         @if ($verifyUrl)
             <form action="{{ $verifyUrl }}" method="POST" class="m-0 px-0.5 py-0"
                 onsubmit="return confirm(@js($verifyConfirmation))">
@@ -173,8 +244,14 @@
                         dark:hover:bg-emerald-500/15
                         dark:hover:text-emerald-400
                     ">
-                    <svg class="h-5 w-5 transition-transform duration-200 group-hover:scale-110" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                    <svg class="
+                            h-5
+                            w-5
+                            transition-transform
+                            duration-200
+                            group-hover:scale-110
+                        "
+                        fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
@@ -182,7 +259,6 @@
             </form>
         @endif
 
-        {{-- Hapus --}}
         @if ($deleteUrl)
             <form action="{{ $deleteUrl }}" method="POST" class="m-0 px-0.5 py-0"
                 onsubmit="return confirm(@js($deleteConfirmation))">
@@ -210,8 +286,14 @@
                         dark:hover:bg-red-500/15
                         dark:hover:text-red-400
                     ">
-                    <svg class="h-5 w-5 transition-transform duration-200 group-hover:scale-110" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                    <svg class="
+                            h-5
+                            w-5
+                            transition-transform
+                            duration-200
+                            group-hover:scale-110
+                        "
+                        fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7" />
 

@@ -1,4 +1,4 @@
-@extends('layouts.public')
+@extends('layouts.public.app')
 
 @section('title', 'Login Warga | PPID Kota Batu')
 

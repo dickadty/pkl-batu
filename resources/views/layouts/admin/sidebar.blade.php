@@ -1,3 +1,4 @@
+```blade
 @php
     /*
     |--------------------------------------------------------------------------
@@ -28,6 +29,8 @@
     $pengadaanActive = request()->routeIs('admin.pengadaan.*');
 
     $permohonanActive = request()->routeIs('admin.permohonan.*');
+
+    $notifikasiActive = request()->routeIs('admin.notifikasi.*');
 
     $chatActive = request()->routeIs('admin.pesan-masuk.*');
 
@@ -162,11 +165,23 @@
 
     /*
     |--------------------------------------------------------------------------
-    | Notifikasi permohonan
+    | Jumlah permohonan yang membutuhkan perhatian
     |--------------------------------------------------------------------------
     */
 
-    $notificationCount = (int) ($totalNotifikasiAdminUtama ?? 0);
+    $permohonanNotificationCount = (int) ($totalNotifikasiAdminUtama ?? 0);
+
+    /*
+    |--------------------------------------------------------------------------
+    | Jumlah notifikasi database yang belum dibaca
+    |--------------------------------------------------------------------------
+    */
+
+    $unreadNotificationCount = 0;
+
+    if ($admin && method_exists($admin, 'unreadNotifications')) {
+        $unreadNotificationCount = (int) $admin->unreadNotifications()->count();
+    }
 
     /*
     |--------------------------------------------------------------------------
@@ -258,12 +273,7 @@
         '-translate-x-full xl:translate-x-0':
             !$store.sidebar.isMobileOpen
     }"
-    @mouseenter="
-        $store.sidebar.setHovered(true)
-    "
-    @mouseleave="
-        $store.sidebar.setHovered(false)
-    ">
+    @mouseenter="$store.sidebar.setHovered(true)" @mouseleave="$store.sidebar.setHovered(false)">
     {{-- ================================================================
         LOGO
     ================================================================= --}}
@@ -281,13 +291,8 @@
         :class="$store.sidebar.isCompact() ?
             'xl:justify-center' :
             'justify-start'">
-        <a href="{{ route('admin.dashboard') }}"
-            class="
-                flex
-                min-w-0
-                items-center
-            "
-            aria-label="Dashboard Admin" @click="closeMobileSidebar()">
+        <a href="{{ route('admin.dashboard') }}" class="flex min-w-0 items-center" aria-label="Dashboard Admin"
+            @click="closeMobileSidebar()">
             {{-- Logo terang --}}
             <img x-cloak x-show="$store.sidebar.isWide()" src="{{ $logoPath }}" alt="Logo" width="150"
                 height="38"
@@ -312,12 +317,7 @@
 
             {{-- Logo compact --}}
             <img x-cloak x-show="$store.sidebar.isCompact()" src="{{ $logoIconPath }}" alt="Logo" width="34"
-                height="34"
-                class="
-                    h-[34px]
-                    w-[34px]
-                    object-contain
-                ">
+                height="34" class="h-[34px] w-[34px] object-contain">
         </a>
     </div>
 
@@ -412,12 +412,7 @@
                             <i class="ri-dashboard-3-line text-lg"></i>
                         </span>
 
-                        <span x-cloak x-show="$store.sidebar.isWide()"
-                            class="
-                                min-w-0
-                                flex-1
-                                truncate
-                            ">
+                        <span x-cloak x-show="$store.sidebar.isWide()" class="min-w-0 flex-1 truncate">
                             Dashboard
                         </span>
                     </a>
@@ -946,16 +941,11 @@
                                 <i class="ri-file-search-line text-lg"></i>
                             </span>
 
-                            <span x-cloak x-show="$store.sidebar.isWide()"
-                                class="
-                                    min-w-0
-                                    flex-1
-                                    truncate
-                                ">
+                            <span x-cloak x-show="$store.sidebar.isWide()" class="min-w-0 flex-1 truncate">
                                 Permohonan Informasi
                             </span>
 
-                            @if ($notificationCount > 0)
+                            @if ($permohonanNotificationCount > 0)
                                 <span x-cloak x-show="$store.sidebar.isWide()"
                                     class="
                                         ml-auto
@@ -973,7 +963,93 @@
                                         leading-none
                                         text-white
                                     ">
-                                    {{ $notificationCount > 99 ? '99+' : $notificationCount }}
+                                    {{ $permohonanNotificationCount > 99 ? '99+' : $permohonanNotificationCount }}
+                                </span>
+
+                                <span x-cloak x-show="$store.sidebar.isCompact()"
+                                    class="
+                                        absolute
+                                        right-2.5
+                                        top-1.5
+                                        h-2.5
+                                        w-2.5
+                                        rounded-full
+                                        border-2
+                                        border-white
+                                        bg-red-500
+                                        dark:border-gray-900
+                                    "></span>
+                            @endif
+                        </a>
+                    </li>
+                @endif
+
+                {{-- ====================================================
+                    NOTIFIKASI
+                ===================================================== --}}
+
+                @if (\Illuminate\Support\Facades\Route::has('admin.notifikasi.index'))
+                    <li>
+                        <a href="{{ route('admin.notifikasi.index') }}" title="Notifikasi"
+                            @click="closeMobileSidebar()"
+                            class="
+                                menu-item
+                                group
+                                relative
+                                flex
+                                min-h-10
+                                w-full
+                                items-center
+                                gap-3
+                                rounded-lg
+                                px-3
+                                py-2
+                                text-[13px]
+                                font-medium
+                                leading-5
+                                transition-colors
+                                duration-200
+                                {{ $notifikasiActive ? 'menu-item-active' : 'menu-item-inactive' }}
+                            "
+                            :class="$store.sidebar.isCompact() ?
+                                'xl:justify-center' :
+                                'justify-start'">
+                            <span
+                                class="
+                                    flex
+                                    h-6
+                                    w-6
+                                    shrink-0
+                                    items-center
+                                    justify-center
+                                    {{ $notifikasiActive ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}
+                                ">
+                                <i class="ri-notification-3-line text-lg"></i>
+                            </span>
+
+                            <span x-cloak x-show="$store.sidebar.isWide()" class="min-w-0 flex-1 truncate">
+                                Notifikasi
+                            </span>
+
+                            @if ($unreadNotificationCount > 0)
+                                <span x-cloak x-show="$store.sidebar.isWide()"
+                                    class="
+                                        ml-auto
+                                        flex
+                                        h-5
+                                        min-w-5
+                                        shrink-0
+                                        items-center
+                                        justify-center
+                                        rounded-full
+                                        bg-red-500
+                                        px-1.5
+                                        text-[10px]
+                                        font-bold
+                                        leading-none
+                                        text-white
+                                    ">
+                                    {{ $unreadNotificationCount > 99 ? '99+' : $unreadNotificationCount }}
                                 </span>
 
                                 <span x-cloak x-show="$store.sidebar.isCompact()"
@@ -1037,12 +1113,7 @@
                                 <i class="ri-chat-3-line text-lg"></i>
                             </span>
 
-                            <span x-cloak x-show="$store.sidebar.isWide()"
-                                class="
-                                    min-w-0
-                                    flex-1
-                                    truncate
-                                ">
+                            <span x-cloak x-show="$store.sidebar.isWide()" class="min-w-0 flex-1 truncate">
                                 Chat
                             </span>
                         </a>
@@ -1148,3 +1219,4 @@
         </div>
     </div>
 </aside>
+```

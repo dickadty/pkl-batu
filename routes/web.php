@@ -1,10 +1,12 @@
 <?php
 
+use App\Http\Controllers\Admin\AccountSettingController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\BeritaController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DokumentasiController as AdminInformasiPublikController;
 use App\Http\Controllers\Admin\FaqController as AdminFaqController;
+use App\Http\Controllers\Admin\NotifikasiController;
 use App\Http\Controllers\Admin\PejabatController;
 use App\Http\Controllers\Admin\PengadaanController;
 use App\Http\Controllers\Admin\PermohonanController as AdminPermohonanController;
@@ -195,7 +197,8 @@ Route::prefix('admin')
         Route::middleware('admin.auth')
             ->group(function (): void {
                 Route::get('/', function () {
-                    return redirect()->route('admin.dashboard');
+                    return redirect()
+                        ->route('admin.dashboard');
                 })->name('home');
 
                 Route::get(
@@ -207,6 +210,30 @@ Route::prefix('admin')
                     '/logout',
                     [AuthController::class, 'logout']
                 )->name('logout');
+
+                /*
+                |--------------------------------------------------------------------------
+                | Pengaturan Akun
+                |--------------------------------------------------------------------------
+                */
+
+                Route::prefix('account-settings')
+                    ->name('account-settings.')
+                    ->controller(AccountSettingController::class)
+                    ->group(function (): void {
+                        Route::get('/', 'index')
+                            ->name('index');
+
+                        Route::put(
+                            '/profile',
+                            'updateProfile'
+                        )->name('profile.update');
+
+                        Route::put(
+                            '/password',
+                            'updatePassword'
+                        )->name('password.update');
+                    });
 
                 /*
                 |--------------------------------------------------------------------------
@@ -533,36 +560,87 @@ Route::prefix('admin')
                             ->whereNumber('id')
                             ->name('destroy');
                     });
-            });
 
-        Route::middleware('admin.role:1,2')
-            ->prefix('pengadaan')
-            ->name('pengadaan.')
-            ->controller(PengadaanController::class)
-            ->group(function (): void {
-                Route::get('/', 'index')
-                    ->name('index');
+                /*
+                |--------------------------------------------------------------------------
+                | Pengadaan
+                |--------------------------------------------------------------------------
+                */
 
-                Route::get('/tambah', 'create')
-                    ->name('create');
+                Route::middleware('admin.role:1,2')
+                    ->prefix('pengadaan')
+                    ->name('pengadaan.')
+                    ->controller(PengadaanController::class)
+                    ->group(function (): void {
+                        Route::get('/', 'index')
+                            ->name('index');
 
-                Route::post('/tambah', 'store')
-                    ->name('store');
+                        Route::get('/tambah', 'create')
+                            ->name('create');
 
-                Route::get('/{id}', 'show')
-                    ->whereNumber('id')
-                    ->name('show');
+                        Route::post('/tambah', 'store')
+                            ->name('store');
 
-                Route::get('/{id}/edit', 'edit')
-                    ->whereNumber('id')
-                    ->name('edit');
+                        Route::get('/{id}', 'show')
+                            ->whereNumber('id')
+                            ->name('show');
 
-                Route::put('/{id}', 'update')
-                    ->whereNumber('id')
-                    ->name('update');
+                        Route::get('/{id}/edit', 'edit')
+                            ->whereNumber('id')
+                            ->name('edit');
 
-                Route::delete('/{id}', 'destroy')
-                    ->whereNumber('id')
-                    ->name('destroy');
+                        Route::put('/{id}', 'update')
+                            ->whereNumber('id')
+                            ->name('update');
+
+                        Route::delete('/{id}', 'destroy')
+                            ->whereNumber('id')
+                            ->name('destroy');
+                    });
+
+                /*
+                |--------------------------------------------------------------------------
+                | Notifikasi
+                |--------------------------------------------------------------------------
+                */
+
+                Route::prefix('notifikasi')
+                    ->name('notifikasi.')
+                    ->controller(NotifikasiController::class)
+                    ->group(function (): void {
+                        Route::get('/', 'index')
+                            ->name('index');
+
+                        Route::patch(
+                            '/baca-semua',
+                            'tandaiSemuaDibaca'
+                        )->name('baca-semua');
+
+                        Route::delete(
+                            '/hapus-semua-dibaca',
+                            'hapusSemuaDibaca'
+                        )->name('hapus-semua-dibaca');
+
+                        Route::patch(
+                            '/{id}/buka',
+                            'buka'
+                        )
+                            ->whereUuid('id')
+                            ->name('buka');
+
+                        Route::patch(
+                            '/{id}/baca',
+                            'tandaiDibaca'
+                        )
+                            ->whereUuid('id')
+                            ->name('baca');
+
+                        Route::delete(
+                            '/{id}',
+                            'destroy'
+                        )
+                            ->whereUuid('id')
+                            ->name('destroy');
+                    });
             });
     });

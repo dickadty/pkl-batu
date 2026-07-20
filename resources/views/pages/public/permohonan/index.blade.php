@@ -1,4 +1,4 @@
-@extends('layouts.public')
+@extends('layouts.public.app')
 
 @section('title', 'Riwayat Permohonan Informasi | PPID Kota Batu')
 
