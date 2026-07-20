@@ -50,22 +50,24 @@ $heroSlides = [
         @foreach($heroSlides as $index => $slide)
             <div class="hero-content absolute inset-x-0 flex flex-col items-center px-4 transition-all duration-3000 ease-[cubic-bezier(0.22,1,0.36,1)] {{ $index === 0 ? 'translate-y-0 opacity-100 pointer-events-auto' : 'translate-y-8 opacity-0 pointer-events-none' }}"
                 data-hero-content="{{ $index }}">
+                <!-- Subtle dark overlay behind text for better contrast -->
+                <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-3xl rounded-2xl bg-gradient-to-b from-black/40 to-black/50 backdrop-blur-sm pointer-events-none z-0"></div>
                 <h1 class="mx-auto max-w-3xl text-4xl font-extrabold leading-tight text-white sm:text-5xl lg:text-6xl">
-                    {!! $slide['title'] !!}
+                    <span class="relative z-10">{!! $slide['title'] !!}</span>
                 </h1>
 
-                <p class="mx-auto mt-6 max-w-xl text-base leading-relaxed text-slate-100/90 sm:text-lg">
+                <p class="mx-auto mt-6 max-w-xl text-base leading-relaxed text-slate-100/90 sm:text-lg relative z-50">
                     {{ $slide['description'] }}
                 </p>
 
                 <div class="mt-9 flex flex-wrap items-center justify-center gap-4">
                     <a href="{{ $slide['primary_link'] }}"
-                        class="inline-flex items-center gap-2 rounded-3xl bg-green-700 px-6 py-3 font-medium text-white shadow-lg  hover:bg-green-600">
+                        class="inline-flex items-center gap-2 rounded-3xl bg-green-700 px-6 py-3 font-medium text-white shadow-lg  hover:bg-green-600 relative z-10">
                         {{ $slide['primary_text'] }}
                     </a>
 
                     <a href="{{ $slide['secondary_link'] }}"
-                        class="inline-flex items-center gap-2 rounded-3xl bg-green-700 px-6 py-3 font-medium text-white shadow-lg  hover:bg-green-600">
+                        class="inline-flex items-center gap-2 rounded-3xl bg-green-700 px-6 py-3 font-medium text-white shadow-lg  hover:bg-green-600 relative z-10">
                         {{ $slide['secondary_text'] }}
                     </a>
                 </div>

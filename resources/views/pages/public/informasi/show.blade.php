@@ -1,36 +1,116 @@
 @extends('layouts.public')
 
-@section('content')
-    <div class="max-w-4xl mx-auto p-6">
-        <div class="bg-white rounded shadow p-6">
-            <h1 class="text-3xl font-bold mb-4">
-                {{ $dokumen->nama }}
-            </h1>
+@section('title', $dokumen->nama . ' | PPID Kota Batu')
 
-            <div class="space-y-2 mb-4 text-gray-700">
-                <p><strong>PPID:</strong> {{ $dokumen->ppidPembantu->nama ?? '-' }}</p>
-                <p><strong>Tahun:</strong> {{ $dokumen->tahun ?? '-' }}</p>
-                <p><strong>Sifat Informasi:</strong> {{ $dokumen->sifat ?? '-' }}</p>
-                <p><strong>Tanggal Upload:</strong> {{ $dokumen->tanggal ? date('d-m-Y', $dokumen->tanggal) : '-' }}</p>
+@section('content')
+
+{{-- Header --}}
+<section class="bg-white border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <p class="text-sm text-slate-500 mb-2">
+            Detail Informasi Publik
+        </p>
+
+        <h1 class="text-3xl font-bold text-slate-900 mb-6">
+            {{ $dokumen->nama }}
+        </h1>
+
+        <div class="grid md:grid-cols-2 gap-4 text-sm text-slate-700">
+
+            <div>
+                <span class="font-semibold">PPID:</span>
+                {{ $dokumen->ppidPembantu->nama ?? '-' }}
             </div>
 
-            <div class="mb-6">
-                <h2 class="text-xl font-semibold mb-2">Ringkasan</h2>
-                <p class="text-gray-700">
+            <div>
+                <span class="font-semibold">Tahun:</span>
+                {{ $dokumen->tahun ?? '-' }}
+            </div>
+
+            <div>
+                <span class="font-semibold">Sifat Informasi:</span>
+                {{ $dokumen->sifat ?? '-' }}
+            </div>
+
+            <div>
+                <span class="font-semibold">Tanggal Upload:</span>
+                {{ $dokumen->tanggal
+                    ? date('d F Y', $dokumen->tanggal)
+                    : '-' }}
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+{{-- Konten --}}
+<section class="bg-slate-50 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+
+            {{-- Ringkasan --}}
+            <div class="p-6 border-b border-slate-200">
+
+                <h2 class="text-xl font-semibold text-slate-900 mb-3">
+                    Ringkasan
+                </h2>
+
+                <p class="text-slate-700 leading-relaxed">
                     {{ $dokumen->ringkasan ?? 'Tidak ada ringkasan.' }}
                 </p>
+
             </div>
 
-            <div class="flex gap-2">
+            {{-- Tombol --}}
+            <div class="px-6 py-4 border-b border-slate-200 flex flex-wrap gap-3">
+
                 <a href="{{ route('public.informasi.download', $dokumen->id) }}"
-                    class="px-4 py-2 bg-green-600 text-white rounded">
+                    class="inline-flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-white hover:bg-green-700 transition">
+
+                    <svg class="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M12 4v10m0 0l-4-4m4 4l4-4M4 20h16" />
+                    </svg>
+
                     Download File
+
                 </a>
 
-                <a href="{{ route('public.informasi.index') }}" class="px-4 py-2 bg-gray-200 rounded">
-                    Kembali
-                </a>
             </div>
+
+            {{-- Preview Dokumen --}}
+            <div class="p-6">
+
+                @if($dokumen->file)
+
+                    <iframe
+                        src="{{ Storage::url($dokumen->file) }}"
+                        width="100%"
+                        height="800"
+                        class="rounded-lg border border-slate-200">
+                    </iframe>
+
+                @else
+
+                    <div class="text-center py-12 text-slate-500">
+                        Tidak ada file yang tersedia.
+                    </div>
+
+                @endif
+
+            </div>
+
         </div>
+
     </div>
+</section>
+
 @endsection

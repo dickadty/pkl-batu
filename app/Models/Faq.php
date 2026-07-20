@@ -11,8 +11,8 @@ class Faq extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'pertanyaan',
-        'jawaban',
+        'tanya',
+        'jawab',
         'tanggal',
         'status',
     ];

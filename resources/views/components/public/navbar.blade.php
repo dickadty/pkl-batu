@@ -39,13 +39,13 @@
         <img
             src="{{ asset('assets/img/logo/Logo_Kota_Batu,_Jawa_Timur_(Seal_of_Batu,_East_Java).svg.webp') }}"
             alt="Logo PPID Kota Batu"
-            class="w-10 h-10 object-contain shrink-0">
+            class="w-12 h-12 object-contain shrink-0">
 
         <div>
-            <h1 class="text-[1.25rem] font-bold leading-none tracking-tight" style="color:#033927">
+            <h1 class="text-[1.40rem] font-bold leading-none tracking-tight" style="color:#033927">
                 PPID Kota Batu
             </h1>
-            <p class="mt-0.5 text-[0.50rem] leading-5 text-slate-500">
+            <p class="mt-0.5 text-[0.70rem] leading-5 text-slate-500">
                 Pejabat Pengelola Informasi dan Dokumentasi
             </p>
         </div>
@@ -94,7 +94,7 @@
             <div class="pointer-events-none absolute left-0 top-full pt-2 hidden w-72 group-hover:block group-hover:pointer-events-auto z-50">
                 <div class="rounded-2xl border border-slate-200 bg-white p-3 shadow-lg">
                     <div class="grid gap-1 text-sm text-slate-700">
-                        <a href="{{ url('/daftar-informasi') }}" class="block rounded-xl px-3 py-2 hover:bg-slate-50 transition">Daftar Informasi</a>
+                        <a href="{{ url('/informasi') }}" class="block rounded-xl px-3 py-2 hover:bg-slate-50 transition">Daftar Informasi</a>
                         <a href="{{ url('/informasi-serta-merta') }}" class="block rounded-xl px-3 py-2 hover:bg-slate-50 transition">Informasi Serta Merta</a>
                         <a href="{{ url('/informasi-berkala') }}" class="block rounded-xl px-3 py-2 hover:bg-slate-50 transition">Informasi Berkala</a>
                         <a href="{{ url('/informasi-setiap-saat') }}" class="block rounded-xl px-3 py-2 hover:bg-slate-50 transition">Informasi Setiap Saat</a>
@@ -123,6 +123,7 @@
                         <a href="{{ url('/pelayanan-pengajuan-keberatan') }}" class="block rounded-xl px-3 py-2 hover:bg-slate-50 transition">pelayanan Pengajuan Keberatan</a>
                         <a href="{{ url('/sop-ppid') }}" class="block rounded-xl px-3 py-2 hover:bg-slate-50 transition">SOP PPID</a>
                         <a href="{{ url('/survei-kepuasan') }}" class="block rounded-xl px-3 py-2 hover:bg-slate-50 transition">Survei kepuasan</a>
+                        <!-- <a href="{{ url('/faq') }}" class="block rounded-xl px-3 py-2 hover:bg-slate-50 transition">FAQ</a> -->
                     </div>
                 </div>
             </div>
@@ -133,7 +134,7 @@
         </a>
     </div>
 
-    <button type="button" class="hidden md:block px-5 py-2 text-sm font-medium text-white active:scale-95 transition-all rounded-full" style="background-color:#033927">
+    <button type="button" class="hidden md:block px-5 py-2 text-sm font-medium text-white active:scale-95 transition-all rounded-full" style="background-color:#04853c">
          @if (Auth::guard('public')->check())
                     <form action="{{ route('public.logout') }}" method="POST">
                         @csrf

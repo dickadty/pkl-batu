@@ -23,11 +23,11 @@
                 'item' => $item
             ])
         @endforeach
-    </div>
+            </div>
 
             <div class="mt-8">
                 {{ $berita->links() }}
             </div>
         </section>
-            </div>
+     </div>
 @endsection
