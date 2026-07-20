@@ -1,53 +1,33 @@
-<footer class="bg-slate-900 text-slate-300 mt-16">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div class="grid md:grid-cols-3 gap-8">
+<footer class="px-6 md:px-16 lg:px-24 xl:px-32 pt-8 w-full bg-green-950 text-slate-300">
+    <div class="flex flex-col md:flex-row justify-between w-full gap-10 border-b border-gray-500/30 pb-6">
+        <div class="md:max-w-96">
+            <h2 class="text-xl font-bold text-white">
+                PPID Kota Batu
+            </h2>
+            <p class="mt-6 text-[13px] leading-6">
+                Dalam konteks pemerintahan daerah, PPID adalah pejabat yang ditetapkan melalui SK Gubernur/Bupati/ Walikota, yang memiliki wewenang dalam bidang penyimpanan, pendokumentasian, penyediaan dan pelayanan informasi serta bertanggungjawab langsung kepada Sekretaris Daerah selaku atasan PPID.
+            </p>
+        </div>
+        <div class="flex-1 flex items-start md:justify-end gap-20">
             <div>
-                <h3 class="text-white font-bold text-lg mb-3">
-                    PPID Kota Batu
-                </h3>
-                <p class="text-sm leading-6">
-                    Portal layanan informasi publik untuk mendukung keterbukaan, transparansi, dan akses informasi
-                    masyarakat.
-                </p>
-            </div>
-
-            <div>
-                <h3 class="text-white font-semibold mb-3">
-                    Menu
-                </h3>
-                <ul class="space-y-2 text-sm">
-                    <li>
-                        <a href="{{ url('/') }}" class="hover:text-white">
-                            Beranda
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ route('public.informasi.index') }}" class="hover:text-white">
-                            Informasi Publik
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="hover:text-white">
-                            Profil PPID
-                        </a>
-                    </li>
+                <h2 class="font-semibold mb-5 text-white">KABAR TERKINI</h2>
+                <ul class="text-[13px] space-y-2">
+                    <li><a href="{{ url('/') }}" class="text-slate-300">Beranda</a></li>
+                    <li><a href="{{ route('public.informasi.index') }}" class="text-slate-300 hover:text-gray-300">Informasi Publik</a></li>
+                    <li><a href="#" class="text-slate-300 hover:text-gray-50">Profil PPID</a></li>
                 </ul>
             </div>
-
             <div>
-                <h3 class="text-white font-semibold mb-3">
-                    Kontak
-                </h3>
-                <p class="text-sm leading-6">
-                    Dinas Komunikasi dan Informatika Kota Batu<br>
-                    Jl. Panglima Sudirman, Kota Batu<br>
-                    Jawa Timur
-                </p>
+                <h2 class="font-semibold mb-5 text-white">Sosial Media</h2>
+                <div class="text-[13px] space-y-2">
+                    <p>Dinas Komunikasi dan Informatika Kota Batu</p>
+                    <p>Jl. Panglima Sudirman, Kota Batu</p>
+                    <p>Jawa Timur</p>
+                </div>
             </div>
         </div>
-
-        <div class="border-t border-slate-700 mt-8 pt-5 text-sm text-slate-400">
-            &copy; {{ date('Y') }} PPID Kota Batu. Semua hak dilindungi.
-        </div>
     </div>
+    <p class="pt-4 text-center text-xs md:text-sm pb-5">
+        &copy; {{ date('Y') }} <a href="{{ url('/') }}">PPID Kota Batu</a>. Semua hak dilindungi.
+    </p>
 </footer>

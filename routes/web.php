@@ -1,13 +1,12 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\BeritaController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DokumentasiController as AdminInformasiPublikController;
 use App\Http\Controllers\Admin\FaqController as AdminFaqController;
 use App\Http\Controllers\Admin\PejabatController;
+use App\Http\Controllers\Admin\PengadaanController;
 use App\Http\Controllers\Admin\PermohonanController as AdminPermohonanController;
 use App\Http\Controllers\Admin\PesanMasukController;
 use App\Http\Controllers\Admin\PpidPembantuController;
@@ -15,10 +14,11 @@ use App\Http\Controllers\Admin\SliderController;
 use App\Http\Controllers\Publik\AuthController as PublikAuthController;
 use App\Http\Controllers\Publik\BeritaController as PublikBeritaController;
 use App\Http\Controllers\Publik\FaqController as PublikFaqController;
+use App\Http\Controllers\Publik\HomeController;
 use App\Http\Controllers\Publik\InformasiController;
 use App\Http\Controllers\Publik\PermohonanController as PublikPermohonanController;
 use App\Http\Controllers\Publik\PesanController as PublikPesanController;
-use App\Http\Controllers\Admin\PengadaanController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,8 +26,8 @@ use App\Http\Controllers\Admin\PengadaanController;
 |--------------------------------------------------------------------------
 */
 
-Route::redirect('/', '/informasi')
-    ->name('home');
+Route::get('/', [HomeController::class, 'index'])
+    ->name('beranda');
 
 /*
 |--------------------------------------------------------------------------
