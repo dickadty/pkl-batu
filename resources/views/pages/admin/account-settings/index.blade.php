@@ -18,7 +18,7 @@
 
         <x-ui.flash-messages />
 
-        <x-admin.account-settings.profile-card :admin="$admin" />
+        {{-- <x-admin.account-settings.profile-card :admin="$admin" /> --}}
 
         <div
             class="
