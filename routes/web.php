@@ -6,18 +6,19 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\BeritaController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DokumentasiController as AdminInformasiPublikController;
+use App\Http\Controllers\Admin\FaqController as AdminFaqController;
 use App\Http\Controllers\Admin\PejabatController;
 use App\Http\Controllers\Admin\PermohonanController as AdminPermohonanController;
 use App\Http\Controllers\Admin\PesanMasukController;
 use App\Http\Controllers\Admin\PpidPembantuController;
 use App\Http\Controllers\Admin\SliderController;
-use App\Http\Controllers\Publik\FaqController as PublikFaqController;
-use App\Http\Controllers\Admin\FaqController as AdminFaqController;
 use App\Http\Controllers\Publik\AuthController as PublikAuthController;
 use App\Http\Controllers\Publik\BeritaController as PublikBeritaController;
+use App\Http\Controllers\Publik\FaqController as PublikFaqController;
 use App\Http\Controllers\Publik\InformasiController;
 use App\Http\Controllers\Publik\PermohonanController as PublikPermohonanController;
 use App\Http\Controllers\Publik\PesanController as PublikPesanController;
+use App\Http\Controllers\Admin\PengadaanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,7 +26,8 @@ use App\Http\Controllers\Publik\PesanController as PublikPesanController;
 |--------------------------------------------------------------------------
 */
 
-Route::redirect('/', '/informasi')->name('home');
+Route::redirect('/', '/informasi')
+    ->name('home');
 
 /*
 |--------------------------------------------------------------------------
@@ -58,7 +60,6 @@ Route::prefix('informasi')
 Route::get('/faq', [PublikFaqController::class, 'index'])
     ->name('public.faq.index');
 
-
 /*
 |--------------------------------------------------------------------------
 | Berita Publik
@@ -79,7 +80,7 @@ Route::prefix('berita')
 
 /*
 |--------------------------------------------------------------------------
-| Pesan Publik / Percakapan
+| Pesan Publik
 |--------------------------------------------------------------------------
 */
 
@@ -197,11 +198,15 @@ Route::prefix('admin')
                     return redirect()->route('admin.dashboard');
                 })->name('home');
 
-                Route::get('/dashboard', [DashboardController::class, 'index'])
-                    ->name('dashboard');
+                Route::get(
+                    '/dashboard',
+                    [DashboardController::class, 'index']
+                )->name('dashboard');
 
-                Route::post('/logout', [AuthController::class, 'logout'])
-                    ->name('logout');
+                Route::post(
+                    '/logout',
+                    [AuthController::class, 'logout']
+                )->name('logout');
 
                 /*
                 |--------------------------------------------------------------------------
@@ -222,6 +227,10 @@ Route::prefix('admin')
 
                         Route::post('/tambah', 'store')
                             ->name('store');
+
+                        Route::get('/{id}', 'show')
+                            ->whereNumber('id')
+                            ->name('show');
 
                         Route::get('/{id}/edit', 'edit')
                             ->whereNumber('id')
@@ -274,16 +283,31 @@ Route::prefix('admin')
                         Route::post('/tambah', 'store')
                             ->name('store');
 
+                        Route::get('/{id}', 'show')
+                            ->whereNumber('id')
+                            ->name('show');
+
+                        Route::get('/{id}/edit', 'edit')
+                            ->whereNumber('id')
+                            ->name('edit');
+
+                        Route::put('/{id}', 'update')
+                            ->whereNumber('id')
+                            ->name('update');
+
                         Route::delete('/{id}', 'destroy')
                             ->whereNumber('id')
                             ->name('destroy');
                     });
 
                 Route::middleware('admin.role:1')
-                    ->patch('/informasi-publik/{id}/verifikasi', [
-                        AdminInformasiPublikController::class,
-                        'verifikasi',
-                    ])
+                    ->patch(
+                        '/informasi-publik/{id}/verifikasi',
+                        [
+                            AdminInformasiPublikController::class,
+                            'verifikasi',
+                        ]
+                    )
                     ->whereNumber('id')
                     ->name('informasi-publik.verifikasi');
 
@@ -306,6 +330,10 @@ Route::prefix('admin')
 
                         Route::post('/tambah', 'store')
                             ->name('store');
+
+                        Route::get('/{id}', 'show')
+                            ->whereNumber('id')
+                            ->name('show');
 
                         Route::delete('/{id}', 'destroy')
                             ->whereNumber('id')
@@ -331,6 +359,10 @@ Route::prefix('admin')
 
                         Route::post('/tambah', 'store')
                             ->name('store');
+
+                        Route::get('/{id}', 'show')
+                            ->whereNumber('id')
+                            ->name('show');
 
                         Route::get('/{id}/edit', 'edit')
                             ->whereNumber('id')
@@ -364,6 +396,10 @@ Route::prefix('admin')
 
                         Route::post('/tambah', 'store')
                             ->name('store');
+
+                        Route::get('/{id}', 'show')
+                            ->whereNumber('id')
+                            ->name('show');
 
                         Route::get('/{id}/edit', 'edit')
                             ->whereNumber('id')
@@ -451,24 +487,58 @@ Route::prefix('admin')
                     });
 
                 Route::middleware('admin.role:2')
-                    ->post('/permohonan/{id}/jawab-pembantu', [
-                        AdminPermohonanController::class,
-                        'jawabPembantu',
-                    ])
+                    ->post(
+                        '/permohonan/{id}/jawab-pembantu',
+                        [
+                            AdminPermohonanController::class,
+                            'jawabPembantu',
+                        ]
+                    )
                     ->whereNumber('id')
                     ->name('permohonan.jawab-pembantu');
-            });
-        /*
-|--------------------------------------------------------------------------
-| FAQ Admin
-|--------------------------------------------------------------------------
-| Khusus admin utama untuk mengelola FAQ.
-*/
 
-        Route::middleware('admin.role:1')
-            ->prefix('faq')
-            ->name('faq.')
-            ->controller(AdminFaqController::class)
+                /*
+                |--------------------------------------------------------------------------
+                | FAQ Admin
+                |--------------------------------------------------------------------------
+                */
+
+                Route::middleware('admin.role:1')
+                    ->prefix('faq')
+                    ->name('faq.')
+                    ->controller(AdminFaqController::class)
+                    ->group(function (): void {
+                        Route::get('/', 'index')
+                            ->name('index');
+
+                        Route::get('/tambah', 'create')
+                            ->name('create');
+
+                        Route::post('/tambah', 'store')
+                            ->name('store');
+
+                        Route::get('/{id}', 'show')
+                            ->whereNumber('id')
+                            ->name('show');
+
+                        Route::get('/{id}/edit', 'edit')
+                            ->whereNumber('id')
+                            ->name('edit');
+
+                        Route::put('/{id}', 'update')
+                            ->whereNumber('id')
+                            ->name('update');
+
+                        Route::delete('/{id}', 'destroy')
+                            ->whereNumber('id')
+                            ->name('destroy');
+                    });
+            });
+
+        Route::middleware('admin.role:1,2')
+            ->prefix('pengadaan')
+            ->name('pengadaan.')
+            ->controller(PengadaanController::class)
             ->group(function (): void {
                 Route::get('/', 'index')
                     ->name('index');
@@ -478,6 +548,10 @@ Route::prefix('admin')
 
                 Route::post('/tambah', 'store')
                     ->name('store');
+
+                Route::get('/{id}', 'show')
+                    ->whereNumber('id')
+                    ->name('show');
 
                 Route::get('/{id}/edit', 'edit')
                     ->whereNumber('id')

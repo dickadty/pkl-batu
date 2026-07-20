@@ -1,109 +1,44 @@
-@extends('layouts.admin')
+@extends('layouts.admin.app')
 
 @section('title', 'Tambah Akun Admin')
 
 @section('content')
-    <div class="breadcrumb-custom">
-        Dashboard / Akun Admin / Tambah
-    </div>
+    <div class="space-y-6">
+        {{-- ============================================================
+            JUDUL HALAMAN
+        ============================================================= --}}
 
-    @if ($errors->any())
-        <div class="alert alert-danger">
-            <strong>Data belum valid.</strong>
-            <ul class="mb-0 mt-2">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
+        <x-admin.page-header title="Tambah Akun Admin"
+            description="Tambahkan akun administrator baru, tentukan role, unit PPID yang dikelola, dan informasi keamanannya."
+            :breadcrumbs="[
+                [
+                    'label' => 'Dashboard',
+                    'url' => route('admin.dashboard'),
+                    'icon' => 'ri-dashboard-line',
+                ],
+                [
+                    'label' => 'Master Data',
+                ],
+                [
+                    'label' => 'Akun Admin',
+                ],
+                [
+                    'label' => 'Tambah Akun Admin',
+                ],
+            ]" />
 
-    <div class="panel-card">
-        <div class="panel-card-header">
-            <span>Tambah Akun Admin</span>
-        </div>
+        {{-- ============================================================
+            FLASH MESSAGE DAN VALIDATION ERROR
+        ============================================================= --}}
 
-        <form action="{{ route('admin.akun-admin.store') }}" method="POST" class="form-material">
-            @csrf
+        <x-ui.flash-messages />
 
-            <div class="mb-4">
-                <label>Username</label>
-                <input type="text" name="username" value="{{ old('username') }}" class="form-control"
-                    placeholder="Contoh: adminpembantu2" required>
-            </div>
+        {{-- ============================================================
+            FORM AKUN ADMIN
+        ============================================================= --}}
 
-            <div class="mb-4">
-                <label>Email</label>
-                <input type="email" name="email" value="{{ old('email') }}" class="form-control"
-                    placeholder="Contoh: adminpembantu2@ppid.test">
-            </div>
-
-            <div class="mb-4">
-                <label>Role Admin</label>
-                <select name="role" id="role" class="form-select" required>
-                    <option value="">Pilih Role</option>
-                    <option value="1" {{ old('role') == 1 ? 'selected' : '' }}>
-                        Admin Utama
-                    </option>
-                    <option value="2" {{ old('role') == 2 ? 'selected' : '' }}>
-                        Admin Pembantu
-                    </option>
-                </select>
-            </div>
-
-            <div class="mb-4" id="ppidPembantuWrapper">
-                <label>PPID Pembantu</label>
-                <select name="ppid_pembantuid" class="form-select">
-                    <option value="">Pilih PPID Pembantu</option>
-                    @foreach ($ppidPembantu as $ppid)
-                        <option value="{{ $ppid->id }}" {{ old('ppid_pembantuid') == $ppid->id ? 'selected' : '' }}>
-                            {{ $ppid->nama }}
-                        </option>
-                    @endforeach
-                </select>
-
-                <small class="text-muted">
-                    Wajib dipilih jika role adalah Admin Pembantu.
-                </small>
-            </div>
-
-            <div class="mb-4">
-                <label>Password</label>
-                <input type="password" name="password" class="form-control" required>
-            </div>
-
-            <div class="mb-4">
-                <label>Konfirmasi Password</label>
-                <input type="password" name="password_confirmation" class="form-control" required>
-            </div>
-
-            <div class="d-flex gap-2">
-                <button type="submit" class="btn btn-red">
-                    Simpan Akun Admin
-                </button>
-
-                <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">
-                    Kembali
-                </a>
-            </div>
-        </form>
+        <x-forms.akun-admin-form :action="route('admin.akun-admin.store')" method="POST" :ppid-pembantu="$ppidPembantu" title="Informasi Akun Admin"
+            description="Field bertanda bintang wajib diisi. PPID Pembantu hanya wajib dipilih ketika role akun adalah Admin Pembantu."
+            submit-label="Simpan Akun Admin" :cancel-url="route('admin.dashboard')" />
     </div>
 @endsection
-
-@push('scripts')
-    <script>
-        const roleSelect = document.getElementById('role');
-        const ppidWrapper = document.getElementById('ppidPembantuWrapper');
-
-        function togglePpidPembantu() {
-            if (roleSelect.value === '2') {
-                ppidWrapper.style.display = 'block';
-            } else {
-                ppidWrapper.style.display = 'none';
-            }
-        }
-
-        roleSelect.addEventListener('change', togglePpidPembantu);
-        togglePpidPembantu();
-    </script>
-@endpush

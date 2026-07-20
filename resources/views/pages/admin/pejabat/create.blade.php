@@ -1,82 +1,52 @@
-@extends('layouts.admin')
+@extends('layouts.admin.app')
 
 @section('title', 'Tambah Pejabat')
 
 @section('content')
-    <div class="breadcrumb-custom">
-        Dashboard / Pejabat / Tambah
-    </div>
+    <div class="space-y-6">
+        {{-- ============================================================
+            JUDUL HALAMAN
+        ============================================================= --}}
 
-    @if ($errors->any())
-        <div class="alert alert-danger">
-            <strong>Data belum valid.</strong>
+        <x-admin.page-header
+            title="Tambah Pejabat"
+            description="Tambahkan profil pejabat beserta jabatan, masa jabatan, data kelahiran, alamat, kontak, dan foto resmi."
+            :breadcrumbs="[
+                [
+                    'label' => 'Dashboard',
+                    'url' => route('admin.dashboard'),
+                    'icon' => 'ri-dashboard-line',
+                ],
+                [
+                    'label' => 'Master Data',
+                ],
+                [
+                    'label' => 'Pejabat',
+                    'url' => route('admin.pejabat.index'),
+                ],
+                [
+                    'label' => 'Tambah Pejabat',
+                ],
+            ]"
+        />
 
-            <ul class="mb-0 mt-2">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
+        {{-- ============================================================
+            FLASH MESSAGE DAN VALIDATION ERROR
+        ============================================================= --}}
 
-    <div class="panel-card">
-        <div class="panel-card-header">
-            <span>Tambah Pejabat</span>
-        </div>
+        <x-ui.flash-messages />
 
-        <form action="{{ route('admin.pejabat.store') }}" method="POST" enctype="multipart/form-data" class="form-material">
-            @csrf
+        {{-- ============================================================
+            FORM PEJABAT
+        ============================================================= --}}
 
-            <div class="mb-4">
-                <label>Nama Pejabat</label>
-                <input type="text" name="nama" value="{{ old('nama') }}" class="form-control" required>
-            </div>
-
-            <div class="mb-4">
-                <label>Jabatan</label>
-                <input type="text" name="jabatan" value="{{ old('jabatan') }}" class="form-control" required>
-            </div>
-
-            <div class="mb-4">
-                <label>Masa Jabatan</label>
-                <input type="text" name="masa" value="{{ old('masa') }}" class="form-control"
-                    placeholder="Contoh: 2024 - 2029">
-            </div>
-
-            <div class="mb-4">
-                <label>Tempat/Tanggal Lahir</label>
-                <input type="text" name="tmp_tgl_lahir" value="{{ old('tmp_tgl_lahir') }}" class="form-control"
-                    placeholder="Contoh: Batu, 01 Januari 1980">
-            </div>
-
-            <div class="mb-4">
-                <label>Alamat</label>
-                <textarea name="alamat" rows="4" class="form-control">{{ old('alamat') }}</textarea>
-            </div>
-
-            <div class="mb-4">
-                <label>No. Telepon</label>
-                <input type="text" name="no_telp" value="{{ old('no_telp') }}" class="form-control">
-            </div>
-
-            <div class="mb-4">
-                <label>Foto</label>
-                <input type="file" name="foto" class="form-control" accept=".jpg,.jpeg,.png,.webp">
-
-                <small class="text-muted">
-                    Format: JPG, JPEG, PNG, WEBP. Maksimal 2 MB.
-                </small>
-            </div>
-
-            <div class="d-flex gap-2">
-                <button type="submit" class="btn btn-red">
-                    Simpan
-                </button>
-
-                <a href="{{ route('admin.pejabat.index') }}" class="btn btn-secondary">
-                    Kembali
-                </a>
-            </div>
-        </form>
+        <x-forms.pejabat-form
+            :action="route('admin.pejabat.store')"
+            method="POST"
+            title="Informasi Pejabat"
+            description="Lengkapi data pejabat secara akurat. Field bertanda bintang wajib diisi sebelum data dapat disimpan."
+            submit-label="Simpan Pejabat"
+            :cancel-url="route('admin.pejabat.index')"
+        />
     </div>
 @endsection

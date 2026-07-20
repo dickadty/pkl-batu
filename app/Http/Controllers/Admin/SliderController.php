@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Services\Admin\SliderService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class SliderController extends Controller
 {
@@ -12,68 +14,143 @@ class SliderController extends Controller
         protected SliderService $sliderService
     ) {}
 
-    public function index()
+    /**
+     * Menampilkan daftar slider.
+     */
+    public function index(): View
     {
         $slider = $this->sliderService->getAllForAdmin();
 
-        return view('pages.admin.slider.index', compact('slider'));
+        return view(
+            'pages.admin.slider.index',
+            compact('slider')
+        );
     }
 
-    public function create()
+    /**
+     * Menampilkan halaman tambah slider.
+     */
+    public function create(): View
     {
         return view('pages.admin.slider.create');
     }
 
-    public function store(Request $request)
+    /**
+     * Menyimpan slider baru.
+     */
+    public function store(Request $request): RedirectResponse
     {
-        $validated = $this->validateSlider($request, true);
+        $validated = $this->validateSlider(
+            $request,
+            true
+        );
 
-        $this->sliderService->create(
+        $slider = $this->sliderService->create(
             $validated,
             $request->file('banner')
         );
 
         return redirect()
-            ->route('admin.slider.index')
-            ->with('success', 'Slider berhasil ditambahkan.');
+            ->route(
+                'admin.slider.show',
+                $slider->id
+            )
+            ->with(
+                'success',
+                'Slider berhasil ditambahkan.'
+            );
     }
 
-    public function edit($id)
+    /**
+     * Menampilkan detail slider.
+     */
+    public function show(int $id): View
     {
-        $slider = $this->sliderService->findById((int) $id);
+        $slider = $this->sliderService->findById($id);
 
-        return view('pages.admin.slider.edit', compact('slider'));
+        return view(
+            'pages.admin.slider.show',
+            compact('slider')
+        );
     }
 
-    public function update(Request $request, $id)
+    /**
+     * Menampilkan halaman edit slider.
+     */
+    public function edit(int $id): View
     {
+        $slider = $this->sliderService->findById($id);
+
+        return view(
+            'pages.admin.slider.edit',
+            compact('slider')
+        );
+    }
+
+    /**
+     * Memperbarui slider.
+     */
+    public function update(
+        Request $request,
+        int $id
+    ): RedirectResponse {
         $validated = $this->validateSlider($request);
 
         $slider = $this->sliderService->update(
-            (int) $id,
+            $id,
             $validated,
             $request->file('banner')
         );
 
         return redirect()
-            ->route('admin.slider.edit', $slider->id)
-            ->with('success', 'Slider berhasil diperbarui.');
+            ->route(
+                'admin.slider.show',
+                $slider->id
+            )
+            ->with(
+                'success',
+                'Slider berhasil diperbarui.'
+            );
     }
 
-    public function destroy($id)
+    /**
+     * Menghapus slider.
+     */
+    public function destroy(int $id): RedirectResponse
     {
-        $this->sliderService->delete((int) $id);
+        $this->sliderService->delete($id);
 
         return redirect()
             ->route('admin.slider.index')
-            ->with('success', 'Slider berhasil dihapus.');
+            ->with(
+                'success',
+                'Slider berhasil dihapus.'
+            );
     }
 
-    private function validateSlider(Request $request, bool $bannerRequired = false): array
-    {
+    /**
+     * Validasi data slider.
+     */
+    private function validateSlider(
+        Request $request,
+        bool $bannerRequired = false
+    ): array {
         return $request->validate([
-            'title' => 'required|string|max:150',
-            'banner' => ($bannerRequired ? 'required' : 'nullable') . '|image|mimes:jpg,jpeg,png,webp|max:3072',
+            'title' => [
+                'required',
+                'string',
+                'max:150',
+            ],
+
+            'banner' => [
+                $bannerRequired
+                    ? 'required'
+                    : 'nullable',
+
+                'image',
+                'mimes:jpg,jpeg,png,webp',
+                'max:3072',
+            ],
         ]);
     }
 }

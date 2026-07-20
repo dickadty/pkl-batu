@@ -1,92 +1,39 @@
-@extends('layouts.admin')
+@extends('layouts.admin.app')
 
 @section('title', 'Data Pejabat')
 
 @section('content')
-    <div class="breadcrumb-custom">
-        Dashboard / Pejabat
-    </div>
+    <div class="space-y-6">
+        {{-- ============================================================
+            JUDUL HALAMAN
+        ============================================================= --}}
 
-    @if (session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
+        <x-admin.page-header title="Daftar Pejabat"
+            description="Kelola profil pejabat, jabatan, masa jabatan, data kelahiran, foto, dan informasi kontak."
+            :breadcrumbs="[
+                [
+                    'label' => 'Dashboard',
+                    'url' => route('admin.dashboard'),
+                    'icon' => 'ri-dashboard-line',
+                ],
+                [
+                    'label' => 'Master Data',
+                ],
+                [
+                    'label' => 'Pejabat',
+                ],
+            ]" />
 
-    <div class="panel-card">
-        <div class="panel-card-header d-flex justify-content-between align-items-center">
-            <span>Data Pejabat</span>
+        {{-- ============================================================
+            FLASH MESSAGE
+        ============================================================= --}}
 
-            <a href="{{ route('admin.pejabat.create') }}" class="btn btn-red btn-sm">
-                Tambah Pejabat
-            </a>
-        </div>
+        <x-ui.flash-messages />
 
-        <div class="p-4">
-            <div class="table-responsive">
-                <table class="table table-bordered table-hover align-middle">
-                    <thead class="table-light">
-                        <tr>
-                            <th width="60">No</th>
-                            <th width="100">Foto</th>
-                            <th>Nama</th>
-                            <th>Jabatan</th>
-                            <th>Masa</th>
-                            <th>Tempat/Tanggal Lahir</th>
-                            <th>No. Telepon</th>
-                            <th width="160">Aksi</th>
-                        </tr>
-                    </thead>
+        {{-- ============================================================
+            TABEL PEJABAT
+        ============================================================= --}}
 
-                    <tbody>
-                        @forelse ($pejabat as $item)
-                            <tr>
-                                <td>{{ $loop->iteration }}</td>
-
-                                <td>
-                                    @if ($item->foto)
-                                        <img src="{{ asset('storage/' . $item->foto) }}" alt="{{ $item->nama }}"
-                                            style="width:70px;height:70px;object-fit:cover;border-radius:6px;">
-                                    @else
-                                        <span class="text-muted">Tidak ada</span>
-                                    @endif
-                                </td>
-
-                                <td>{{ $item->nama ?? '-' }}</td>
-                                <td>{{ $item->jabatan ?? '-' }}</td>
-                                <td>{{ $item->masa ?? '-' }}</td>
-                                <td>{{ $item->tmp_tgl_lahir ?? '-' }}</td>
-                                <td>{{ $item->no_telp ?? '-' }}</td>
-
-                                <td>
-                                    <div class="d-flex gap-2">
-                                        <a href="{{ route('admin.pejabat.edit', $item->id) }}"
-                                            class="btn btn-sm btn-warning">
-                                            Edit
-                                        </a>
-
-                                        <form action="{{ route('admin.pejabat.destroy', $item->id) }}" method="POST"
-                                            onsubmit="return confirm('Yakin ingin menghapus data pejabat ini?')">
-                                            @csrf
-                                            @method('DELETE')
-
-                                            <button type="submit" class="btn btn-sm btn-danger">
-                                                Hapus
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="8" class="text-center text-muted p-4">
-                                    Belum ada data pejabat.
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        <x-tables.pejabat-table :pejabat="$pejabat" />
     </div>
 @endsection

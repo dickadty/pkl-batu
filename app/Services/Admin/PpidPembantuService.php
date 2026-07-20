@@ -13,6 +13,9 @@ class PpidPembantuService
         protected KategoriPpid $kategoriPpid
     ) {}
 
+    /**
+     * Mengambil seluruh PPID beserta kategori.
+     */
     public function getAllWithKategori(): Collection
     {
         return $this->ppidPembantu
@@ -22,6 +25,9 @@ class PpidPembantuService
             ->get();
     }
 
+    /**
+     * Mengambil daftar kategori PPID.
+     */
     public function getKategoriList(): Collection
     {
         return $this->kategoriPpid
@@ -30,33 +36,56 @@ class PpidPembantuService
             ->get();
     }
 
-    public function findById(int $id): PpidPembantu
-    {
+    /**
+     * Mengambil satu PPID berdasarkan ID.
+     */
+    public function findById(
+        int $id
+    ): PpidPembantu {
         return $this->ppidPembantu
             ->newQuery()
+            ->with('kategoriPpid')
             ->findOrFail($id);
     }
 
-    public function create(array $data): PpidPembantu
-    {
-        $data['slug'] = $this->generateSlug($data['nama']);
+    /**
+     * Menyimpan PPID Pembantu.
+     */
+    public function create(
+        array $data
+    ): PpidPembantu {
+        $data['slug'] = $this->generateSlug(
+            $data['nama']
+        );
 
         return $this->ppidPembantu
             ->newQuery()
             ->create($data);
     }
 
-    public function update(int $id, array $data): PpidPembantu
-    {
+    /**
+     * Memperbarui PPID Pembantu.
+     */
+    public function update(
+        int $id,
+        array $data
+    ): PpidPembantu {
         $ppidPembantu = $this->findById($id);
 
-        $data['slug'] = $this->generateSlug($data['nama']);
+        $data['slug'] = $this->generateSlug(
+            $data['nama']
+        );
 
         $ppidPembantu->update($data);
 
-        return $ppidPembantu;
+        return $ppidPembantu->fresh(
+            'kategoriPpid'
+        );
     }
 
+    /**
+     * Menghapus PPID Pembantu.
+     */
     public function delete(int $id): void
     {
         $ppidPembantu = $this->findById($id);
@@ -64,8 +93,14 @@ class PpidPembantuService
         $ppidPembantu->delete();
     }
 
-    private function generateSlug(string $nama): string
-    {
-        return str($nama)->slug()->toString();
+    /**
+     * Membentuk slug dari nama PPID.
+     */
+    private function generateSlug(
+        string $nama
+    ): string {
+        return str($nama)
+            ->slug()
+            ->toString();
     }
 }
