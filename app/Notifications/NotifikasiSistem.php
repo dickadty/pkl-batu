@@ -19,17 +19,11 @@ class NotifikasiSistem extends Notification
         public array $metadata = []
     ) {}
 
-    /**
-     * Menentukan media pengiriman notifikasi.
-     */
     public function via(object $notifiable): array
     {
         return ['database'];
     }
 
-    /**
-     * Data yang disimpan pada kolom data di tabel notifications.
-     */
     public function toDatabase(object $notifiable): array
     {
         return [
@@ -43,9 +37,6 @@ class NotifikasiSistem extends Notification
         ];
     }
 
-    /**
-     * Representasi array notifikasi.
-     */
     public function toArray(object $notifiable): array
     {
         return $this->toDatabase($notifiable);

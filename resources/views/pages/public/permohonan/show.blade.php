@@ -1,0 +1,242 @@
+@extends('layouts.public.app')
+
+@section('title', 'Detail Tiket Permohonan | PPID Kota Batu')
+
+@section('content')
+    @php
+        $status = trim((string) ($permohonan->status ?: 'Diajukan'));
+        $status = $status !== '' ? $status : 'Diajukan';
+
+        $isFinished = $status === 'Selesai';
+        $isRejected = $status === 'Ditolak';
+
+        $tanggal = $permohonan->tanggal?->translatedFormat('d F Y') ?? '-';
+        $tanggalSelesai = $permohonan->tanggal_selesai?->translatedFormat('d F Y') ?? '-';
+        $tanggalPenolakan = $isRejected
+            ? ($permohonan->tanggal_revisi?->translatedFormat('d F Y') ?? '-')
+            : '-';
+
+        $alasanPenolakan = $isRejected
+            ? trim((string) $permohonan->catatan_revisi)
+            : '';
+
+        $statusBadgeClass = match ($status) {
+            'Selesai' => 'bg-green-100 text-green-700',
+            'Ditolak' => 'bg-red-100 text-red-700',
+            'Revisi PPID Pembantu' => 'bg-yellow-100 text-yellow-800',
+            'Menunggu Validasi Admin Utama' => 'bg-orange-100 text-orange-800',
+            'Diteruskan ke PPID Pembantu' => 'bg-purple-100 text-purple-700',
+            default => 'bg-blue-100 text-blue-700',
+        };
+
+        $statusLabel = match ($status) {
+            'Selesai' => 'Selesai',
+            'Ditolak' => 'Ditolak',
+            default => 'Dalam Proses',
+        };
+    @endphp
+
+    <section class="border-b border-slate-200 bg-white">
+        <div class="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
+            <span class="inline-flex rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
+                Tiket Permohonan Informasi
+            </span>
+
+            <h1 class="mt-4 break-words text-3xl font-bold text-slate-900">
+                {{ $permohonan->no_pemohon }}
+            </h1>
+
+            <p class="mt-2 text-slate-600">
+                Simpan tautan halaman ini untuk memantau perkembangan permohonan tanpa login.
+            </p>
+        </div>
+    </section>
+
+    <section class="mx-auto max-w-5xl space-y-6 px-4 py-10 sm:px-6 lg:px-8">
+        @if (session('success'))
+            <div class="rounded-xl border border-green-200 bg-green-50 p-5 text-green-700">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        <div
+            class="rounded-2xl border bg-white p-6 shadow-sm {{ $isRejected ? 'border-red-200' : 'border-slate-200' }}">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                        Status Saat Ini
+                    </p>
+
+                    <h2
+                        class="mt-2 text-2xl font-bold {{ $isRejected ? 'text-red-700' : 'text-slate-900' }}">
+                        {{ $status }}
+                    </h2>
+
+                    <p class="mt-2 text-sm text-slate-500">
+                        Diajukan pada {{ $tanggal }}
+                    </p>
+                </div>
+
+                <span
+                    class="inline-flex w-fit rounded-full px-4 py-2 text-sm font-semibold {{ $statusBadgeClass }}">
+                    {{ $statusLabel }}
+                </span>
+            </div>
+        </div>
+
+        @if ($isRejected)
+            <section class="overflow-hidden rounded-2xl border border-red-200 bg-white shadow-sm">
+                <div class="border-b border-red-200 bg-red-50 px-6 py-5">
+                    <div class="flex items-start gap-3">
+                        <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-red-100 text-red-700">
+                            <i class="ri-close-circle-line text-2xl"></i>
+                        </div>
+
+                        <div>
+                            <h2 class="text-lg font-bold text-red-900">
+                                Permohonan Informasi Ditolak
+                            </h2>
+
+                            <p class="mt-1 text-sm text-red-700">
+                                Ditolak pada {{ $tanggalPenolakan }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-5 p-6">
+                    <div class="rounded-xl border border-red-100 bg-red-50 p-5">
+                        <p class="text-xs font-semibold uppercase tracking-wider text-red-600">
+                            Alasan Penolakan
+                        </p>
+
+                        <div class="mt-3 whitespace-pre-line text-sm leading-7 text-red-900">
+                            {{ $alasanPenolakan !== ''
+                                ? $alasanPenolakan
+                                : 'Data atau dokumen permohonan belum memenuhi kelengkapan yang dipersyaratkan.' }}
+                        </div>
+                    </div>
+
+                    <div class="rounded-xl border border-cyan-200 bg-cyan-50 p-5 text-sm leading-7 text-cyan-900">
+                        <p class="font-semibold">
+                            Status Permintaan Informasi: Ditolak
+                        </p>
+
+                        <p class="mt-2">
+                            Setelah dilakukan pemeriksaan, data atau dokumen yang dikirimkan belum memenuhi
+                            kelengkapan dan validitas yang dipersyaratkan. Permohonan ini tidak dapat diproses lebih
+                            lanjut.
+                        </p>
+
+                        <p class="mt-4">
+                            Silakan mengajukan permohonan baru dengan data yang benar, lengkap, dan sesuai dengan
+                            identitas Anda.
+                        </p>
+                    </div>
+                </div>
+            </section>
+        @endif
+
+        <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+            <div class="space-y-6 lg:col-span-2">
+                <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+                    <div class="border-b border-slate-200 px-6 py-5">
+                        <h2 class="text-lg font-bold text-slate-900">
+                            Detail Permohonan
+                        </h2>
+                    </div>
+
+                    <dl class="divide-y divide-slate-200">
+                        @foreach ([
+                            'Rincian Informasi' => $permohonan->rincian,
+                            'Tujuan Penggunaan' => $permohonan->tujuan,
+                            'Cara Memperoleh' => $permohonan->cara_memperoleh,
+                            'Cara Pengiriman' => $permohonan->cara_pengiriman,
+                        ] as $label => $value)
+                            <div class="grid grid-cols-1 gap-2 px-6 py-4 sm:grid-cols-[190px_minmax(0,1fr)]">
+                                <dt class="text-sm font-semibold text-slate-600">
+                                    {{ $label }}
+                                </dt>
+
+                                <dd class="whitespace-pre-line text-sm leading-6 text-slate-800">
+                                    {{ $value ?: '-' }}
+                                </dd>
+                            </div>
+                        @endforeach
+                    </dl>
+                </section>
+
+                @if ($isFinished)
+                    <section class="overflow-hidden rounded-2xl border border-green-200 bg-white shadow-sm">
+                        <div class="border-b border-green-200 bg-green-50 px-6 py-5">
+                            <h2 class="text-lg font-bold text-green-900">
+                                Jawaban Final
+                            </h2>
+
+                            <p class="mt-1 text-sm text-green-700">
+                                Diselesaikan pada {{ $tanggalSelesai }}
+                            </p>
+                        </div>
+
+                        <div class="space-y-5 p-6">
+                            <div class="whitespace-pre-line rounded-xl bg-slate-50 p-5 text-sm leading-7 text-slate-800">
+                                {{ $permohonan->jawaban ?: 'Jawaban final tersedia pada file lampiran.' }}
+                            </div>
+
+                            @if ($permohonan->file_jawaban)
+                                <a
+                                    href="{{ asset('storage/' . ltrim($permohonan->file_jawaban, '/')) }}"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="inline-flex h-11 items-center justify-center rounded-lg bg-green-700 px-5 text-sm font-semibold text-white hover:bg-green-800">
+                                    Lihat File Jawaban
+                                </a>
+                            @endif
+                        </div>
+                    </section>
+                @endif
+            </div>
+
+            <aside class="space-y-6">
+                <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+                    <div class="border-b border-slate-200 px-6 py-5">
+                        <h2 class="text-lg font-bold text-slate-900">
+                            Pemohon
+                        </h2>
+                    </div>
+
+                    <dl class="divide-y divide-slate-200">
+                        @foreach ([
+                            'Nama' => $permohonan->namaWarga(),
+                            'Kategori' => $permohonan->kategori_pemohon,
+                            'Email' => $permohonan->emailWarga(),
+                            'Telepon' => $permohonan->teleponWarga(),
+                        ] as $label => $value)
+                            <div class="px-6 py-4">
+                                <dt class="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                                    {{ $label }}
+                                </dt>
+
+                                <dd class="mt-1 break-words text-sm font-medium text-slate-800">
+                                    {{ $value ?: '-' }}
+                                </dd>
+                            </div>
+                        @endforeach
+                    </dl>
+                </section>
+
+                <section
+                    class="rounded-2xl border p-5 text-sm leading-6 {{ $isRejected
+                        ? 'border-red-200 bg-red-50 text-red-800'
+                        : 'border-blue-200 bg-blue-50 text-blue-800' }}">
+                    @if ($isRejected)
+                        Pemberitahuan penolakan dan alasan penolakan telah dikirim ke email pemohon.
+                    @else
+                        Email dikirim saat permohonan diterima, ditolak, atau jawaban final telah tersedia. Proses
+                        internal admin berlangsung melalui dashboard.
+                    @endif
+                </section>
+            </aside>
+        </div>
+    </section>
+@endsection
