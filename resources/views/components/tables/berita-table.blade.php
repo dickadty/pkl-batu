@@ -363,18 +363,33 @@
             if (!empty($item->tanggal)) {
                 try {
                     if (is_numeric($item->tanggal) && (int) $item->tanggal > 100000000) {
-                        $formattedDate = \Illuminate\Support\Carbon::createFromTimestamp(
-                            (int) $item->tanggal,
-                        )->translatedFormat('d F Y');
+                        $formattedDate = \Illuminate\Support\Carbon::createFromTimestamp((int) $item->tanggal)
+                            ->locale('id')
+                            ->translatedFormat('d F Y');
                     } else {
-                        $formattedDate = \Illuminate\Support\Carbon::parse($item->tanggal)->translatedFormat('d F Y');
+                        $formattedDate = \Illuminate\Support\Carbon::parse($item->tanggal)
+                            ->locale('id')
+                            ->translatedFormat('d F Y');
                     }
                 } catch (\Throwable $exception) {
                     $formattedDate = (string) $item->tanggal;
                 }
             }
 
+            /*
+             * Halaman show dibuka melalui judul berita.
+             */
             $showUrl = route('admin.berita.show', $item->id);
+
+            /*
+             * URL edit untuk tombol Action.
+             */
+            $editUrl = route('admin.berita.edit', $item->id);
+
+            /*
+             * URL hapus untuk tombol Action.
+             */
+            $deleteUrl = route('admin.berita.destroy', $item->id);
         @endphp
 
         <tr
@@ -588,7 +603,7 @@
                         <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"
                             aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M8 7V3m8 4V3M5 11h14M5 5h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 00-2 2V7a2 2 0 012-2z" />
+                                d="M8 7V3m8 4V3M5 11h14M5 5h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2z" />
                         </svg>
                     </span>
 
@@ -606,7 +621,7 @@
                     align-middle
                     sm:px-6
                 ">
-                <x-tables.row-actions :delete-url="route('admin.berita.destroy', $item->id)" :delete-label="'Hapus berita ' . ($item->judul ?? '')"
+                <x-tables.row-actions :edit-url="$editUrl" :delete-url="$deleteUrl" :edit-label="'Edit berita ' . ($item->judul ?? '')" :delete-label="'Hapus berita ' . ($item->judul ?? '')"
                     delete-confirmation="Apakah Anda yakin ingin menghapus berita ini?" />
             </td>
         </tr>

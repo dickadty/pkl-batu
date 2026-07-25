@@ -13,7 +13,7 @@ class AdminRoleMiddleware
         $admin = Auth::guard('admin')->user();
 
         if (! $admin) {
-            return redirect()->route('admin.login');
+            return redirect()->route('login');
         }
 
         if (! in_array((string) $admin->role, $roles, true)) {

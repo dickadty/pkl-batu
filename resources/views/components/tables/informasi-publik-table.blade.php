@@ -70,7 +70,8 @@
                         text-gray-500
                         dark:text-gray-400
                     ">
-                    Filter dokumen berdasarkan nama, status, klasifikasi, tahun, dan unit PPID Pembantu.
+                    Filter dokumen berdasarkan nama, status, klasifikasi,
+                    tahun, dan unit PPID Pembantu.
                 </p>
             </div>
 
@@ -539,20 +540,62 @@
 
             $showUrl = route('admin.informasi-publik.show', $item->id);
 
-            $rawStatus = data_get($item, 'status_label', data_get($item, 'status', 'Belum Diverifikasi'));
+            $editUrl = route('admin.informasi-publik.edit', $item->id);
 
-            $normalizedStatus = strtolower(trim((string) $rawStatus));
+            $deleteUrl = route('admin.informasi-publik.destroy', $item->id);
 
-            $isVerified = in_array($normalizedStatus, ['1', 'verified', 'terverifikasi', 'disetujui', 'aktif'], true);
+            $downloadUrl = route('public.informasi.download', $item->id);
 
-            $statusLabel = $isVerified
-                ? (in_array($normalizedStatus, ['1', 'verified'], true)
-                    ? 'Terverifikasi'
-                    : (string) $rawStatus)
-                : (in_array($normalizedStatus, ['', '0'], true)
-                    ? 'Belum Diverifikasi'
-                    : (string) $rawStatus);
+            /*
+             * Kolom verifikasi yang benar adalah is_verifikasi.
+             * Dashboard juga membaca kolom ini.
+             */
+            $rawVerification = null;
 
+            if (is_object($item) && method_exists($item, 'getRawOriginal')) {
+                $rawVerification = $item->getRawOriginal('is_verifikasi');
+            }
+
+            /*
+             * Jika nilai raw tidak tersedia, ambil attribute model.
+             */
+            if ($rawVerification === null || $rawVerification === '') {
+                $rawVerification = data_get($item, 'is_verifikasi', 0);
+            }
+
+            /*
+             * Menormalkan integer, boolean, dan string.
+             */
+            if (is_bool($rawVerification)) {
+                $isVerified = $rawVerification;
+            } elseif (is_numeric($rawVerification)) {
+                $isVerified = (int) $rawVerification === 1;
+            } else {
+                $normalizedVerification = strtolower(trim((string) $rawVerification));
+
+                $isVerified = in_array(
+                    $normalizedVerification,
+                    [
+                        '1',
+                        'true',
+                        'yes',
+                        'verified',
+                        'terverifikasi',
+                        'diverifikasi',
+                        'sudah diverifikasi',
+                        'disetujui',
+                        'aktif',
+                    ],
+                    true,
+                );
+            }
+
+            $statusLabel = $isVerified ? 'Terverifikasi' : 'Belum Diverifikasi';
+
+            /*
+             * Tombol verifikasi hanya muncul untuk Admin Utama
+             * dan data yang belum terverifikasi.
+             */
             $verifyUrl = $isAdminUtama && !$isVerified ? route('admin.informasi-publik.verifikasi', $item->id) : null;
 
             $sifatKey = strtolower(trim((string) ($item->sifat ?? '')));
@@ -711,34 +754,52 @@
                         font-semibold
                         {{ $sifatClass }}
                     ">
-                    {{ $item->sifat ? \Illuminate\Support\Str::title($item->sifat) : '-' }}
+                    {{ !empty($item->sifat) ? \Illuminate\Support\Str::title($item->sifat) : '-' }}
                 </span>
             </td>
 
             <td class="px-4 py-4 sm:px-6">
-                <div
-                    class="
-                        inline-flex
-                        items-center
-                        gap-2
-                        rounded-xl
-                        bg-purple-50
-                        px-3
-                        py-2
-                        text-sm
-                        font-medium
-                        text-purple-700
-                        dark:bg-purple-500/15
-                        dark:text-purple-400
-                    ">
-                    <svg class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                        aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M8 21h8m-4-4v4M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
+                @if ($ppidName !== '-')
+                    <div
+                        class="
+                            inline-flex
+                            items-center
+                            gap-2
+                            rounded-xl
+                            bg-purple-50
+                            px-3
+                            py-2
+                            text-sm
+                            font-medium
+                            text-purple-700
+                            dark:bg-purple-500/15
+                            dark:text-purple-400
+                        ">
+                        <svg class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                            aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 21h8m-4-4v4M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
 
-                    {{ $ppidName }}
-                </div>
+                        {{ $ppidName }}
+                    </div>
+                @else
+                    <span
+                        class="
+                            inline-flex
+                            rounded-full
+                            bg-gray-100
+                            px-3
+                            py-1.5
+                            text-xs
+                            font-medium
+                            text-gray-500
+                            dark:bg-gray-800
+                            dark:text-gray-400
+                        ">
+                        PPID Utama
+                    </span>
+                @endif
             </td>
 
             <td
@@ -785,6 +846,7 @@
                         class="
                             h-1.5
                             w-1.5
+                            shrink-0
                             rounded-full
                             {{ $isVerified ? 'bg-green-500' : 'bg-yellow-500' }}
                         "></span>
@@ -803,7 +865,7 @@
                     align-middle
                     sm:px-6
                 ">
-                <x-tables.row-actions :download-url="route('public.informasi.download', $item->id)" :edit-url="route('admin.informasi-publik.edit', $item->id)" :verify-url="$verifyUrl" :delete-url="route('admin.informasi-publik.destroy', $item->id)"
+                <x-tables.row-actions :download-url="$downloadUrl" :edit-url="$editUrl" :verify-url="$verifyUrl" :delete-url="$deleteUrl"
                     :download-label="'Unduh informasi ' . ($item->nama ?? '')" :edit-label="'Edit informasi ' . ($item->nama ?? '')" :verify-label="'Verifikasi informasi ' . ($item->nama ?? '')" :delete-label="'Hapus informasi ' . ($item->nama ?? '')"
                     verify-confirmation="Apakah Anda yakin ingin memverifikasi informasi ini?"
                     delete-confirmation="Apakah Anda yakin ingin menghapus informasi publik ini?" />
