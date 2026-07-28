@@ -11,9 +11,9 @@ use App\Models\UserPublic;
 use App\Notifications\NotifikasiSistem;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Filesystem\Factory as FilesystemFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
@@ -26,6 +26,36 @@ class PermohonanService
 
     private const ROLE_ADMIN_PEMBANTU = 2;
 
+    private const STATUS_DIAJUKAN = 'Diajukan';
+
+    private const STATUS_DIPROSES = 'Diproses';
+
+    private const STATUS_DITERUSKAN = 'Diteruskan ke PPID Pembantu';
+
+    private const STATUS_MENUNGGU_VALIDASI = 'Menunggu Validasi Admin Utama';
+
+    private const STATUS_REVISI = 'Revisi PPID Pembantu';
+
+    private const STATUS_SELESAI = 'Selesai';
+
+    private const STATUS_DITOLAK = 'Ditolak';
+
+    /**
+     * Nilai filter URL dan status yang tersimpan di database.
+     *
+     * @var array<string, string|null>
+     */
+    public const STATUS_FILTERS = [
+        'semua' => null,
+        'diajukan' => self::STATUS_DIAJUKAN,
+        'diproses' => self::STATUS_DIPROSES,
+        'diteruskan' => self::STATUS_DITERUSKAN,
+        'menunggu_validasi' => self::STATUS_MENUNGGU_VALIDASI,
+        'revisi' => self::STATUS_REVISI,
+        'selesai' => self::STATUS_SELESAI,
+        'ditolak' => self::STATUS_DITOLAK,
+    ];
+
     public function __construct(
         protected Permohonan $permohonan,
         protected PpidPembantu $ppidPembantu,
@@ -33,36 +63,112 @@ class PermohonanService
     ) {}
 
     /**
-     * Mengambil seluruh permohonan berdasarkan hak akses admin.
+     * Mengambil daftar permohonan berdasarkan hak akses dan filter admin.
+     *
+     * @param array{
+     *     q?: string|null,
+     *     status?: string|null,
+     *     ppid_pembantuid?: int|string|null
+     * } $filters
      */
     public function getForAdmin(
-        Authorization $admin
+        Authorization $admin,
+        array $filters = []
     ): Collection {
-        $items = $this->permohonan
-            ->newQuery()
+        $query = $this->queryForAdmin($admin)
             ->with([
                 'userPublic',
                 'ppidPembantu',
-            ])
-            ->when(
-                $this->isAdminPembantu($admin),
-                function ($query) use ($admin): void {
-                    $query->where(
-                        'ppid_pembantuid',
-                        $admin->ppid_pembantuid
-                    );
-                }
-            )
+            ]);
+
+        $this->applyListFilters(
+            query: $query,
+            admin: $admin,
+            filters: $filters,
+            includeStatus: true
+        );
+
+        $items = $query
             ->orderByDesc('id')
             ->get();
 
         return $items->map(
-            function (Permohonan $item): Permohonan {
-                return $this->attachGuestUserFallback(
-                    $item
-                );
-            }
+            fn(Permohonan $item): Permohonan =>
+            $this->attachGuestUserFallback($item)
         );
+    }
+
+    /**
+     * Menghitung ringkasan permohonan berdasarkan hak akses admin.
+     * Filter status sengaja diabaikan agar seluruh card tetap menampilkan
+     * jumlah setiap status ketika salah satu card sedang aktif.
+     *
+     * @param array{
+     *     q?: string|null,
+     *     status?: string|null,
+     *     ppid_pembantuid?: int|string|null
+     * } $filters
+     *
+     * @return array{
+     *     semua: int,
+     *     diajukan: int,
+     *     diproses: int,
+     *     diteruskan: int,
+     *     menunggu_validasi: int,
+     *     revisi: int,
+     *     selesai: int,
+     *     ditolak: int
+     * }
+     */
+    public function getSummaryForAdmin(
+        Authorization $admin,
+        array $filters = []
+    ): array {
+        $query = $this->queryForAdmin($admin);
+
+        $this->applyListFilters(
+            query: $query,
+            admin: $admin,
+            filters: $filters,
+            includeStatus: false
+        );
+
+        $statusCounts = $query
+            ->selectRaw('status, COUNT(*) AS total')
+            ->groupBy('status')
+            ->pluck('total', 'status');
+
+        return [
+            'semua' => (int) $statusCounts->sum(),
+            'diajukan' => (int) $statusCounts->get(
+                self::STATUS_DIAJUKAN,
+                0
+            ),
+            'diproses' => (int) $statusCounts->get(
+                self::STATUS_DIPROSES,
+                0
+            ),
+            'diteruskan' => (int) $statusCounts->get(
+                self::STATUS_DITERUSKAN,
+                0
+            ),
+            'menunggu_validasi' => (int) $statusCounts->get(
+                self::STATUS_MENUNGGU_VALIDASI,
+                0
+            ),
+            'revisi' => (int) $statusCounts->get(
+                self::STATUS_REVISI,
+                0
+            ),
+            'selesai' => (int) $statusCounts->get(
+                self::STATUS_SELESAI,
+                0
+            ),
+            'ditolak' => (int) $statusCounts->get(
+                self::STATUS_DITOLAK,
+                0
+            ),
+        ];
     }
 
     /**
@@ -92,12 +198,23 @@ class PermohonanService
     }
 
     /**
-     * Mengambil daftar PPID Pembantu.
+     * Mengambil daftar PPID Pembantu sesuai hak akses admin.
      */
-    public function getPpidPembantuList(): Collection
-    {
+    public function getPpidPembantuList(
+        ?Authorization $admin = null
+    ): Collection {
         return $this->ppidPembantu
             ->newQuery()
+            ->when(
+                $admin !== null
+                    && $this->isAdminPembantu($admin),
+                function (Builder $query) use ($admin): void {
+                    $query->where(
+                        'id',
+                        $admin->ppid_pembantuid
+                    );
+                }
+            )
             ->orderBy('nama')
             ->get();
     }
@@ -122,8 +239,8 @@ class PermohonanService
         if (! in_array(
             $permohonan->status,
             [
-                'Diajukan',
-                'Diproses',
+                self::STATUS_DIAJUKAN,
+                self::STATUS_DIPROSES,
             ],
             true
         )) {
@@ -136,7 +253,7 @@ class PermohonanService
             'ppid_pembantuid' => $data['ppid_pembantuid'],
             'catatan_utama' => $data['catatan_utama'] ?? null,
             'tanggal_diteruskan' => now()->toDateString(),
-            'status' => 'Diteruskan ke PPID Pembantu',
+            'status' => self::STATUS_DITERUSKAN,
         ]);
 
         $permohonan = $permohonan
@@ -190,8 +307,8 @@ class PermohonanService
         if (! in_array(
             $permohonan->status,
             [
-                'Diteruskan ke PPID Pembantu',
-                'Revisi PPID Pembantu',
+                self::STATUS_DITERUSKAN,
+                self::STATUS_REVISI,
             ],
             true
         )) {
@@ -216,7 +333,7 @@ class PermohonanService
             'file_pembantu' => $data['file_pembantu']
                 ?? $permohonan->file_pembantu,
             'tanggal_jawab_pembantu' => now()->toDateString(),
-            'status' => 'Menunggu Validasi Admin Utama',
+            'status' => self::STATUS_MENUNGGU_VALIDASI,
         ]);
 
         $permohonan = $permohonan
@@ -264,7 +381,7 @@ class PermohonanService
 
         if (
             $permohonan->status
-            !== 'Menunggu Validasi Admin Utama'
+            !== self::STATUS_MENUNGGU_VALIDASI
         ) {
             throw new AuthorizationException(
                 'Permohonan ini tidak dapat divalidasi pada status saat ini.'
@@ -278,7 +395,7 @@ class PermohonanService
             'tanggal_validasi' => now()->toDateString(),
             'tanggal_selesai' => now()->toDateString(),
             'adminid' => $admin->id,
-            'status' => 'Selesai',
+            'status' => self::STATUS_SELESAI,
         ]);
 
         $permohonan = $permohonan
@@ -328,7 +445,7 @@ class PermohonanService
 
         if (
             $permohonan->status
-            !== 'Menunggu Validasi Admin Utama'
+            !== self::STATUS_MENUNGGU_VALIDASI
         ) {
             throw new AuthorizationException(
                 'Revisi tidak dapat diminta pada status permohonan saat ini.'
@@ -338,7 +455,7 @@ class PermohonanService
         $permohonan->update([
             'catatan_revisi' => $data['catatan_revisi'],
             'tanggal_revisi' => now()->toDateString(),
-            'status' => 'Revisi PPID Pembantu',
+            'status' => self::STATUS_REVISI,
         ]);
 
         $permohonan = $permohonan
@@ -387,8 +504,8 @@ class PermohonanService
         if (! in_array(
             $permohonan->status,
             [
-                'Diajukan',
-                'Diproses',
+                self::STATUS_DIAJUKAN,
+                self::STATUS_DIPROSES,
             ],
             true
         )) {
@@ -411,7 +528,7 @@ class PermohonanService
             'catatan_revisi' => $alasanPenolakan,
             'tanggal_revisi' => now()->toDateString(),
             'adminid' => $admin->id,
-            'status' => 'Ditolak',
+            'status' => self::STATUS_DITOLAK,
         ]);
 
         $permohonan = $permohonan
@@ -422,11 +539,6 @@ class PermohonanService
                 'admin',
             ]);
 
-        /*
-         * Apabila permohonan belum diteruskan ke PPID Pembantu,
-         * method notifikasi ini otomatis berhenti karena
-         * ppid_pembantuid masih kosong.
-         */
         $this->kirimNotifikasiKePpidPembantu(
             permohonan: $permohonan,
             judul: 'Permohonan Ditolak',
@@ -440,9 +552,6 @@ class PermohonanService
             actor: $admin
         );
 
-        /*
-         * Memasukkan email penolakan ke antrean database.
-         */
         $this->queueRejectionEmailToCitizen(
             $permohonan
         );
@@ -450,6 +559,104 @@ class PermohonanService
         return $this->attachGuestUserFallback(
             $permohonan
         );
+    }
+
+    /**
+     * Membuat query dasar berdasarkan hak akses admin.
+     */
+    private function queryForAdmin(
+        Authorization $admin
+    ): Builder {
+        $query = $this->permohonan->newQuery();
+
+        if ($this->isAdminPembantu($admin)) {
+            if (empty($admin->ppid_pembantuid)) {
+                throw new AuthorizationException(
+                    'Akun Admin Pembantu belum terhubung dengan unit PPID Pembantu.'
+                );
+            }
+
+            $query->where(
+                'ppid_pembantuid',
+                $admin->ppid_pembantuid
+            );
+        }
+
+        return $query;
+    }
+
+    /**
+     * Menerapkan filter daftar permohonan.
+     *
+     * @param array<string, mixed> $filters
+     */
+    private function applyListFilters(
+        Builder $query,
+        Authorization $admin,
+        array $filters,
+        bool $includeStatus
+    ): void {
+        $search = trim(
+            (string) ($filters['q'] ?? '')
+        );
+
+        if ($search !== '') {
+            $query->where(
+                function (Builder $subQuery) use ($search): void {
+                    $like = '%' . $search . '%';
+
+                    $subQuery
+                        ->where('no_pemohon', 'like', $like)
+                        ->orWhere('nama_pemohon', 'like', $like)
+                        ->orWhere('nomor_identitas', 'like', $like)
+                        ->orWhere('email_pemohon', 'like', $like)
+                        ->orWhere('telp_pemohon', 'like', $like)
+                        ->orWhere('status', 'like', $like)
+                        ->orWhereHas(
+                            'userPublic',
+                            function (Builder $userQuery) use ($like): void {
+                                $userQuery
+                                    ->where('nama', 'like', $like)
+                                    ->orWhere('nik', 'like', $like)
+                                    ->orWhere('email', 'like', $like)
+                                    ->orWhere('telp', 'like', $like);
+                            }
+                        );
+                }
+            );
+        }
+
+        if ($this->isAdminUtama($admin)) {
+            $ppidPembantuId = $filters['ppid_pembantuid'] ?? null;
+
+            if (
+                $ppidPembantuId !== null
+                && $ppidPembantuId !== ''
+            ) {
+                $query->where(
+                    'ppid_pembantuid',
+                    (int) $ppidPembantuId
+                );
+            }
+        }
+
+        if (! $includeStatus) {
+            return;
+        }
+
+        $statusKey = (string) (
+            $filters['status'] ?? 'semua'
+        );
+
+        $databaseStatus = self::STATUS_FILTERS[$statusKey]
+            ?? null;
+
+        if ($databaseStatus !== null) {
+            $query->where(
+                'status',
+                $databaseStatus
+            );
+        }
     }
 
     /**
@@ -557,10 +764,6 @@ class PermohonanService
     private function queueRejectionEmailToCitizen(
         Permohonan $permohonan
     ): void {
-        /*
-     * Pastikan relasi warga tersedia karena emailWarga()
-     * dapat mengambil email dari relasi userPublic.
-     */
         $permohonan->loadMissing([
             'userPublic',
         ]);
@@ -747,6 +950,8 @@ class PermohonanService
 
     /**
      * Membentuk metadata notifikasi.
+     *
+     * @return array<string, mixed>
      */
     private function metadataNotifikasi(
         Permohonan $permohonan,
@@ -823,11 +1028,19 @@ class PermohonanService
             . '.'
             . $file->getClientOriginalExtension();
 
-        return $file->storeAs(
+        $storedPath = $file->storeAs(
             'laporan-permohonan',
             $filename,
             'public'
         );
+
+        if (! is_string($storedPath)) {
+            throw new RuntimeException(
+                'File laporan gagal disimpan.'
+            );
+        }
+
+        return $storedPath;
     }
 
     /**

@@ -1,58 +1,21 @@
 @php
-    /*
-    |--------------------------------------------------------------------------
-    | Admin yang Sedang Login
-    |--------------------------------------------------------------------------
-    */
-
+    /* Admin yang Sedang Login */
     $admin = auth('admin')->user();
 
-    $adminRole = (int) data_get(
-        $admin,
-        'role',
-        0
-    );
+    $adminRole = (int) data_get($admin, 'role', 0);
 
-    $isAdminUtama =
-        $adminRole === 1
-        || (
-            $admin
-            && method_exists($admin, 'isAdminUtama')
-            && $admin->isAdminUtama()
-        );
+    $isAdminUtama = $adminRole === 1 || ($admin && method_exists($admin, 'isAdminUtama') && $admin->isAdminUtama());
 
     $isAdminPembantu =
-        $adminRole === 2
-        || (
-            $admin
-            && method_exists($admin, 'isAdminPembantu')
-            && $admin->isAdminPembantu()
-        );
+        $adminRole === 2 || ($admin && method_exists($admin, 'isAdminPembantu') && $admin->isAdminPembantu());
 
-    $canAccessSharedModule = in_array(
-        $adminRole,
-        [1, 2],
-        true
-    );
+    $canAccessSharedModule = in_array($adminRole, [1, 2], true);
 
-    /*
-    |--------------------------------------------------------------------------
-    | Data Profil Admin
-    |--------------------------------------------------------------------------
-    */
+    /* Data Profil Admin */
 
-    $adminDisplayName =
-        data_get($admin, 'nama')
-        ?? data_get($admin, 'username')
-        ?? 'Administrator';
+    $adminDisplayName = data_get($admin, 'nama') ?? (data_get($admin, 'username') ?? 'Administrator');
 
-    $adminInitial = mb_strtoupper(
-        mb_substr(
-            (string) $adminDisplayName,
-            0,
-            1
-        )
-    );
+    $adminInitial = mb_strtoupper(mb_substr((string) $adminDisplayName, 0, 1));
 
     $roleLabel = match ($adminRole) {
         1 => 'Admin Utama',
@@ -60,101 +23,50 @@
         default => 'Administrator',
     };
 
-    $ppidPembantuName =
-        data_get($admin, 'ppidPembantu.nama')
-        ?? data_get($admin, 'ppid_pembantu.nama')
-        ?? null;
+    $ppidPembantuName = data_get($admin, 'ppidPembantu.nama') ?? (data_get($admin, 'ppid_pembantu.nama') ?? null);
 
-    if (
-        $isAdminPembantu
-        && !empty($ppidPembantuName)
-    ) {
+    if ($isAdminPembantu && !empty($ppidPembantuName)) {
         $roleLabel .= ' · ' . $ppidPembantuName;
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Status Menu Aktif
-    |--------------------------------------------------------------------------
-    */
+    /* Status Menu Aktif */
 
-    $dashboardActive = request()->routeIs(
-        'admin.dashboard'
-    );
+    $dashboardActive = request()->routeIs('admin.dashboard');
 
-    $masterActive = request()->routeIs(
-        'admin.ppid-pembantu.*',
-        'admin.akun-admin.*',
-        'admin.pejabat.*'
-    );
+    $masterActive = request()->routeIs('admin.ppid-pembantu.*', 'admin.akun-admin.*', 'admin.pejabat.*');
 
-    $contentActive = request()->routeIs(
-        'admin.slider.*',
-        'admin.faq.*',
-        'admin.informasi-publik.*',
-        'admin.berita.*'
-    );
+    $contentActive = request()->routeIs('admin.slider.*', 'admin.faq.*', 'admin.informasi-publik.*', 'admin.berita.*');
 
-    $pengadaanActive = request()->routeIs(
-        'admin.pengadaan.*'
-    );
+    $pengadaanActive = request()->routeIs('admin.pengadaan.*');
 
-    $prokerActive = request()->routeIs(
-        'admin.proker.*'
-    );
+    $prokerActive = request()->routeIs('admin.proker.*');
 
-    $permohonanActive = request()->routeIs(
-        'admin.permohonan.*'
-    );
+    $permohonanActive = request()->routeIs('admin.permohonan.*');
 
-    $notifikasiActive = request()->routeIs(
-        'admin.notifikasi.*'
-    );
+    $notifikasiActive = request()->routeIs('admin.notifikasi.*');
 
-    $chatActive = request()->routeIs(
-        'admin.pesan-masuk.*'
-    );
+    $chatActive = request()->routeIs('admin.pesan-masuk.*');
 
-    /*
-    |--------------------------------------------------------------------------
-    | Helper Filter Menu
-    |--------------------------------------------------------------------------
-    */
+    /* Helper Filter Menu */
 
-    $filterMenus = static function (
-        \Illuminate\Support\Collection $menus
-    ) use ($adminRole): \Illuminate\Support\Collection {
+    $filterMenus = static function (\Illuminate\Support\Collection $menus) use (
+        $adminRole,
+    ): \Illuminate\Support\Collection {
         return $menus
-            ->filter(
-                static function (
-                    array $menu
-                ) use ($adminRole): bool {
-                    $routeExists =
-                        \Illuminate\Support\Facades\Route::has(
-                            $menu['route']
-                        );
+            ->filter(static function (array $menu) use ($adminRole): bool {
+                $routeExists = \Illuminate\Support\Facades\Route::has($menu['route']);
 
-                    $allowedRoles =
-                        $menu['roles']
-                        ?? [1, 2];
+                $allowedRoles = $menu['roles'] ?? [1, 2];
 
-                    $roleAllowed = in_array(
-                        $adminRole,
-                        $allowedRoles,
-                        true
-                    );
+                $roleAllowed = in_array($adminRole, $allowedRoles, true);
 
-                    return $routeExists
-                        && $roleAllowed;
-                }
-            )
+                return $routeExists && $roleAllowed;
+            })
             ->values();
     };
 
     /*
-    |--------------------------------------------------------------------------
     | Submenu Master Data
-    |--------------------------------------------------------------------------
     */
 
     $masterMenus = $filterMenus(
@@ -162,70 +74,49 @@
             [
                 'label' => 'Daftar PPID Pembantu',
                 'route' => 'admin.ppid-pembantu.index',
-                'active' => [
-                    'admin.ppid-pembantu.index',
-                    'admin.ppid-pembantu.show',
-                    'admin.ppid-pembantu.edit',
-                ],
+                'active' => ['admin.ppid-pembantu.index', 'admin.ppid-pembantu.show', 'admin.ppid-pembantu.edit'],
                 'icon' => 'ri-government-line',
                 'roles' => [1],
             ],
             [
                 'label' => 'Tambah PPID Pembantu',
                 'route' => 'admin.ppid-pembantu.create',
-                'active' => [
-                    'admin.ppid-pembantu.create',
-                ],
+                'active' => ['admin.ppid-pembantu.create'],
                 'icon' => 'ri-building-add-line',
                 'roles' => [1],
             ],
             [
                 'label' => 'Daftar Akun Admin',
                 'route' => 'admin.akun-admin.index',
-                'active' => [
-                    'admin.akun-admin.index',
-                    'admin.akun-admin.edit',
-                ],
+                'active' => ['admin.akun-admin.index', 'admin.akun-admin.edit'],
                 'icon' => 'ri-admin-line',
                 'roles' => [1],
             ],
             [
                 'label' => 'Tambah Akun Admin',
                 'route' => 'admin.akun-admin.create',
-                'active' => [
-                    'admin.akun-admin.create',
-                ],
+                'active' => ['admin.akun-admin.create'],
                 'icon' => 'ri-user-add-line',
                 'roles' => [1],
             ],
             [
                 'label' => 'Daftar Pejabat',
                 'route' => 'admin.pejabat.index',
-                'active' => [
-                    'admin.pejabat.index',
-                    'admin.pejabat.show',
-                    'admin.pejabat.edit',
-                ],
+                'active' => ['admin.pejabat.index', 'admin.pejabat.show', 'admin.pejabat.edit'],
                 'icon' => 'ri-contacts-book-2-line',
                 'roles' => [1],
             ],
             [
                 'label' => 'Tambah Pejabat',
                 'route' => 'admin.pejabat.create',
-                'active' => [
-                    'admin.pejabat.create',
-                ],
+                'active' => ['admin.pejabat.create'],
                 'icon' => 'ri-user-star-line',
                 'roles' => [1],
             ],
-        ])
+        ]),
     );
 
-    /*
-    |--------------------------------------------------------------------------
-    | Submenu Konten dan Informasi
-    |--------------------------------------------------------------------------
-    */
+    /* Submenu Konten dan Informasi */
 
     $contentMenus = $filterMenus(
         collect([
@@ -243,79 +134,57 @@
             [
                 'label' => 'Tambah Informasi',
                 'route' => 'admin.informasi-publik.create',
-                'active' => [
-                    'admin.informasi-publik.create',
-                ],
+                'active' => ['admin.informasi-publik.create'],
                 'icon' => 'ri-file-add-line',
                 'roles' => [1, 2],
             ],
             [
                 'label' => 'Daftar Berita',
                 'route' => 'admin.berita.index',
-                'active' => [
-                    'admin.berita.index',
-                    'admin.berita.show',
-                    'admin.berita.edit',
-                ],
+                'active' => ['admin.berita.index', 'admin.berita.show', 'admin.berita.edit'],
                 'icon' => 'ri-newspaper-line',
                 'roles' => [1, 2],
             ],
             [
                 'label' => 'Tambah Berita',
                 'route' => 'admin.berita.create',
-                'active' => [
-                    'admin.berita.create',
-                ],
+                'active' => ['admin.berita.create'],
                 'icon' => 'ri-draft-line',
                 'roles' => [1, 2],
             ],
             [
                 'label' => 'Daftar FAQ',
                 'route' => 'admin.faq.index',
-                'active' => [
-                    'admin.faq.index',
-                    'admin.faq.show',
-                    'admin.faq.edit',
-                ],
+                'active' => ['admin.faq.index', 'admin.faq.show', 'admin.faq.edit'],
                 'icon' => 'ri-question-answer-line',
                 'roles' => [1],
             ],
             [
                 'label' => 'Tambah FAQ',
                 'route' => 'admin.faq.create',
-                'active' => [
-                    'admin.faq.create',
-                ],
+                'active' => ['admin.faq.create'],
                 'icon' => 'ri-questionnaire-line',
                 'roles' => [1],
             ],
             [
                 'label' => 'Daftar Slider',
                 'route' => 'admin.slider.index',
-                'active' => [
-                    'admin.slider.index',
-                    'admin.slider.show',
-                    'admin.slider.edit',
-                ],
+                'active' => ['admin.slider.index', 'admin.slider.show', 'admin.slider.edit'],
                 'icon' => 'ri-gallery-line',
                 'roles' => [1],
             ],
             [
                 'label' => 'Tambah Slider',
                 'route' => 'admin.slider.create',
-                'active' => [
-                    'admin.slider.create',
-                ],
+                'active' => ['admin.slider.create'],
                 'icon' => 'ri-image-add-line',
                 'roles' => [1],
             ],
-        ])
+        ]),
     );
 
     /*
-    |--------------------------------------------------------------------------
     | Submenu Pengadaan
-    |--------------------------------------------------------------------------
     */
 
     $pengadaanMenus = $filterMenus(
@@ -323,30 +192,22 @@
             [
                 'label' => 'Daftar Pengadaan',
                 'route' => 'admin.pengadaan.index',
-                'active' => [
-                    'admin.pengadaan.index',
-                    'admin.pengadaan.show',
-                    'admin.pengadaan.edit',
-                ],
+                'active' => ['admin.pengadaan.index', 'admin.pengadaan.show', 'admin.pengadaan.edit'],
                 'icon' => 'ri-file-list-2-line',
                 'roles' => [1, 2],
             ],
             [
                 'label' => 'Tambah Pengadaan',
                 'route' => 'admin.pengadaan.create',
-                'active' => [
-                    'admin.pengadaan.create',
-                ],
+                'active' => ['admin.pengadaan.create'],
                 'icon' => 'ri-shopping-cart-2-line',
                 'roles' => [1, 2],
             ],
-        ])
+        ]),
     );
 
     /*
-    |--------------------------------------------------------------------------
     | Submenu Program Kerja
-    |--------------------------------------------------------------------------
     */
 
     $prokerMenus = $filterMenus(
@@ -354,134 +215,105 @@
             [
                 'label' => 'Daftar Program Kerja',
                 'route' => 'admin.proker.index',
-                'active' => [
-                    'admin.proker.index',
-                    'admin.proker.show',
-                    'admin.proker.edit',
-                    'admin.proker.dokumen',
-                ],
+                'active' => ['admin.proker.index', 'admin.proker.show', 'admin.proker.edit', 'admin.proker.dokumen'],
                 'icon' => 'ri-calendar-todo-line',
                 'roles' => [1, 2],
             ],
             [
                 'label' => 'Tambah Program Kerja',
                 'route' => 'admin.proker.create',
-                'active' => [
-                    'admin.proker.create',
-                ],
+                'active' => ['admin.proker.create'],
                 'icon' => 'ri-calendar-event-line',
                 'roles' => [1, 2],
             ],
-        ])
+        ]),
     );
 
-    /*
-    |--------------------------------------------------------------------------
-    | Jumlah Permohonan yang Membutuhkan Perhatian
-    |--------------------------------------------------------------------------
-    */
+    /* Jumlah Permohonan yang Membutuhkan Perhatian */
 
-    $permohonanNotificationCount = (int) (
-        $totalNotifikasiAdminUtama ?? 0
-    );
+    $permohonanNotificationCount = (int) ($totalNotifikasiAdminUtama ?? 0);
 
-    /*
-    |--------------------------------------------------------------------------
-    | Jumlah Notifikasi Database yang Belum Dibaca
-    |--------------------------------------------------------------------------
-    */
+    /* Jumlah Notifikasi Database yang Belum Dibaca */
 
     $unreadNotificationCount = 0;
 
-    if (
-        $admin
-        && method_exists(
-            $admin,
-            'unreadNotifications'
-        )
-    ) {
-        $unreadNotificationCount = (int) $admin
-            ->unreadNotifications()
-            ->count();
+    if ($admin && method_exists($admin, 'unreadNotifications')) {
+        $unreadNotificationCount = (int) $admin->unreadNotifications()->count();
     }
 
     /*
-    |--------------------------------------------------------------------------
-    | Logo
-    |--------------------------------------------------------------------------
+    | Logo Pemerintah Kota Batu
+    |
+    | Aset wajib:
+    | - assets/img/logo/LogoKotaBatu.webp
+    |
+    | Aset opsional untuk hasil terbaik:
+    | - assets/img/logo/LogoKotaBatuDark.webp
+    | - assets/img/logo/LogoKotaBatuIcon.webp
+    | - assets/img/logo/LogoKotaBatuIconDark.webp
     */
 
-    $logoPath = asset(
-        'assets/src/images/logo/logo.svg'
-    );
+    $logoRelativePath = 'assets/img/logo/LogoKotaBatu.webp';
+    $logoDarkRelativePath = 'assets/img/logo/LogoKotaBatuDark.webp';
+    $logoIconRelativePath = 'assets/img/logo/LogoKotaBatuIcon.webp';
+    $logoIconDarkRelativePath = 'assets/img/logo/LogoKotaBatuIconDark.webp';
 
-    $logoDarkPath = file_exists(
-        public_path(
-            'assets/src/images/logo/logo-dark.svg'
-        )
-    )
-        ? asset(
-            'assets/src/images/logo/logo-dark.svg'
-        )
-        : $logoPath;
+    $logoPath = asset($logoRelativePath);
 
-    $logoIconPath = file_exists(
-        public_path(
-            'assets/src/images/logo/logo-icon.svg'
-        )
-    )
-        ? asset(
-            'assets/src/images/logo/logo-icon.svg'
-        )
-        : $logoPath;
+    $hasLogoDark = file_exists(public_path($logoDarkRelativePath));
+    $logoDarkPath = $hasLogoDark ? asset($logoDarkRelativePath) : $logoPath;
+
+    $hasLogoIcon = file_exists(public_path($logoIconRelativePath));
+    $logoIconPath = $hasLogoIcon ? asset($logoIconRelativePath) : $logoPath;
+
+    $hasLogoIconDark = file_exists(public_path($logoIconDarkRelativePath));
+    $logoIconDarkPath = $hasLogoIconDark ? asset($logoIconDarkRelativePath) : $logoIconPath;
 @endphp
 
-<aside
-    id="sidebar"
-    x-data="{
-        activeMenus: {
-            master: @js($masterActive),
-            content: @js($contentActive),
-            pengadaan: @js($pengadaanActive),
-            proker: @js($prokerActive),
-        },
+<aside id="sidebar" x-data="{
+    activeMenus: {
+        master: @js($masterActive),
+        content: @js($contentActive),
+        pengadaan: @js($pengadaanActive),
+        proker: @js($prokerActive),
+    },
 
-        openSubmenus: {
-            master: @js($masterActive),
-            content: @js($contentActive),
-            pengadaan: @js($pengadaanActive),
-            proker: @js($prokerActive),
-        },
+    openSubmenus: {
+        master: @js($masterActive),
+        content: @js($contentActive),
+        pengadaan: @js($pengadaanActive),
+        proker: @js($prokerActive),
+    },
 
-        toggleSubmenu(key) {
-            const shouldOpen = !this.openSubmenus[key];
+    toggleSubmenu(key) {
+        const shouldOpen = !this.openSubmenus[key];
 
-            Object.keys(
-                this.openSubmenus
-            ).forEach((menuKey) => {
-                this.openSubmenus[menuKey] = false;
-            });
+        Object.keys(
+            this.openSubmenus
+        ).forEach((menuKey) => {
+            this.openSubmenus[menuKey] = false;
+        });
 
-            this.openSubmenus[key] = shouldOpen;
-        },
+        this.openSubmenus[key] = shouldOpen;
+    },
 
-        isSubmenuOpen(key) {
-            return Boolean(
-                this.openSubmenus[key]
-            );
-        },
+    isSubmenuOpen(key) {
+        return Boolean(
+            this.openSubmenus[key]
+        );
+    },
 
-        isMenuActive(key) {
-            return Boolean(
-                this.activeMenus[key]
-                || this.openSubmenus[key]
-            );
-        },
+    isMenuActive(key) {
+        return Boolean(
+            this.activeMenus[key] ||
+            this.openSubmenus[key]
+        );
+    },
 
-        closeMobileSidebar() {
-            this.$store.sidebar.setMobileOpen(false);
-        }
-    }"
+    closeMobileSidebar() {
+        this.$store.sidebar.setMobileOpen(false);
+    }
+}"
     class="
         fixed
         left-0
@@ -511,17 +343,14 @@
         '-translate-x-full xl:translate-x-0':
             !$store.sidebar.isMobileOpen
     }"
-    @mouseenter="$store.sidebar.setHovered(true)"
-    @mouseleave="$store.sidebar.setHovered(false)"
->
+    @mouseenter="$store.sidebar.setHovered(true)" @mouseleave="$store.sidebar.setHovered(false)">
     {{-- ================================================================
         LOGO
     ================================================================= --}}
 
-    <div
-        class="
+    <div class="
             flex
-            h-[72px]
+            h-[84px]
             shrink-0
             items-center
             border-b
@@ -529,57 +358,60 @@
             px-2
             dark:border-gray-800
         "
-        :class="$store.sidebar.isCompact()
-            ? 'xl:justify-center'
-            : 'justify-start'"
-    >
-        <a
-            href="{{ route('admin.dashboard') }}"
-            class="flex min-w-0 items-center"
-            aria-label="Dashboard Admin"
-            @click="closeMobileSidebar()"
-        >
-            <img
-                x-cloak
-                x-show="$store.sidebar.isWide()"
-                src="{{ $logoPath }}"
-                alt="Logo"
-                width="150"
-                height="38"
-                class="
-                    block
-                    max-h-9
-                    max-w-[165px]
-                    object-contain
-                    dark:hidden
-                "
-            >
+        :class="$store.sidebar.isCompact() ?
+            'xl:justify-center' :
+            'justify-start'">
+        <a href="{{ route('admin.dashboard') }}" class="flex min-w-0 items-center overflow-hidden"
+            aria-label="Dashboard PPID Kota Batu" @click="closeMobileSidebar()">
 
-            <img
-                x-cloak
-                x-show="$store.sidebar.isWide()"
-                src="{{ $logoDarkPath }}"
-                alt="Logo"
-                width="150"
-                height="38"
-                class="
-                    hidden
-                    max-h-9
-                    max-w-[165px]
-                    object-contain
-                    dark:block
-                "
-            >
+            {{-- Identitas lengkap ketika sidebar lebar --}}
+            <span x-cloak x-show="$store.sidebar.isWide()" class="flex min-w-0 items-center gap-2.5">
+                <span class="flex h-11 w-11 shrink-0 items-center justify-center bg-transparent">
+                    <img src="{{ $logoIconPath }}" alt="Logo Pemerintah Kota Batu" width="44" height="44"
+                        class="h-11 w-11 object-contain dark:hidden">
 
-            <img
-                x-cloak
-                x-show="$store.sidebar.isCompact()"
-                src="{{ $logoIconPath }}"
-                alt="Logo"
-                width="34"
-                height="34"
-                class="h-[34px] w-[34px] object-contain"
-            >
+                    <img src="{{ $logoIconDarkPath }}" alt="Logo Pemerintah Kota Batu" width="44" height="44"
+                        class="hidden h-11 w-11 object-contain dark:block">
+                </span>
+
+                <span class="flex min-w-0 flex-col leading-none">
+                    <span
+                        class="
+                            text-[11px]
+                            font-semibold
+                            uppercase
+                            tracking-[0.18em]
+                            text-gray-500
+                            dark:text-gray-400
+                        ">
+                        PPID
+                    </span>
+
+                    <span
+                        class="
+                            mt-1
+                            truncate
+                            text-[15px]
+                            font-extrabold
+                            uppercase
+                            tracking-[0.04em]
+                            text-gray-900
+                            dark:text-white
+                        ">
+                        Kota Batu
+                    </span>
+                </span>
+            </span>
+
+            {{-- Lambang ringkas ketika sidebar compact --}}
+            <span x-cloak x-show="$store.sidebar.isCompact()"
+                class="flex h-10 w-10 items-center justify-center bg-transparent">
+                <img src="{{ $logoIconPath }}" alt="Logo PPID Kota Batu" width="40" height="40"
+                    class="h-10 w-10 object-contain dark:hidden">
+
+                <img src="{{ $logoIconDarkPath }}" alt="Logo PPID Kota Batu" width="40" height="40"
+                    class="hidden h-10 w-10 object-contain dark:block">
+            </span>
         </a>
     </div>
 
@@ -596,21 +428,18 @@
             flex-col
             overflow-y-auto
             py-3
-        "
-    >
+        ">
         <nav class="flex-1">
-            <div
-                class="
+            <div class="
                     mb-2
                     flex
                     h-6
                     items-center
                     px-3
                 "
-                :class="$store.sidebar.isCompact()
-                    ? 'xl:justify-center'
-                    : 'justify-start'"
-            >
+                :class="$store.sidebar.isCompact() ?
+                    'xl:justify-center' :
+                    'justify-start'">
                 <template x-if="$store.sidebar.isWide()">
                     <span
                         class="
@@ -620,8 +449,7 @@
                             tracking-[0.12em]
                             text-gray-400
                             dark:text-gray-500
-                        "
-                    >
+                        ">
                         Navigasi
                     </span>
                 </template>
@@ -632,8 +460,7 @@
                             ri-more-fill
                             text-xl
                             text-gray-400
-                        "
-                    ></i>
+                        "></i>
                 </template>
             </div>
 
@@ -643,10 +470,7 @@
                 ===================================================== --}}
 
                 <li>
-                    <a
-                        href="{{ route('admin.dashboard') }}"
-                        title="Dashboard"
-                        @click="closeMobileSidebar()"
+                    <a href="{{ route('admin.dashboard') }}" title="Dashboard" @click="closeMobileSidebar()"
                         class="
                             menu-item
                             group
@@ -663,16 +487,11 @@
                             leading-5
                             transition-colors
                             duration-200
-                            {{
-                                $dashboardActive
-                                    ? 'menu-item-active'
-                                    : 'menu-item-inactive'
-                            }}
+                            {{ $dashboardActive ? 'menu-item-active' : 'menu-item-inactive' }}
                         "
-                        :class="$store.sidebar.isCompact()
-                            ? 'xl:justify-center'
-                            : 'justify-start'"
-                    >
+                        :class="$store.sidebar.isCompact() ?
+                            'xl:justify-center' :
+                            'justify-start'">
                         <span
                             class="
                                 flex
@@ -681,21 +500,12 @@
                                 shrink-0
                                 items-center
                                 justify-center
-                                {{
-                                    $dashboardActive
-                                        ? 'menu-item-icon-active'
-                                        : 'menu-item-icon-inactive'
-                                }}
-                            "
-                        >
+                                {{ $dashboardActive ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}
+                            ">
                             <i class="ri-dashboard-3-line text-lg"></i>
                         </span>
 
-                        <span
-                            x-cloak
-                            x-show="$store.sidebar.isWide()"
-                            class="min-w-0 flex-1 truncate"
-                        >
+                        <span x-cloak x-show="$store.sidebar.isWide()" class="min-w-0 flex-1 truncate">
                             Dashboard
                         </span>
                     </a>
@@ -705,15 +515,9 @@
                     MASTER DATA
                 ===================================================== --}}
 
-                @if (
-                    $isAdminUtama
-                    && $masterMenus->isNotEmpty()
-                )
+                @if ($isAdminUtama && $masterMenus->isNotEmpty())
                     <li>
-                        <button
-                            type="button"
-                            title="Master Data"
-                            @click="toggleSubmenu('master')"
+                        <button type="button" title="Master Data" @click="toggleSubmenu('master')"
                             :aria-expanded="isSubmenuOpen('master')"
                             class="
                                 menu-item
@@ -733,15 +537,14 @@
                                 duration-200
                             "
                             :class="[
-                                isMenuActive('master')
-                                    ? 'menu-item-active'
-                                    : 'menu-item-inactive',
-
-                                $store.sidebar.isCompact()
-                                    ? 'xl:justify-center'
-                                    : 'justify-start'
-                            ]"
-                        >
+                                isMenuActive('master') ?
+                                'menu-item-active' :
+                                'menu-item-inactive',
+                            
+                                $store.sidebar.isCompact() ?
+                                'xl:justify-center' :
+                                'justify-start'
+                            ]">
                             <span
                                 class="
                                     flex
@@ -751,29 +554,23 @@
                                     items-center
                                     justify-center
                                 "
-                                :class="isMenuActive('master')
-                                    ? 'menu-item-icon-active'
-                                    : 'menu-item-icon-inactive'"
-                            >
+                                :class="isMenuActive('master') ?
+                                    'menu-item-icon-active' :
+                                    'menu-item-icon-inactive'">
                                 <i class="ri-database-2-line text-lg"></i>
                             </span>
 
-                            <span
-                                x-cloak
-                                x-show="$store.sidebar.isWide()"
+                            <span x-cloak x-show="$store.sidebar.isWide()"
                                 class="
                                     min-w-0
                                     flex-1
                                     truncate
                                     text-left
-                                "
-                            >
+                                ">
                                 Master Data
                             </span>
 
-                            <i
-                                x-cloak
-                                x-show="$store.sidebar.isWide()"
+                            <i x-cloak x-show="$store.sidebar.isWide()"
                                 class="
                                     ri-arrow-down-s-line
                                     ml-auto
@@ -782,20 +579,17 @@
                                     transition-transform
                                     duration-200
                                 "
-                                :class="isSubmenuOpen('master')
-                                    ? 'rotate-180 text-brand-500'
-                                    : ''"
-                            ></i>
+                                :class="isSubmenuOpen('master') ?
+                                    'rotate-180 text-brand-500' :
+                                    ''"></i>
                         </button>
 
-                        <div
-                            x-cloak
+                        <div x-cloak
                             x-show="
                                 isSubmenuOpen('master')
                                 && $store.sidebar.isWide()
                             "
-                            x-transition
-                        >
+                            x-transition>
                             <ul
                                 class="
                                     ml-[22px]
@@ -805,26 +599,18 @@
                                     border-gray-200
                                     pl-[17px]
                                     dark:border-gray-700
-                                "
-                            >
+                                ">
                                 @foreach ($masterMenus as $menu)
                                     @php
-                                        $menuPatterns =
-                                            \Illuminate\Support\Arr::wrap(
-                                                $menu['active']
-                                                ?? $menu['route']
-                                            );
+                                        $menuPatterns = \Illuminate\Support\Arr::wrap(
+                                            $menu['active'] ?? $menu['route'],
+                                        );
 
-                                        $menuActive =
-                                            request()->routeIs(
-                                                ...$menuPatterns
-                                            );
+                                        $menuActive = request()->routeIs(...$menuPatterns);
                                     @endphp
 
                                     <li>
-                                        <a
-                                            href="{{ route($menu['route']) }}"
-                                            @click="closeMobileSidebar()"
+                                        <a href="{{ route($menu['route']) }}" @click="closeMobileSidebar()"
                                             class="
                                                 menu-dropdown-item
                                                 flex
@@ -839,28 +625,21 @@
                                                 leading-5
                                                 transition-colors
                                                 duration-200
-                                                {{
-                                                    $menuActive
-                                                        ? 'menu-dropdown-item-active'
-                                                        : 'menu-dropdown-item-inactive'
-                                                }}
-                                            "
-                                        >
+                                                {{ $menuActive ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive' }}
+                                            ">
                                             <i
                                                 class="
                                                     {{ $menu['icon'] }}
                                                     shrink-0
                                                     text-base
-                                                "
-                                            ></i>
+                                                "></i>
 
                                             <span
                                                 class="
                                                     min-w-0
                                                     flex-1
                                                     truncate
-                                                "
-                                            >
+                                                ">
                                                 {{ $menu['label'] }}
                                             </span>
                                         </a>
@@ -877,10 +656,7 @@
 
                 @if ($contentMenus->isNotEmpty())
                     <li>
-                        <button
-                            type="button"
-                            title="Konten dan Informasi"
-                            @click="toggleSubmenu('content')"
+                        <button type="button" title="Konten dan Informasi" @click="toggleSubmenu('content')"
                             :aria-expanded="isSubmenuOpen('content')"
                             class="
                                 menu-item
@@ -900,15 +676,14 @@
                                 duration-200
                             "
                             :class="[
-                                isMenuActive('content')
-                                    ? 'menu-item-active'
-                                    : 'menu-item-inactive',
-
-                                $store.sidebar.isCompact()
-                                    ? 'xl:justify-center'
-                                    : 'justify-start'
-                            ]"
-                        >
+                                isMenuActive('content') ?
+                                'menu-item-active' :
+                                'menu-item-inactive',
+                            
+                                $store.sidebar.isCompact() ?
+                                'xl:justify-center' :
+                                'justify-start'
+                            ]">
                             <span
                                 class="
                                     flex
@@ -918,29 +693,23 @@
                                     items-center
                                     justify-center
                                 "
-                                :class="isMenuActive('content')
-                                    ? 'menu-item-icon-active'
-                                    : 'menu-item-icon-inactive'"
-                            >
+                                :class="isMenuActive('content') ?
+                                    'menu-item-icon-active' :
+                                    'menu-item-icon-inactive'">
                                 <i class="ri-layout-grid-line text-lg"></i>
                             </span>
 
-                            <span
-                                x-cloak
-                                x-show="$store.sidebar.isWide()"
+                            <span x-cloak x-show="$store.sidebar.isWide()"
                                 class="
                                     min-w-0
                                     flex-1
                                     truncate
                                     text-left
-                                "
-                            >
+                                ">
                                 Konten & Informasi
                             </span>
 
-                            <i
-                                x-cloak
-                                x-show="$store.sidebar.isWide()"
+                            <i x-cloak x-show="$store.sidebar.isWide()"
                                 class="
                                     ri-arrow-down-s-line
                                     ml-auto
@@ -949,20 +718,17 @@
                                     transition-transform
                                     duration-200
                                 "
-                                :class="isSubmenuOpen('content')
-                                    ? 'rotate-180 text-brand-500'
-                                    : ''"
-                            ></i>
+                                :class="isSubmenuOpen('content') ?
+                                    'rotate-180 text-brand-500' :
+                                    ''"></i>
                         </button>
 
-                        <div
-                            x-cloak
+                        <div x-cloak
                             x-show="
                                 isSubmenuOpen('content')
                                 && $store.sidebar.isWide()
                             "
-                            x-transition
-                        >
+                            x-transition>
                             <ul
                                 class="
                                     ml-[22px]
@@ -972,26 +738,18 @@
                                     border-gray-200
                                     pl-[17px]
                                     dark:border-gray-700
-                                "
-                            >
+                                ">
                                 @foreach ($contentMenus as $menu)
                                     @php
-                                        $menuPatterns =
-                                            \Illuminate\Support\Arr::wrap(
-                                                $menu['active']
-                                                ?? $menu['route']
-                                            );
+                                        $menuPatterns = \Illuminate\Support\Arr::wrap(
+                                            $menu['active'] ?? $menu['route'],
+                                        );
 
-                                        $menuActive =
-                                            request()->routeIs(
-                                                ...$menuPatterns
-                                            );
+                                        $menuActive = request()->routeIs(...$menuPatterns);
                                     @endphp
 
                                     <li>
-                                        <a
-                                            href="{{ route($menu['route']) }}"
-                                            @click="closeMobileSidebar()"
+                                        <a href="{{ route($menu['route']) }}" @click="closeMobileSidebar()"
                                             class="
                                                 menu-dropdown-item
                                                 flex
@@ -1006,28 +764,21 @@
                                                 leading-5
                                                 transition-colors
                                                 duration-200
-                                                {{
-                                                    $menuActive
-                                                        ? 'menu-dropdown-item-active'
-                                                        : 'menu-dropdown-item-inactive'
-                                                }}
-                                            "
-                                        >
+                                                {{ $menuActive ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive' }}
+                                            ">
                                             <i
                                                 class="
                                                     {{ $menu['icon'] }}
                                                     shrink-0
                                                     text-base
-                                                "
-                                            ></i>
+                                                "></i>
 
                                             <span
                                                 class="
                                                     min-w-0
                                                     flex-1
                                                     truncate
-                                                "
-                                            >
+                                                ">
                                                 {{ $menu['label'] }}
                                             </span>
                                         </a>
@@ -1042,15 +793,9 @@
                     PENGADAAN
                 ===================================================== --}}
 
-                @if (
-                    $canAccessSharedModule
-                    && $pengadaanMenus->isNotEmpty()
-                )
+                @if ($canAccessSharedModule && $pengadaanMenus->isNotEmpty())
                     <li>
-                        <button
-                            type="button"
-                            title="Pengadaan"
-                            @click="toggleSubmenu('pengadaan')"
+                        <button type="button" title="Pengadaan" @click="toggleSubmenu('pengadaan')"
                             :aria-expanded="isSubmenuOpen('pengadaan')"
                             class="
                                 menu-item
@@ -1070,15 +815,14 @@
                                 duration-200
                             "
                             :class="[
-                                isMenuActive('pengadaan')
-                                    ? 'menu-item-active'
-                                    : 'menu-item-inactive',
-
-                                $store.sidebar.isCompact()
-                                    ? 'xl:justify-center'
-                                    : 'justify-start'
-                            ]"
-                        >
+                                isMenuActive('pengadaan') ?
+                                'menu-item-active' :
+                                'menu-item-inactive',
+                            
+                                $store.sidebar.isCompact() ?
+                                'xl:justify-center' :
+                                'justify-start'
+                            ]">
                             <span
                                 class="
                                     flex
@@ -1088,29 +832,23 @@
                                     items-center
                                     justify-center
                                 "
-                                :class="isMenuActive('pengadaan')
-                                    ? 'menu-item-icon-active'
-                                    : 'menu-item-icon-inactive'"
-                            >
+                                :class="isMenuActive('pengadaan') ?
+                                    'menu-item-icon-active' :
+                                    'menu-item-icon-inactive'">
                                 <i class="ri-shopping-cart-2-line text-lg"></i>
                             </span>
 
-                            <span
-                                x-cloak
-                                x-show="$store.sidebar.isWide()"
+                            <span x-cloak x-show="$store.sidebar.isWide()"
                                 class="
                                     min-w-0
                                     flex-1
                                     truncate
                                     text-left
-                                "
-                            >
+                                ">
                                 Pengadaan
                             </span>
 
-                            <i
-                                x-cloak
-                                x-show="$store.sidebar.isWide()"
+                            <i x-cloak x-show="$store.sidebar.isWide()"
                                 class="
                                     ri-arrow-down-s-line
                                     ml-auto
@@ -1119,20 +857,17 @@
                                     transition-transform
                                     duration-200
                                 "
-                                :class="isSubmenuOpen('pengadaan')
-                                    ? 'rotate-180 text-brand-500'
-                                    : ''"
-                            ></i>
+                                :class="isSubmenuOpen('pengadaan') ?
+                                    'rotate-180 text-brand-500' :
+                                    ''"></i>
                         </button>
 
-                        <div
-                            x-cloak
+                        <div x-cloak
                             x-show="
                                 isSubmenuOpen('pengadaan')
                                 && $store.sidebar.isWide()
                             "
-                            x-transition
-                        >
+                            x-transition>
                             <ul
                                 class="
                                     ml-[22px]
@@ -1142,26 +877,18 @@
                                     border-gray-200
                                     pl-[17px]
                                     dark:border-gray-700
-                                "
-                            >
+                                ">
                                 @foreach ($pengadaanMenus as $menu)
                                     @php
-                                        $menuPatterns =
-                                            \Illuminate\Support\Arr::wrap(
-                                                $menu['active']
-                                                ?? $menu['route']
-                                            );
+                                        $menuPatterns = \Illuminate\Support\Arr::wrap(
+                                            $menu['active'] ?? $menu['route'],
+                                        );
 
-                                        $menuActive =
-                                            request()->routeIs(
-                                                ...$menuPatterns
-                                            );
+                                        $menuActive = request()->routeIs(...$menuPatterns);
                                     @endphp
 
                                     <li>
-                                        <a
-                                            href="{{ route($menu['route']) }}"
-                                            @click="closeMobileSidebar()"
+                                        <a href="{{ route($menu['route']) }}" @click="closeMobileSidebar()"
                                             class="
                                                 menu-dropdown-item
                                                 flex
@@ -1176,28 +903,21 @@
                                                 leading-5
                                                 transition-colors
                                                 duration-200
-                                                {{
-                                                    $menuActive
-                                                        ? 'menu-dropdown-item-active'
-                                                        : 'menu-dropdown-item-inactive'
-                                                }}
-                                            "
-                                        >
+                                                {{ $menuActive ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive' }}
+                                            ">
                                             <i
                                                 class="
                                                     {{ $menu['icon'] }}
                                                     shrink-0
                                                     text-base
-                                                "
-                                            ></i>
+                                                "></i>
 
                                             <span
                                                 class="
                                                     min-w-0
                                                     flex-1
                                                     truncate
-                                                "
-                                            >
+                                                ">
                                                 {{ $menu['label'] }}
                                             </span>
                                         </a>
@@ -1212,15 +932,9 @@
                     PROGRAM KERJA
                 ===================================================== --}}
 
-                @if (
-                    $canAccessSharedModule
-                    && $prokerMenus->isNotEmpty()
-                )
+                @if ($canAccessSharedModule && $prokerMenus->isNotEmpty())
                     <li>
-                        <button
-                            type="button"
-                            title="Program Kerja"
-                            @click="toggleSubmenu('proker')"
+                        <button type="button" title="Program Kerja" @click="toggleSubmenu('proker')"
                             :aria-expanded="isSubmenuOpen('proker')"
                             class="
                                 menu-item
@@ -1240,15 +954,14 @@
                                 duration-200
                             "
                             :class="[
-                                isMenuActive('proker')
-                                    ? 'menu-item-active'
-                                    : 'menu-item-inactive',
-
-                                $store.sidebar.isCompact()
-                                    ? 'xl:justify-center'
-                                    : 'justify-start'
-                            ]"
-                        >
+                                isMenuActive('proker') ?
+                                'menu-item-active' :
+                                'menu-item-inactive',
+                            
+                                $store.sidebar.isCompact() ?
+                                'xl:justify-center' :
+                                'justify-start'
+                            ]">
                             <span
                                 class="
                                     flex
@@ -1258,29 +971,23 @@
                                     items-center
                                     justify-center
                                 "
-                                :class="isMenuActive('proker')
-                                    ? 'menu-item-icon-active'
-                                    : 'menu-item-icon-inactive'"
-                            >
+                                :class="isMenuActive('proker') ?
+                                    'menu-item-icon-active' :
+                                    'menu-item-icon-inactive'">
                                 <i class="ri-calendar-todo-line text-lg"></i>
                             </span>
 
-                            <span
-                                x-cloak
-                                x-show="$store.sidebar.isWide()"
+                            <span x-cloak x-show="$store.sidebar.isWide()"
                                 class="
                                     min-w-0
                                     flex-1
                                     truncate
                                     text-left
-                                "
-                            >
+                                ">
                                 Program Kerja
                             </span>
 
-                            <i
-                                x-cloak
-                                x-show="$store.sidebar.isWide()"
+                            <i x-cloak x-show="$store.sidebar.isWide()"
                                 class="
                                     ri-arrow-down-s-line
                                     ml-auto
@@ -1289,20 +996,17 @@
                                     transition-transform
                                     duration-200
                                 "
-                                :class="isSubmenuOpen('proker')
-                                    ? 'rotate-180 text-brand-500'
-                                    : ''"
-                            ></i>
+                                :class="isSubmenuOpen('proker') ?
+                                    'rotate-180 text-brand-500' :
+                                    ''"></i>
                         </button>
 
-                        <div
-                            x-cloak
+                        <div x-cloak
                             x-show="
                                 isSubmenuOpen('proker')
                                 && $store.sidebar.isWide()
                             "
-                            x-transition
-                        >
+                            x-transition>
                             <ul
                                 class="
                                     ml-[22px]
@@ -1312,26 +1016,18 @@
                                     border-gray-200
                                     pl-[17px]
                                     dark:border-gray-700
-                                "
-                            >
+                                ">
                                 @foreach ($prokerMenus as $menu)
                                     @php
-                                        $menuPatterns =
-                                            \Illuminate\Support\Arr::wrap(
-                                                $menu['active']
-                                                ?? $menu['route']
-                                            );
+                                        $menuPatterns = \Illuminate\Support\Arr::wrap(
+                                            $menu['active'] ?? $menu['route'],
+                                        );
 
-                                        $menuActive =
-                                            request()->routeIs(
-                                                ...$menuPatterns
-                                            );
+                                        $menuActive = request()->routeIs(...$menuPatterns);
                                     @endphp
 
                                     <li>
-                                        <a
-                                            href="{{ route($menu['route']) }}"
-                                            @click="closeMobileSidebar()"
+                                        <a href="{{ route($menu['route']) }}" @click="closeMobileSidebar()"
                                             class="
                                                 menu-dropdown-item
                                                 flex
@@ -1346,28 +1042,21 @@
                                                 leading-5
                                                 transition-colors
                                                 duration-200
-                                                {{
-                                                    $menuActive
-                                                        ? 'menu-dropdown-item-active'
-                                                        : 'menu-dropdown-item-inactive'
-                                                }}
-                                            "
-                                        >
+                                                {{ $menuActive ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive' }}
+                                            ">
                                             <i
                                                 class="
                                                     {{ $menu['icon'] }}
                                                     shrink-0
                                                     text-base
-                                                "
-                                            ></i>
+                                                "></i>
 
                                             <span
                                                 class="
                                                     min-w-0
                                                     flex-1
                                                     truncate
-                                                "
-                                            >
+                                                ">
                                                 {{ $menu['label'] }}
                                             </span>
                                         </a>
@@ -1382,15 +1071,9 @@
                     PERMOHONAN INFORMASI
                 ===================================================== --}}
 
-                @if (
-                    \Illuminate\Support\Facades\Route::has(
-                        'admin.permohonan.index'
-                    )
-                )
+                @if (\Illuminate\Support\Facades\Route::has('admin.permohonan.index'))
                     <li>
-                        <a
-                            href="{{ route('admin.permohonan.index') }}"
-                            title="Permohonan Informasi"
+                        <a href="{{ route('admin.permohonan.index') }}" title="Permohonan Informasi"
                             @click="closeMobileSidebar()"
                             class="
                                 menu-item
@@ -1409,16 +1092,11 @@
                                 leading-5
                                 transition-colors
                                 duration-200
-                                {{
-                                    $permohonanActive
-                                        ? 'menu-item-active'
-                                        : 'menu-item-inactive'
-                                }}
+                                {{ $permohonanActive ? 'menu-item-active' : 'menu-item-inactive' }}
                             "
-                            :class="$store.sidebar.isCompact()
-                                ? 'xl:justify-center'
-                                : 'justify-start'"
-                        >
+                            :class="$store.sidebar.isCompact() ?
+                                'xl:justify-center' :
+                                'justify-start'">
                             <span
                                 class="
                                     flex
@@ -1427,28 +1105,17 @@
                                     shrink-0
                                     items-center
                                     justify-center
-                                    {{
-                                        $permohonanActive
-                                            ? 'menu-item-icon-active'
-                                            : 'menu-item-icon-inactive'
-                                    }}
-                                "
-                            >
+                                    {{ $permohonanActive ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}
+                                ">
                                 <i class="ri-file-search-line text-lg"></i>
                             </span>
 
-                            <span
-                                x-cloak
-                                x-show="$store.sidebar.isWide()"
-                                class="min-w-0 flex-1 truncate"
-                            >
+                            <span x-cloak x-show="$store.sidebar.isWide()" class="min-w-0 flex-1 truncate">
                                 Permohonan Informasi
                             </span>
 
                             @if ($permohonanNotificationCount > 0)
-                                <span
-                                    x-cloak
-                                    x-show="$store.sidebar.isWide()"
+                                <span x-cloak x-show="$store.sidebar.isWide()"
                                     class="
                                         ml-auto
                                         flex
@@ -1464,18 +1131,11 @@
                                         font-bold
                                         leading-none
                                         text-white
-                                    "
-                                >
-                                    {{
-                                        $permohonanNotificationCount > 99
-                                            ? '99+'
-                                            : $permohonanNotificationCount
-                                    }}
+                                    ">
+                                    {{ $permohonanNotificationCount > 99 ? '99+' : $permohonanNotificationCount }}
                                 </span>
 
-                                <span
-                                    x-cloak
-                                    x-show="$store.sidebar.isCompact()"
+                                <span x-cloak x-show="$store.sidebar.isCompact()"
                                     class="
                                         absolute
                                         right-2.5
@@ -1487,8 +1147,7 @@
                                         border-white
                                         bg-red-500
                                         dark:border-gray-900
-                                    "
-                                ></span>
+                                    "></span>
                             @endif
                         </a>
                     </li>
@@ -1498,15 +1157,9 @@
                     NOTIFIKASI
                 ===================================================== --}}
 
-                @if (
-                    \Illuminate\Support\Facades\Route::has(
-                        'admin.notifikasi.index'
-                    )
-                )
+                @if (\Illuminate\Support\Facades\Route::has('admin.notifikasi.index'))
                     <li>
-                        <a
-                            href="{{ route('admin.notifikasi.index') }}"
-                            title="Notifikasi"
+                        <a href="{{ route('admin.notifikasi.index') }}" title="Notifikasi"
                             @click="closeMobileSidebar()"
                             class="
                                 menu-item
@@ -1525,16 +1178,11 @@
                                 leading-5
                                 transition-colors
                                 duration-200
-                                {{
-                                    $notifikasiActive
-                                        ? 'menu-item-active'
-                                        : 'menu-item-inactive'
-                                }}
+                                {{ $notifikasiActive ? 'menu-item-active' : 'menu-item-inactive' }}
                             "
-                            :class="$store.sidebar.isCompact()
-                                ? 'xl:justify-center'
-                                : 'justify-start'"
-                        >
+                            :class="$store.sidebar.isCompact() ?
+                                'xl:justify-center' :
+                                'justify-start'">
                             <span
                                 class="
                                     flex
@@ -1543,28 +1191,17 @@
                                     shrink-0
                                     items-center
                                     justify-center
-                                    {{
-                                        $notifikasiActive
-                                            ? 'menu-item-icon-active'
-                                            : 'menu-item-icon-inactive'
-                                    }}
-                                "
-                            >
+                                    {{ $notifikasiActive ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}
+                                ">
                                 <i class="ri-notification-3-line text-lg"></i>
                             </span>
 
-                            <span
-                                x-cloak
-                                x-show="$store.sidebar.isWide()"
-                                class="min-w-0 flex-1 truncate"
-                            >
+                            <span x-cloak x-show="$store.sidebar.isWide()" class="min-w-0 flex-1 truncate">
                                 Notifikasi
                             </span>
 
                             @if ($unreadNotificationCount > 0)
-                                <span
-                                    x-cloak
-                                    x-show="$store.sidebar.isWide()"
+                                <span x-cloak x-show="$store.sidebar.isWide()"
                                     class="
                                         ml-auto
                                         flex
@@ -1580,18 +1217,11 @@
                                         font-bold
                                         leading-none
                                         text-white
-                                    "
-                                >
-                                    {{
-                                        $unreadNotificationCount > 99
-                                            ? '99+'
-                                            : $unreadNotificationCount
-                                    }}
+                                    ">
+                                    {{ $unreadNotificationCount > 99 ? '99+' : $unreadNotificationCount }}
                                 </span>
 
-                                <span
-                                    x-cloak
-                                    x-show="$store.sidebar.isCompact()"
+                                <span x-cloak x-show="$store.sidebar.isCompact()"
                                     class="
                                         absolute
                                         right-2.5
@@ -1603,8 +1233,7 @@
                                         border-white
                                         bg-red-500
                                         dark:border-gray-900
-                                    "
-                                ></span>
+                                    "></span>
                             @endif
                         </a>
                     </li>
@@ -1614,16 +1243,9 @@
                     CHAT
                 ===================================================== --}}
 
-                @if (
-                    $isAdminUtama
-                    && \Illuminate\Support\Facades\Route::has(
-                        'admin.pesan-masuk.index'
-                    )
-                )
+                @if ($isAdminUtama && \Illuminate\Support\Facades\Route::has('admin.pesan-masuk.index'))
                     <li>
-                        <a
-                            href="{{ route('admin.pesan-masuk.index') }}"
-                            title="Chat"
+                        <a href="{{ route('admin.pesan-masuk.index') }}" title="Chat"
                             @click="closeMobileSidebar()"
                             class="
                                 menu-item
@@ -1642,16 +1264,11 @@
                                 leading-5
                                 transition-colors
                                 duration-200
-                                {{
-                                    $chatActive
-                                        ? 'menu-item-active'
-                                        : 'menu-item-inactive'
-                                }}
+                                {{ $chatActive ? 'menu-item-active' : 'menu-item-inactive' }}
                             "
-                            :class="$store.sidebar.isCompact()
-                                ? 'xl:justify-center'
-                                : 'justify-start'"
-                        >
+                            :class="$store.sidebar.isCompact() ?
+                                'xl:justify-center' :
+                                'justify-start'">
                             <span
                                 class="
                                     flex
@@ -1660,21 +1277,12 @@
                                     shrink-0
                                     items-center
                                     justify-center
-                                    {{
-                                        $chatActive
-                                            ? 'menu-item-icon-active'
-                                            : 'menu-item-icon-inactive'
-                                    }}
-                                "
-                            >
+                                    {{ $chatActive ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}
+                                ">
                                 <i class="ri-chat-3-line text-lg"></i>
                             </span>
 
-                            <span
-                                x-cloak
-                                x-show="$store.sidebar.isWide()"
-                                class="min-w-0 flex-1 truncate"
-                            >
+                            <span x-cloak x-show="$store.sidebar.isWide()" class="min-w-0 flex-1 truncate">
                                 Chat
                             </span>
                         </a>
@@ -1695,12 +1303,8 @@
                 border-gray-200
                 pt-3
                 dark:border-gray-800
-            "
-        >
-            <div
-                x-cloak
-                x-show="$store.sidebar.isWide()"
-                x-transition.opacity
+            ">
+            <div x-cloak x-show="$store.sidebar.isWide()" x-transition.opacity
                 class="
                     flex
                     min-w-0
@@ -1712,8 +1316,7 @@
                     transition
                     hover:bg-gray-50
                     dark:hover:bg-white/[0.03]
-                "
-            >
+                ">
                 <div
                     class="
                         flex
@@ -1727,8 +1330,7 @@
                         text-sm
                         font-bold
                         text-white
-                    "
-                >
+                    ">
                     {{ $adminInitial }}
                 </div>
 
@@ -1740,8 +1342,7 @@
                             font-semibold
                             text-gray-800
                             dark:text-white
-                        "
-                    >
+                        ">
                         {{ $adminDisplayName }}
                     </div>
 
@@ -1752,24 +1353,20 @@
                             text-[11px]
                             text-gray-500
                             dark:text-gray-400
-                        "
-                    >
+                        ">
                         {{ $roleLabel }}
                     </div>
                 </div>
             </div>
 
-            <div
-                x-cloak
-                x-show="$store.sidebar.isCompact()"
+            <div x-cloak x-show="$store.sidebar.isCompact()"
                 class="
                     hidden
                     justify-center
                     py-2
                     xl:flex
                 "
-                title="{{ $adminDisplayName }}"
-            >
+                title="{{ $adminDisplayName }}">
                 <div
                     class="
                         flex
@@ -1782,8 +1379,7 @@
                         text-sm
                         font-bold
                         text-white
-                    "
-                >
+                    ">
                     {{ $adminInitial }}
                 </div>
             </div>

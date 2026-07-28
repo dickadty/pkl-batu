@@ -1,21 +1,10 @@
 @props(['slider'])
 
 @php
-    /*
-    |--------------------------------------------------------------------------
-    | Persiapan data
-    |--------------------------------------------------------------------------
-    */
 
     $isPaginated = $slider instanceof \Illuminate\Pagination\AbstractPaginator;
 
     $currentItems = $isPaginated ? $slider->getCollection() : collect($slider);
-
-    /*
-    |--------------------------------------------------------------------------
-    | ID baris untuk checkbox
-    |--------------------------------------------------------------------------
-    */
 
     $rowIds = $currentItems
         ->pluck('id')
@@ -25,12 +14,6 @@
         ->values()
         ->all();
 
-    /*
-    |--------------------------------------------------------------------------
-    | Nomor awal tabel
-    |--------------------------------------------------------------------------
-    */
-
     $firstNumber = $isPaginated ? $slider->firstItem() ?? 1 : 1;
 @endphp
 
@@ -38,9 +21,7 @@
     description="Kelola judul, banner, tanggal publikasi, dan tampilan slider pada halaman utama." :row-ids="$rowIds"
     :paginator="$isPaginated ? $slider : null" :selectable="true" :show-actions="false" :show-pagination="true" :show-pagination-summary="true" :pagination-window="1"
     min-width="min-w-[1250px]">
-    {{-- ============================================================
-        ACTION HEADER
-    ============================================================= --}}
+
 
     <x-slot:headerActions>
         <a href="{{ route('admin.slider.create') }}"
@@ -71,10 +52,6 @@
             <span>Tambah Slider</span>
         </a>
     </x-slot:headerActions>
-
-    {{-- ============================================================
-        HEADER TABEL
-    ============================================================= --}}
 
     <x-slot:head>
         <th scope="col"
@@ -154,19 +131,9 @@
         </th>
     </x-slot:head>
 
-    {{-- ============================================================
-        DATA TABEL
-    ============================================================= --}}
-
     @forelse ($currentItems as $index => $item)
         @php
             $rowNumber = $firstNumber + $index;
-
-            /*
-            |--------------------------------------------------------------------------
-            | URL banner
-            |--------------------------------------------------------------------------
-            */
 
             $bannerUrl = null;
 
@@ -175,12 +142,6 @@
                     ? $item->banner
                     : asset('storage/' . ltrim($item->banner, '/'));
             }
-
-            /*
-            |--------------------------------------------------------------------------
-            | Tanggal slider
-            |--------------------------------------------------------------------------
-            */
 
             $formattedDate = '-';
 
@@ -199,12 +160,6 @@
                     $formattedDate = (string) $item->tanggal;
                 }
             }
-
-            /*
-            |--------------------------------------------------------------------------
-            | URL halaman show admin
-            |--------------------------------------------------------------------------
-            */
 
             $showUrl = route('admin.slider.show', $item->id);
         @endphp
@@ -382,33 +337,6 @@
             {{-- Judul Slider --}}
             <td class="px-4 py-4 sm:px-6">
                 <div class="flex items-start gap-3">
-                    <div
-                        class="
-                            flex
-                            h-11
-                            w-11
-                            shrink-0
-                            items-center
-                            justify-center
-                            rounded-xl
-                            bg-gradient-to-br
-                            from-blue-50
-                            to-purple-50
-                            text-blue-600
-                            ring-1
-                            ring-blue-100
-                            dark:from-blue-500/15
-                            dark:to-purple-500/15
-                            dark:text-blue-400
-                            dark:ring-blue-500/20
-                        ">
-                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                            aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2 1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                    </div>
-
                     <div class="min-w-0">
                         {{-- Judul dapat diklik menuju halaman show --}}
                         <a href="{{ $showUrl }}"
@@ -587,8 +515,7 @@
                         dark:bg-blue-500/15
                         dark:text-blue-400
                     ">
-                    <svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                        aria-hidden="true">
+                    <svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2 1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>

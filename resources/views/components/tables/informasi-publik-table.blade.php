@@ -639,27 +639,6 @@
 
             <td class="px-4 py-4 sm:px-6">
                 <div class="flex items-start gap-3">
-                    <div
-                        class="
-                            flex
-                            h-11
-                            w-11
-                            shrink-0
-                            items-center
-                            justify-center
-                            rounded-xl
-                            bg-cyan-50
-                            text-cyan-600
-                            dark:bg-cyan-500/15
-                            dark:text-cyan-400
-                        ">
-                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                            aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5l5 5v11a2 2 0 01-2 2z" />
-                        </svg>
-                    </div>
-
                     <div class="min-w-0">
                         <a href="{{ $showUrl }}"
                             class="

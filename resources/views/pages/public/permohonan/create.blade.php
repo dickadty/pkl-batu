@@ -5,7 +5,6 @@
 @section('content')
     @php
         $isLoggedIn = $user !== null;
-        $hasStoredIdentity = $isLoggedIn && trim((string) data_get($user, 'scanktp', '')) !== '';
     @endphp
 
     <section class="border-b border-slate-200 bg-white">
@@ -22,7 +21,8 @@
                 @if ($isLoggedIn)
                     Identitas diambil dari akun Anda. Setelah dikirim, permohonan akan langsung masuk ke riwayat akun.
                 @else
-                    Pada pengajuan pertama, sistem membuat akun warga otomatis. Unggah foto KTP untuk membantu mengisi identitas, lalu periksa kembali hasil pembacaannya.
+                    Pada pengajuan pertama, sistem membuat akun warga otomatis. Unggah foto KTP untuk membantu mengisi
+                    identitas, lalu periksa kembali hasil pembacaannya.
                 @endif
             </p>
         </div>
@@ -117,62 +117,62 @@
                     @if ($isLoggedIn)
                         <div>
                             <p class="mb-1.5 text-sm font-semibold text-slate-700">Nama Pemohon</p>
-                            <div class="min-h-11 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-800">
+                            <div
+                                class="min-h-11 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-800">
                                 {{ $user->nama ?? '-' }}
                             </div>
                         </div>
 
                         <div>
                             <p class="mb-1.5 text-sm font-semibold text-slate-700">Nomor Identitas</p>
-                            <div class="min-h-11 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-800">
+                            <div
+                                class="min-h-11 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-800">
                                 {{ $user->nik ?? '-' }}
                             </div>
                         </div>
 
                         <div>
                             <p class="mb-1.5 text-sm font-semibold text-slate-700">Email / Username</p>
-                            <div class="min-h-11 break-all rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-800">
+                            <div
+                                class="min-h-11 break-all rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-800">
                                 {{ $user->email ?? '-' }}
                             </div>
                         </div>
 
                         <div>
                             <p class="mb-1.5 text-sm font-semibold text-slate-700">Nomor Telepon</p>
-                            <div class="min-h-11 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-800">
+                            <div
+                                class="min-h-11 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-800">
                                 {{ $user->telp ?? '-' }}
                             </div>
                         </div>
 
                         <div>
                             <p class="mb-1.5 text-sm font-semibold text-slate-700">Pekerjaan</p>
-                            <div class="min-h-11 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-800">
+                            <div
+                                class="min-h-11 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-800">
                                 {{ $user->pekerjaan ?: '-' }}
                             </div>
                         </div>
 
                         <div class="md:col-span-2">
                             <p class="mb-1.5 text-sm font-semibold text-slate-700">Alamat</p>
-                            <div class="min-h-20 whitespace-pre-line rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm leading-6 text-slate-800">{{ $user->alamat ?: '-' }}</div>
+                            <div
+                                class="min-h-20 whitespace-pre-line rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm leading-6 text-slate-800">
+                                {{ $user->alamat ?: '-' }}</div>
                         </div>
 
                         <div>
                             <label for="file_identitas" class="mb-1.5 block text-sm font-semibold text-slate-700">
-                                {{ $hasStoredIdentity ? 'Ganti Salinan Identitas' : 'Salinan Identitas' }}
-                                @unless ($hasStoredIdentity)
-                                    <span class="text-red-500">*</span>
-                                @endunless
+                                Salinan Identitas (KTP) <span class="text-red-500">*</span>
                             </label>
 
-                            <input id="file_identitas" name="file_identitas" type="file"
-                                @required(! $hasStoredIdentity) accept=".pdf,.jpg,.jpeg,.png"
+                            <input id="file_identitas" name="file_identitas" type="file" required
+                                accept=".pdf,.jpg,.jpeg,.png"
                                 class="block w-full rounded-lg border border-slate-300 bg-white text-sm text-slate-600 file:mr-4 file:border-0 file:border-r file:border-slate-200 file:bg-slate-50 file:px-4 file:py-2.5 file:font-semibold">
 
                             <p class="mt-1.5 text-xs text-slate-500">
-                                @if ($hasStoredIdentity)
-                                    Identitas tersimpan akan digunakan. Unggah hanya untuk menggantinya.
-                                @else
-                                    PDF, JPG, JPEG, atau PNG. Maksimal 5 MB.
-                                @endif
+                                Wajib mengunggah KTP pada setiap pengajuan. Format PDF, JPG, JPEG, atau PNG. Maksimal 5 MB.
                             </p>
                         </div>
                     @else
@@ -184,12 +184,14 @@
                                     </h3>
 
                                     <p class="mt-2 text-sm leading-6 text-blue-800">
-                                        Pilih foto JPG, JPEG, atau PNG yang jelas. Sistem akan mencoba membaca NIK, nama, tempat dan tanggal lahir, jenis kelamin, alamat, wilayah, serta pekerjaan.
+                                        Pilih foto JPG, JPEG, atau PNG yang jelas. Sistem akan mencoba membaca NIK, nama,
+                                        tempat dan tanggal lahir, jenis kelamin, alamat, wilayah, serta pekerjaan.
                                     </p>
 
                                     <div class="mt-4">
-                                        <label for="file_identitas" class="mb-1.5 block text-sm font-semibold text-blue-950">
-                                            Foto atau Salinan Identitas <span class="text-red-500">*</span>
+                                        <label for="file_identitas"
+                                            class="mb-1.5 block text-sm font-semibold text-blue-950">
+                                            Foto atau Salinan Identitas (KTP) <span class="text-red-500">*</span>
                                         </label>
 
                                         <input id="file_identitas" name="file_identitas" type="file" required
@@ -197,7 +199,8 @@
                                             class="block w-full rounded-lg border border-blue-300 bg-white text-sm text-slate-600 file:mr-4 file:border-0 file:border-r file:border-blue-200 file:bg-blue-100 file:px-4 file:py-2.5 file:font-semibold file:text-blue-900">
 
                                         <p class="mt-1.5 text-xs text-blue-700">
-                                            OCR hanya berjalan untuk JPG, JPEG, dan PNG. PDF tetap dapat diunggah, tetapi datanya harus diisi manual. Maksimal 5 MB.
+                                            KTP wajib diunggah. OCR hanya berjalan untuk JPG, JPEG, dan PNG. PDF tetap dapat
+                                            diunggah, tetapi datanya harus diisi manual. Maksimal 5 MB.
                                         </p>
                                     </div>
 
@@ -210,8 +213,8 @@
                                                     d="M3 5a2 2 0 012-2h4l2 2h8a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5zm6 8l2 2 4-4" />
                                             </svg>
 
-                                            <svg id="ktp-ocr-spinner" class="hidden h-5 w-5 animate-spin" viewBox="0 0 24 24"
-                                                fill="none" aria-hidden="true">
+                                            <svg id="ktp-ocr-spinner" class="hidden h-5 w-5 animate-spin"
+                                                viewBox="0 0 24 24" fill="none" aria-hidden="true">
                                                 <circle class="opacity-25" cx="12" cy="12" r="10"
                                                     stroke="currentColor" stroke-width="4"></circle>
                                                 <path class="opacity-75" fill="currentColor"
@@ -382,15 +385,16 @@
 
                     <div>
                         <label for="file_surat_kuasa" class="mb-1.5 block text-sm font-semibold text-slate-700">
-                            Surat Kuasa
+                            Surat Kuasa <span class="text-red-500">*</span>
                         </label>
 
-                        <input id="file_surat_kuasa" name="file_surat_kuasa" type="file"
+                        <input id="file_surat_kuasa" name="file_surat_kuasa" type="file" required
                             accept=".pdf,.jpg,.jpeg,.png"
                             class="block w-full rounded-lg border border-slate-300 bg-white text-sm text-slate-600 file:mr-4 file:border-0 file:border-r file:border-slate-200 file:bg-slate-50 file:px-4 file:py-2.5 file:font-semibold">
 
                         <p class="mt-1.5 text-xs text-slate-500">
-                            Diisi apabila permohonan diajukan melalui kuasa. Maksimal 5 MB.
+                            Surat kuasa wajib diunggah pada setiap pengajuan. Format PDF, JPG, JPEG, atau PNG. Maksimal 5
+                            MB.
                         </p>
                     </div>
                 </div>
@@ -461,12 +465,13 @@
             @unless ($isLoggedIn)
                 <section class="rounded-2xl border border-blue-200 bg-blue-50 p-5">
                     <label class="flex items-start gap-3">
-                        <input type="checkbox" name="persetujuan_akun" value="1"
-                            @checked(old('persetujuan_akun')) required
+                        <input type="checkbox" name="persetujuan_akun" value="1" @checked(old('persetujuan_akun')) required
                             class="mt-1 h-4 w-4 rounded border-blue-300 text-blue-700 focus:ring-blue-500">
 
                         <span class="text-sm leading-6 text-blue-900">
-                            Saya menyetujui pembuatan akun layanan PPID berdasarkan identitas dan email yang saya berikan. Email digunakan sebagai username, sedangkan password dibuat sendiri melalui tautan aktivasi yang dikirim setelah permohonan berhasil.
+                            Saya menyetujui pembuatan akun layanan PPID berdasarkan identitas dan email yang saya berikan. Email
+                            digunakan sebagai username, sedangkan password dibuat sendiri melalui tautan aktivasi yang dikirim
+                            setelah permohonan berhasil.
                         </span>
                     </label>
                 </section>
@@ -515,14 +520,15 @@
                         info: 'border-blue-200 bg-white text-blue-900'
                     };
 
-                    statusBox.className = `mt-4 rounded-xl border p-4 text-sm leading-6 ${classes[type] ?? classes.info}`;
+                    statusBox.className =
+                        `mt-4 rounded-xl border p-4 text-sm leading-6 ${classes[type] ?? classes.info}`;
                     statusBox.classList.remove('hidden');
 
-                    const warningList = warnings.length > 0
-                        ? `<ul class="mt-2 list-disc space-y-1 pl-5">${warnings
+                    const warningList = warnings.length > 0 ?
+                        `<ul class="mt-2 list-disc space-y-1 pl-5">${warnings
                             .map((warning) => `<li>${escapeHtml(warning)}</li>`)
-                            .join('')}</ul>`
-                        : '';
+                            .join('')}</ul>` :
+                        '';
 
                     statusBox.innerHTML = `<p class="font-semibold">${escapeHtml(message)}</p>${warningList}`;
                 };
@@ -545,15 +551,19 @@
                     }
 
                     field.value = String(value).trim();
-                    field.dispatchEvent(new Event('input', { bubbles: true }));
-                    field.dispatchEvent(new Event('change', { bubbles: true }));
+                    field.dispatchEvent(new Event('input', {
+                        bubbles: true
+                    }));
+                    field.dispatchEvent(new Event('change', {
+                        bubbles: true
+                    }));
                 };
 
                 const setLoading = (loading) => {
                     scanButton.disabled = loading || !isSelectedFileScannable();
-                    buttonText.textContent = loading
-                        ? 'Membaca KTP...'
-                        : 'Baca Data KTP Otomatis';
+                    buttonText.textContent = loading ?
+                        'Membaca KTP...' :
+                        'Baca Data KTP Otomatis';
                     spinner.classList.toggle('hidden', !loading);
                     buttonIcon.classList.toggle('hidden', loading);
                 };
@@ -606,7 +616,8 @@
                     const file = fileInput.files?.[0];
 
                     if (!(file instanceof File) || !imageTypes.includes(file.type)) {
-                        showStatus('warning', 'Pilih foto KTP berformat JPG, JPEG, atau PNG terlebih dahulu.');
+                        showStatus('warning',
+                            'Pilih foto KTP berformat JPG, JPEG, atau PNG terlebih dahulu.');
                         return;
                     }
 
@@ -614,7 +625,8 @@
                     formData.append('file_identitas', file);
 
                     setLoading(true);
-                    showStatus('info', 'Sistem sedang membaca foto KTP. Proses ini dapat memerlukan beberapa detik.');
+                    showStatus('info',
+                        'Sistem sedang membaca foto KTP. Proses ini dapat memerlukan beberapa detik.');
 
                     try {
                         const response = await fetch(ocrUrl, {
@@ -631,14 +643,14 @@
                         const payload = await response.json().catch(() => null);
 
                         if (!response.ok || !payload?.success) {
-                            const validationMessage = payload?.errors
-                                ? Object.values(payload.errors).flat().join(' ')
-                                : null;
+                            const validationMessage = payload?.errors ?
+                                Object.values(payload.errors).flat().join(' ') :
+                                null;
 
                             throw new Error(
-                                validationMessage
-                                || payload?.message
-                                || 'Foto KTP tidak dapat dibaca.'
+                                validationMessage ||
+                                payload?.message ||
+                                'Foto KTP tidak dapat dibaca.'
                             );
                         }
 
@@ -669,9 +681,9 @@
                     } catch (error) {
                         showStatus(
                             'error',
-                            error instanceof Error
-                                ? error.message
-                                : 'Terjadi kesalahan saat membaca foto KTP.'
+                            error instanceof Error ?
+                            error.message :
+                            'Terjadi kesalahan saat membaca foto KTP.'
                         );
                     } finally {
                         setLoading(false);

@@ -11,6 +11,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
@@ -21,21 +22,110 @@ class PermohonanController extends Controller
     ) {}
 
     /**
-     * Menampilkan daftar permohonan.
+     * Menampilkan daftar permohonan dan card ringkasan status.
      */
-    public function index(): View
+    public function index(Request $request): View
     {
         $admin = $this->getAuthenticatedAdmin();
 
-        $permohonan = $this->permohonanService
-            ->getForAdmin($admin);
+        $validated = $request->validate(
+            [
+                'q' => [
+                    'nullable',
+                    'string',
+                    'max:255',
+                ],
+
+                'status' => [
+                    'nullable',
+                    'string',
+                    Rule::in(
+                        array_keys(
+                            PermohonanService::STATUS_FILTERS
+                        )
+                    ),
+                ],
+
+                'ppid_pembantuid' => [
+                    'nullable',
+                    'integer',
+                    Rule::exists(
+                        'ppid_pembantu',
+                        'id'
+                    ),
+                ],
+            ],
+            [
+                'q.string' =>
+                'Kata pencarian harus berupa teks.',
+
+                'q.max' =>
+                'Kata pencarian maksimal 255 karakter.',
+
+                'status.in' =>
+                'Filter status permohonan tidak valid.',
+
+                'ppid_pembantuid.integer' =>
+                'PPID Pembantu tidak valid.',
+
+                'ppid_pembantuid.exists' =>
+                'PPID Pembantu yang dipilih tidak ditemukan.',
+            ]
+        );
+
+        $filters = [
+            'q' => trim(
+                (string) ($validated['q'] ?? '')
+            ),
+
+            'status' => (string) (
+                $validated['status'] ?? 'semua'
+            ),
+
+            'ppid_pembantuid' =>
+            $validated['ppid_pembantuid']
+                ?? null,
+        ];
+
+        $permohonan = $this
+            ->permohonanService
+            ->getForAdmin(
+                $admin,
+                $filters
+            );
+
+        $summary = $this
+            ->permohonanService
+            ->getSummaryForAdmin(
+                $admin,
+                $filters
+            );
+
+        $ppidPembantuList = $this
+            ->permohonanService
+            ->getPpidPembantuList(
+                $admin
+            );
 
         return view(
             'pages.admin.permohonan.index',
-            compact(
-                'permohonan',
-                'admin'
-            )
+            [
+                'admin' => $admin,
+                'permohonan' => $permohonan,
+                'ppidPembantuList' => $ppidPembantuList,
+                'currentStatus' => $filters['status'],
+                'filters' => $filters,
+
+                'totalSemua' => $summary['semua'],
+                'totalDiajukan' => $summary['diajukan'],
+                'totalDiproses' => $summary['diproses'],
+                'totalDiteruskan' => $summary['diteruskan'],
+                'totalMenungguValidasi' =>
+                $summary['menunggu_validasi'],
+                'totalRevisi' => $summary['revisi'],
+                'totalSelesai' => $summary['selesai'],
+                'totalDitolak' => $summary['ditolak'],
+            ]
         );
     }
 
@@ -47,22 +137,26 @@ class PermohonanController extends Controller
     ): View {
         $admin = $this->getAuthenticatedAdmin();
 
-        $permohonan = $this->permohonanService
+        $permohonan = $this
+            ->permohonanService
             ->getDetailForAdmin(
                 $id,
                 $admin
             );
 
-        $ppidPembantu = $this->permohonanService
-            ->getPpidPembantuList();
+        $ppidPembantu = $this
+            ->permohonanService
+            ->getPpidPembantuList(
+                $admin
+            );
 
         return view(
             'pages.admin.permohonan.show',
-            compact(
-                'permohonan',
-                'admin',
-                'ppidPembantu'
-            )
+            [
+                'permohonan' => $permohonan,
+                'admin' => $admin,
+                'ppidPembantu' => $ppidPembantu,
+            ]
         );
     }
 
@@ -75,15 +169,20 @@ class PermohonanController extends Controller
     ): BinaryFileResponse {
         $admin = $this->getAuthenticatedAdmin();
 
-        $permohonan = $this->permohonanService
+        $permohonan = $this
+            ->permohonanService
             ->getDetailForAdmin(
                 $id,
                 $admin
             );
 
         $path = match ($jenis) {
-            'identitas' => $permohonan->file_identitas,
-            'surat-kuasa' => $permohonan->file_surat_kuasa,
+            'identitas' =>
+            $permohonan->file_identitas,
+
+            'surat-kuasa' =>
+            $permohonan->file_surat_kuasa,
+
             default => null,
         };
 
@@ -130,10 +229,12 @@ class PermohonanController extends Controller
             $absolutePath,
             [
                 'Content-Type' => $mimeType,
-                'Cache-Control' => 'private, no-store, max-age=0',
+                'Cache-Control' =>
+                'private, no-store, max-age=0',
                 'Pragma' => 'no-cache',
                 'Expires' => '0',
-                'X-Content-Type-Options' => 'nosniff',
+                'X-Content-Type-Options' =>
+                'nosniff',
             ]
         );
 
@@ -154,22 +255,41 @@ class PermohonanController extends Controller
     ): RedirectResponse {
         $admin = $this->getAuthenticatedAdmin();
 
-        $validated = $request->validate([
-            'ppid_pembantuid' => [
-                'bail',
-                'required',
-                'integer',
-                'exists:ppid_pembantu,id',
-            ],
+        $validated = $request->validate(
+            [
+                'ppid_pembantuid' => [
+                    'bail',
+                    'required',
+                    'integer',
+                    'exists:ppid_pembantu,id',
+                ],
 
-            'catatan_utama' => [
-                'nullable',
-                'string',
-                'max:5000',
+                'catatan_utama' => [
+                    'nullable',
+                    'string',
+                    'max:5000',
+                ],
             ],
-        ]);
+            [
+                'ppid_pembantuid.required' =>
+                'PPID Pembantu wajib dipilih.',
 
-        $permohonan = $this->permohonanService
+                'ppid_pembantuid.integer' =>
+                'PPID Pembantu tidak valid.',
+
+                'ppid_pembantuid.exists' =>
+                'PPID Pembantu yang dipilih tidak ditemukan.',
+
+                'catatan_utama.string' =>
+                'Catatan harus berupa teks.',
+
+                'catatan_utama.max' =>
+                'Catatan maksimal 5.000 karakter.',
+            ]
+        );
+
+        $permohonan = $this
+            ->permohonanService
             ->teruskan(
                 $id,
                 $admin,
@@ -198,28 +318,52 @@ class PermohonanController extends Controller
     ): RedirectResponse {
         $admin = $this->getAuthenticatedAdmin();
 
-        $validated = $request->validate([
-            'jawaban_pembantu' => [
-                'bail',
-                'required',
-                'string',
-                'max:10000',
-            ],
+        $validated = $request->validate(
+            [
+                'jawaban_pembantu' => [
+                    'bail',
+                    'required',
+                    'string',
+                    'max:10000',
+                ],
 
-            'file_pembantu' => [
-                'nullable',
-                'file',
-                'mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png',
-                'max:5120',
+                'file_pembantu' => [
+                    'nullable',
+                    'file',
+                    'mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png',
+                    'max:5120',
+                ],
             ],
-        ]);
+            [
+                'jawaban_pembantu.required' =>
+                'Jawaban PPID Pembantu wajib diisi.',
 
-        $permohonan = $this->permohonanService
+                'jawaban_pembantu.string' =>
+                'Jawaban harus berupa teks.',
+
+                'jawaban_pembantu.max' =>
+                'Jawaban maksimal 10.000 karakter.',
+
+                'file_pembantu.file' =>
+                'Lampiran yang dipilih tidak valid.',
+
+                'file_pembantu.mimes' =>
+                'Lampiran harus berupa PDF, DOC, DOCX, XLS, XLSX, JPG, JPEG, atau PNG.',
+
+                'file_pembantu.max' =>
+                'Ukuran lampiran maksimal 5 MB.',
+            ]
+        );
+
+        $permohonan = $this
+            ->permohonanService
             ->jawabPembantu(
                 $id,
                 $admin,
                 $validated,
-                $request->file('file_pembantu')
+                $request->file(
+                    'file_pembantu'
+                )
             );
 
         return redirect()
@@ -244,16 +388,29 @@ class PermohonanController extends Controller
     ): RedirectResponse {
         $admin = $this->getAuthenticatedAdmin();
 
-        $validated = $request->validate([
-            'jawaban_final' => [
-                'bail',
-                'required',
-                'string',
-                'max:10000',
+        $validated = $request->validate(
+            [
+                'jawaban_final' => [
+                    'bail',
+                    'required',
+                    'string',
+                    'max:10000',
+                ],
             ],
-        ]);
+            [
+                'jawaban_final.required' =>
+                'Jawaban final wajib diisi.',
 
-        $permohonan = $this->permohonanService
+                'jawaban_final.string' =>
+                'Jawaban final harus berupa teks.',
+
+                'jawaban_final.max' =>
+                'Jawaban final maksimal 10.000 karakter.',
+            ]
+        );
+
+        $permohonan = $this
+            ->permohonanService
             ->validasi(
                 $id,
                 $admin,
@@ -282,16 +439,29 @@ class PermohonanController extends Controller
     ): RedirectResponse {
         $admin = $this->getAuthenticatedAdmin();
 
-        $validated = $request->validate([
-            'catatan_revisi' => [
-                'bail',
-                'required',
-                'string',
-                'max:5000',
+        $validated = $request->validate(
+            [
+                'catatan_revisi' => [
+                    'bail',
+                    'required',
+                    'string',
+                    'max:5000',
+                ],
             ],
-        ]);
+            [
+                'catatan_revisi.required' =>
+                'Catatan revisi wajib diisi.',
 
-        $permohonan = $this->permohonanService
+                'catatan_revisi.string' =>
+                'Catatan revisi harus berupa teks.',
+
+                'catatan_revisi.max' =>
+                'Catatan revisi maksimal 5.000 karakter.',
+            ]
+        );
+
+        $permohonan = $this
+            ->permohonanService
             ->revisi(
                 $id,
                 $admin,
@@ -341,11 +511,12 @@ class PermohonanController extends Controller
                 'Alasan penolakan minimal 10 karakter.',
 
                 'alasan_penolakan.max' =>
-                'Alasan penolakan maksimal 5000 karakter.',
+                'Alasan penolakan maksimal 5.000 karakter.',
             ]
         );
 
-        $permohonan = $this->permohonanService
+        $permohonan = $this
+            ->permohonanService
             ->tolak(
                 $id,
                 $admin,

@@ -355,8 +355,6 @@
 
             $ppidPembantu = data_get($item, 'ppidPembantu.nama') ?? (data_get($item, 'ppid_pembantu.nama') ?? '-');
 
-            $initial = !empty($namaPaket) ? mb_strtoupper(mb_substr($namaPaket, 0, 1)) : 'P';
-
             $showUrl = route('admin.pengadaan.show', $item->id);
         @endphp
 
@@ -385,27 +383,6 @@
 
             <td class="px-4 py-4 sm:px-6">
                 <div class="flex items-center gap-3">
-                    <div
-                        class="
-                            flex
-                            h-11
-                            w-11
-                            shrink-0
-                            items-center
-                            justify-center
-                            rounded-xl
-                            bg-gradient-to-br
-                            from-blue-50
-                            to-cyan-50
-                            font-bold
-                            text-blue-600
-                            dark:from-blue-500/15
-                            dark:to-cyan-500/15
-                            dark:text-blue-400
-                        ">
-                        {{ $initial }}
-                    </div>
-
                     <div class="min-w-0">
                         <a href="{{ $showUrl }}" title="Lihat detail {{ $namaPaket }}"
                             class="
