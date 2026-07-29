@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\BeritaController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DokumentasiController as AdminInformasiPublikController;
 use App\Http\Controllers\Admin\FaqController as AdminFaqController;
+use App\Http\Controllers\Admin\KeberatanController as AdminKeberatanController;
 use App\Http\Controllers\Admin\NotifikasiController;
 use App\Http\Controllers\Admin\PejabatController;
 use App\Http\Controllers\Admin\PengadaanController;
@@ -21,6 +22,7 @@ use App\Http\Controllers\Publik\BeritaController as PublikBeritaController;
 use App\Http\Controllers\Publik\FaqController as PublikFaqController;
 use App\Http\Controllers\Publik\HomeController;
 use App\Http\Controllers\Publik\InformasiController;
+use App\Http\Controllers\Publik\KeberatanController as PublikKeberatanController;
 use App\Http\Controllers\Publik\KtpOcrController;
 use App\Http\Controllers\Publik\PermohonanController as PublikPermohonanController;
 use App\Http\Controllers\Publik\PesanController as PublikPesanController;
@@ -317,6 +319,34 @@ Route::prefix('permohonan')
                 )
                 ->name('index');
         });
+    });
+
+/*
+|--------------------------------------------------------------------------
+| KEBERATAN PUBLIK
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('keberatan')
+    ->name('public.keberatan.')
+    ->middleware('auth:public')
+    ->controller(
+        PublikKeberatanController::class
+    )
+    ->group(function (): void {
+        Route::get('/', 'index')
+            ->name('index');
+
+        Route::get('/ajukan', 'create')
+            ->name('create');
+
+        Route::post('/ajukan', 'store')
+            ->middleware('throttle:5,1')
+            ->name('store');
+
+        Route::get('/{id}', 'show')
+            ->whereNumber('id')
+            ->name('show');
     });
 
 /*
@@ -999,7 +1029,44 @@ Route::prefix('admin')
                         ->whereNumber('id')
                         ->name('show');
                 });
+
+            /*
+            |--------------------------------------------------------------------------
+            | KEBERATAN
+            |--------------------------------------------------------------------------
+            */
+
+            Route::prefix('keberatan')
+                ->name('keberatan.')
+                ->controller(
+                    AdminKeberatanController::class
+                )
+                ->group(function (): void {
+                    Route::get('/', 'index')
+                        ->name('index');
+
+                    Route::get('/{id}', 'show')
+                        ->whereNumber('id')
+                        ->name('show');
+                });
         });
+
+        /*
+        |--------------------------------------------------------------------------
+        | AKSI KEBERATAN ADMIN UTAMA
+        |--------------------------------------------------------------------------
+        */
+
+        Route::middleware('admin.role:1')
+            ->put(
+                '/keberatan/{id}',
+                [
+                    AdminKeberatanController::class,
+                    'update',
+                ]
+            )
+            ->whereNumber('id')
+            ->name('keberatan.update');
 
         /*
         |--------------------------------------------------------------------------
