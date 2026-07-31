@@ -43,8 +43,6 @@
 
     $permohonanActive = request()->routeIs('admin.permohonan.*');
 
-    $keberatanActive = request()->routeIs('admin.keberatan.*');
-
     $notifikasiActive = request()->routeIs('admin.notifikasi.*');
 
     $chatActive = request()->routeIs('admin.pesan-masuk.*');
@@ -243,6 +241,18 @@
         $unreadNotificationCount = (int) $admin->unreadNotifications()->count();
     }
 
+    /* Jumlah Percakapan Chat yang Membutuhkan Perhatian */
+
+    $unreadChatCount = 0;
+
+    if ($isAdminUtama && \Illuminate\Support\Facades\Route::has('admin.pesan-masuk.index')) {
+        $unreadChatCount = (int) app(\App\Services\Admin\PesanMasukService::class)->countUnread();
+    }
+
+    $chatUnreadCountUrl = \Illuminate\Support\Facades\Route::has('admin.pesan-masuk.unread-count')
+        ? route('admin.pesan-masuk.unread-count')
+        : null;
+
     /*
     | Logo Pemerintah Kota Batu
     |
@@ -273,6 +283,66 @@
 @endphp
 
 <aside id="sidebar" x-data="{
+    chatUnreadCount: @js($unreadChatCount),
+    chatUnreadCountUrl: @js($chatUnreadCountUrl),
+    chatUnreadTimer: null,
+
+    init() {
+        this.startChatUnreadPolling();
+    },
+
+    destroy() {
+        if (this.chatUnreadTimer !== null) {
+            window.clearInterval(this.chatUnreadTimer);
+            this.chatUnreadTimer = null;
+        }
+    },
+
+    startChatUnreadPolling() {
+        if (!this.chatUnreadCountUrl) {
+            return;
+        }
+
+        this.refreshChatUnreadCount();
+
+        this.chatUnreadTimer = window.setInterval(() => {
+            this.refreshChatUnreadCount();
+        }, 10000);
+    },
+
+    async refreshChatUnreadCount() {
+        if (!this.chatUnreadCountUrl) {
+            return;
+        }
+
+        try {
+            const response = await fetch(this.chatUnreadCountUrl, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                credentials: 'same-origin',
+                cache: 'no-store',
+            });
+
+            if (!response.ok) {
+                return;
+            }
+
+            const payload = await response.json();
+
+            if (payload?.success === true) {
+                this.chatUnreadCount = Math.max(
+                    0,
+                    Number(payload.unread_count ?? 0)
+                );
+            }
+        } catch (error) {
+            /* Pertahankan nilai terakhir apabila polling gagal. */
+        }
+    },
+
     activeMenus: {
         master: @js($masterActive),
         content: @js($contentActive),
@@ -1156,56 +1226,6 @@
                 @endif
 
                 {{-- ====================================================
-                    KEBERATAN
-                ===================================================== --}}
-
-                @if (\Illuminate\Support\Facades\Route::has('admin.keberatan.index'))
-                    <li>
-                        <a href="{{ route('admin.keberatan.index') }}" title="Keberatan"
-                            @click="closeMobileSidebar()"
-                            class="
-                                menu-item
-                                group
-                                relative
-                                flex
-                                min-h-10
-                                w-full
-                                items-center
-                                gap-3
-                                rounded-lg
-                                px-3
-                                py-2
-                                text-[13px]
-                                font-medium
-                                leading-5
-                                transition-colors
-                                duration-200
-                                {{ $keberatanActive ? 'menu-item-active' : 'menu-item-inactive' }}
-                            "
-                            :class="$store.sidebar.isCompact() ?
-                                'xl:justify-center' :
-                                'justify-start'">
-                            <span
-                                class="
-                                    flex
-                                    h-6
-                                    w-6
-                                    shrink-0
-                                    items-center
-                                    justify-center
-                                    {{ $keberatanActive ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}
-                                ">
-                                <i class="ri-error-warning-line text-lg"></i>
-                            </span>
-
-                            <span x-cloak x-show="$store.sidebar.isWide()" class="min-w-0 flex-1 truncate">
-                                Keberatan
-                            </span>
-                        </a>
-                    </li>
-                @endif
-
-                {{-- ====================================================
                     NOTIFIKASI
                 ===================================================== --}}
 
@@ -1337,6 +1357,41 @@
                             <span x-cloak x-show="$store.sidebar.isWide()" class="min-w-0 flex-1 truncate">
                                 Chat
                             </span>
+
+                            <span x-cloak x-show="$store.sidebar.isWide() && chatUnreadCount > 0"
+                                x-text="chatUnreadCount > 99 ? '99+' : chatUnreadCount"
+                                class="
+                                    ml-auto
+                                    flex
+                                    h-5
+                                    min-w-5
+                                    shrink-0
+                                    items-center
+                                    justify-center
+                                    rounded-full
+                                    bg-red-500
+                                    px-1.5
+                                    text-[10px]
+                                    font-bold
+                                    leading-none
+                                    text-white
+                                "
+                                aria-label="Jumlah chat baru"></span>
+
+                            <span x-cloak x-show="$store.sidebar.isCompact() && chatUnreadCount > 0"
+                                class="
+                                    absolute
+                                    right-2.5
+                                    top-1.5
+                                    h-2.5
+                                    w-2.5
+                                    rounded-full
+                                    border-2
+                                    border-white
+                                    bg-red-500
+                                    dark:border-gray-900
+                                "
+                                aria-hidden="true"></span>
                         </a>
                     </li>
                 @endif
