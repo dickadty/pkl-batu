@@ -51,8 +51,8 @@
 <nav
     class="sticky top-0 z-50 flex items-center justify-between w-full py-2.5 pl-3 pr-4 md:pl-8 md:pr-10 lg:pl-12 lg:pr-16 xl:pl-16 xl:pr-20 bg-white border-b border-slate-100 shadow-sm text-sm">
     <a href="{{ url('/') }}" class="w-auto px-2 py-2 flex items-center gap-3 rounded-xl">
-        <img src="{{ asset('assets/img/logo/Logo_Kota_Batu,_Jawa_Timur_(Seal_of_Batu,_East_Java).svg.webp') }}"
-            alt="Logo PPID Kota Batu" class="w-10 h-10 object-contain shrink-0">
+        <img src="{{ asset('assets/img/logo/LogoKotaBatu.webp') }}" alt="Logo PPID Kota Batu"
+            class="w-10 h-10 object-contain shrink-0">
 
         <div>
             <h1 class="text-[1.25rem] font-bold leading-none tracking-tight" style="color:#033927">
