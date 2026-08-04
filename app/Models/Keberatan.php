@@ -13,43 +13,86 @@ class Keberatan extends Model
 
     public const STATUS_SELESAI = 'Selesai';
 
-    public const STATUS_DITOLAK = 'Ditolak';
+    public const HASIL_DITERIMA = 'Diterima';
+
+    public const HASIL_DITERIMA_SEBAGIAN = 'Diterima Sebagian';
+
+    public const HASIL_DITOLAK = 'Ditolak';
+
+    public const TINDAK_LANJUT_PENJELASAN = 'Penjelasan';
+
+    public const TINDAK_LANJUT_DOKUMEN_TAMBAHAN =
+    'Dokumen Tambahan';
+
+    public const TINDAK_LANJUT_DOKUMEN_PENGGANTI =
+    'Dokumen Pengganti';
+
+    public const TINDAK_LANJUT_PERBAIKAN_DOKUMEN =
+    'Perbaikan Dokumen';
+
+    public const TINDAK_LANJUT_TANPA_DOKUMEN =
+    'Tanpa Dokumen';
 
     protected $table = 'keberatan';
-
-    protected $primaryKey = 'id';
 
     protected $fillable = [
         'no_keberatan',
         'permohonanid',
         'alasan',
         'status',
+        'hasil',
+        'jenis_tindak_lanjut',
         'tanggapan',
+        'file_tanggapan',
+        'nama_file_tanggapan',
         'tanggal_pengajuan',
+        'tanggal_diproses',
         'tanggal_tanggapan',
+        'tanggal_selesai',
         'adminid',
     ];
 
-    protected function casts(): array
+    protected $casts = [
+        'tanggal_pengajuan' => 'date',
+        'tanggal_diproses' => 'date',
+        'tanggal_tanggapan' => 'date',
+        'tanggal_selesai' => 'date',
+    ];
+
+    public static function statusOptions(): array
     {
         return [
-            'id' => 'integer',
-            'permohonanid' => 'integer',
-            'adminid' => 'integer',
-            'tanggal_pengajuan' => 'date',
-            'tanggal_tanggapan' => 'date',
-            'created_at' => 'datetime',
-            'updated_at' => 'datetime',
+            self::STATUS_DIAJUKAN,
+            self::STATUS_DIPROSES,
+            self::STATUS_SELESAI,
         ];
     }
 
-  
+    public static function hasilOptions(): array
+    {
+        return [
+            self::HASIL_DITERIMA,
+            self::HASIL_DITERIMA_SEBAGIAN,
+            self::HASIL_DITOLAK,
+        ];
+    }
+
+    public static function tindakLanjutOptions(): array
+    {
+        return [
+            self::TINDAK_LANJUT_PENJELASAN,
+            self::TINDAK_LANJUT_DOKUMEN_TAMBAHAN,
+            self::TINDAK_LANJUT_DOKUMEN_PENGGANTI,
+            self::TINDAK_LANJUT_PERBAIKAN_DOKUMEN,
+            self::TINDAK_LANJUT_TANPA_DOKUMEN,
+        ];
+    }
+
     public function permohonan(): BelongsTo
     {
         return $this->belongsTo(
             Permohonan::class,
-            'permohonanid',
-            'id'
+            'permohonanid'
         );
     }
 
@@ -57,31 +100,8 @@ class Keberatan extends Model
     {
         return $this->belongsTo(
             Authorization::class,
-            'adminid',
-            'id'
+            'adminid'
         );
-    }
-
-    /**
-     * Daftar status keberatan.
-     *
-     * @return array<string, string>
-     */
-    public static function statusOptions(): array
-    {
-        return [
-            self::STATUS_DIAJUKAN =>
-                self::STATUS_DIAJUKAN,
-
-            self::STATUS_DIPROSES =>
-                self::STATUS_DIPROSES,
-
-            self::STATUS_SELESAI =>
-                self::STATUS_SELESAI,
-
-            self::STATUS_DITOLAK =>
-                self::STATUS_DITOLAK,
-        ];
     }
 
     public function isDiajukan(): bool
@@ -97,10 +117,5 @@ class Keberatan extends Model
     public function isSelesai(): bool
     {
         return $this->status === self::STATUS_SELESAI;
-    }
-
-    public function isDitolak(): bool
-    {
-        return $this->status === self::STATUS_DITOLAK;
     }
 }

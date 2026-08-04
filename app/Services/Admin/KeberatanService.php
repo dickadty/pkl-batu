@@ -4,12 +4,11 @@ namespace App\Services\Admin;
 
 use App\Models\Authorization;
 use App\Models\Keberatan;
-use App\Models\PpidPembantu;
 use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use RuntimeException;
 
 class KeberatanService
 {
@@ -17,354 +16,165 @@ class KeberatanService
         protected Keberatan $keberatan
     ) {}
 
-    /**
-     * Mengambil daftar keberatan sesuai hak akses admin.
-     *
-     * @param array<string, mixed> $filters
-     */
-    public function getForAdmin(
-        Authorization $admin,
-        array $filters = []
-    ): LengthAwarePaginator {
-        $search = trim(
-            (string) (
-                $filters['q']
-                ?? ''
-            )
-        );
-
-        $status = trim(
-            (string) (
-                $filters['status']
-                ?? ''
-            )
-        );
-
-        $ppidPembantuId = isset(
-            $filters['ppid_pembantuid']
-        ) && $filters['ppid_pembantuid'] !== ''
-            ? (int) $filters['ppid_pembantuid']
-            : null;
-
-        $perPage = (int) (
-            $filters['per_page']
-            ?? 15
-        );
-
-        if (
-            ! in_array(
-                $perPage,
-                [
-                    10,
-                    15,
-                    25,
-                    50,
-                    100,
-                ],
-                true
-            )
-        ) {
-            $perPage = 15;
-        }
-
-        $query = $this->queryForAdmin(
-            $admin,
-            true
-        );
-
-        if ($search !== '') {
-            $query->where(
-                function (
-                    Builder $subQuery
-                ) use ($search): void {
-                    $subQuery
-                        ->where(
-                            'no_keberatan',
-                            'like',
-                            '%' . $search . '%'
-                        )
-                        ->orWhere(
-                            'alasan',
-                            'like',
-                            '%' . $search . '%'
-                        )
-                        ->orWhere(
-                            'tanggapan',
-                            'like',
-                            '%' . $search . '%'
-                        )
-                        ->orWhereHas(
-                            'permohonan',
-                            function (
-                                Builder $permohonanQuery
-                            ) use ($search): void {
-                                $permohonanQuery
-                                    ->where(
-                                        'no_pemohon',
-                                        'like',
-                                        '%' . $search . '%'
-                                    )
-                                    ->orWhere(
-                                        'nama_pemohon',
-                                        'like',
-                                        '%' . $search . '%'
-                                    )
-                                    ->orWhere(
-                                        'email_pemohon',
-                                        'like',
-                                        '%' . $search . '%'
-                                    )
-                                    ->orWhere(
-                                        'rincian',
-                                        'like',
-                                        '%' . $search . '%'
-                                    );
-                            }
-                        );
-                }
-            );
-        }
-
-        if ($status !== '') {
-            $query->where(
-                'status',
-                $status
-            );
-        }
-
-        if (
-            $admin->isAdminUtama()
-            && $ppidPembantuId !== null
-        ) {
-            $query->whereHas(
-                'permohonan',
-                function (
-                    Builder $permohonanQuery
-                ) use ($ppidPembantuId): void {
-                    $permohonanQuery->where(
-                        'ppid_pembantuid',
-                        $ppidPembantuId
-                    );
-                }
-            );
-        }
-
-        return $query
-            ->orderByDesc(
-                'tanggal_pengajuan'
-            )
-            ->orderByDesc('id')
-            ->paginate($perPage)
-            ->withQueryString();
-    }
-
-    /**
-     * Menghitung card ringkasan sesuai hak akses admin.
-     *
-     * @return array{
-     *     semua: int,
-     *     diajukan: int,
-     *     diproses: int,
-     *     selesai: int,
-     *     ditolak: int
-     * }
-     */
-    public function getSummaryForAdmin(
-        Authorization $admin
-    ): array {
-        $query = $this->queryForAdmin(
-            $admin,
-            false
-        );
-
-        $totalSemua = (clone $query)
-            ->count();
-
-        $statusCounts = (clone $query)
-            ->selectRaw(
-                'status, COUNT(*) AS total'
-            )
-            ->groupBy('status')
-            ->pluck(
-                'total',
-                'status'
-            );
-
-        return [
-            'semua' => $totalSemua,
-
-            'diajukan' => (int) $statusCounts
-                ->get(
-                    Keberatan::STATUS_DIAJUKAN,
-                    0
-                ),
-
-            'diproses' => (int) $statusCounts
-                ->get(
-                    Keberatan::STATUS_DIPROSES,
-                    0
-                ),
-
-            'selesai' => (int) $statusCounts
-                ->get(
-                    Keberatan::STATUS_SELESAI,
-                    0
-                ),
-
-            'ditolak' => (int) $statusCounts
-                ->get(
-                    Keberatan::STATUS_DITOLAK,
-                    0
-                ),
-        ];
-    }
-
-
-    public function getPpidPembantuListForAdmin(
-        Authorization $admin
-    ): Collection {
-        if (! $admin->isAdminUtama()) {
-            return new Collection();
-        }
-
-        return PpidPembantu::query()
-            ->select([
-                'id',
-                'nama',
-            ])
-            ->orderBy('nama')
-            ->get();
-    }
-
-    public function getDetailForAdmin(
+    public function getDetail(
         int $id,
         Authorization $admin
     ): Keberatan {
-        return $this
-            ->queryForAdmin(
-                $admin,
-                true
-            )
-            ->findOrFail($id);
-    }
+        $this->ensureAdminUtama($admin);
 
-    /**
-     * @param array<string, mixed> $data
-     */
-    public function updateResponse(
-        int $id,
-        Authorization $admin,
-        array $data
-    ): Keberatan {
-        $this->ensureAdminUtama(
-            $admin
-        );
-
-        return DB::transaction(
-            function () use (
-                $id,
-                $admin,
-                $data
-            ): Keberatan {
-                $keberatan = $this
-                    ->queryForAdmin(
-                        $admin,
-                        false
-                    )
-                    ->lockForUpdate()
-                    ->findOrFail($id);
-
-                $status = trim(
-                    (string) $data['status']
-                );
-
-                $tanggapan = trim(
-                    (string) (
-                        $data['tanggapan']
-                        ?? ''
-                    )
-                );
-
-                $isFinal = in_array(
-                    $status,
-                    [
-                        Keberatan::STATUS_SELESAI,
-                        Keberatan::STATUS_DITOLAK,
-                    ],
-                    true
-                );
-
-                $keberatan->update([
-                    'status' => $status,
-
-                    'tanggapan' =>
-                        $tanggapan !== ''
-                            ? $tanggapan
-                            : null,
-
-                    'tanggal_tanggapan' =>
-                        $isFinal
-                            ? now()->toDateString()
-                            : null,
-
-                    'adminid' => $admin->id,
-                ]);
-
-                return $keberatan
-                    ->refresh()
-                    ->load([
-                        'permohonan.userPublic',
-                        'permohonan.ppidPembantu',
-                        'admin',
-                    ]);
-            }
-        );
-    }
-
-    private function queryForAdmin(
-        Authorization $admin,
-        bool $withRelations = true
-    ): Builder {
-        $query = $this
-            ->keberatan
-            ->newQuery();
-
-        if ($withRelations) {
-            $query->with([
+        return $this->keberatan
+            ->newQuery()
+            ->with([
                 'permohonan.userPublic',
                 'permohonan.ppidPembantu',
                 'admin',
+            ])
+            ->findOrFail($id);
+    }
+
+    public function proses(
+        int $id,
+        Authorization $admin
+    ): Keberatan {
+        $this->ensureAdminUtama($admin);
+
+        $keberatan = $this->keberatan
+            ->newQuery()
+            ->findOrFail($id);
+
+        if (! $keberatan->isDiajukan()) {
+            throw new AuthorizationException(
+                'Keberatan hanya dapat diproses ketika status masih Diajukan.'
+            );
+        }
+
+        $keberatan->update([
+            'status' => Keberatan::STATUS_DIPROSES,
+            'tanggal_diproses' => now()->toDateString(),
+            'adminid' => $admin->id,
+        ]);
+
+        return $keberatan->refresh();
+    }
+
+    public function selesaikan(
+        int $id,
+        Authorization $admin,
+        array $data,
+        ?UploadedFile $fileTanggapan = null
+    ): Keberatan {
+        $this->ensureAdminUtama($admin);
+
+        $keberatan = $this->keberatan
+            ->newQuery()
+            ->findOrFail($id);
+
+        if (! $keberatan->isDiproses()) {
+            throw new AuthorizationException(
+                'Keberatan harus berstatus Diproses sebelum diselesaikan.'
+            );
+        }
+
+        $jenisTindakLanjut = trim(
+            (string) $data['jenis_tindak_lanjut']
+        );
+
+        $requiresDocument = in_array(
+            $jenisTindakLanjut,
+            [
+                Keberatan::TINDAK_LANJUT_DOKUMEN_TAMBAHAN,
+                Keberatan::TINDAK_LANJUT_DOKUMEN_PENGGANTI,
+                Keberatan::TINDAK_LANJUT_PERBAIKAN_DOKUMEN,
+            ],
+            true
+        );
+
+        if (
+            $requiresDocument
+            && ! $fileTanggapan instanceof UploadedFile
+            && empty($keberatan->file_tanggapan)
+        ) {
+            throw new RuntimeException(
+                'Dokumen tanggapan wajib diunggah untuk jenis tindak lanjut ini.'
+            );
+        }
+
+        $newPath = null;
+        $originalName = null;
+
+        if ($fileTanggapan instanceof UploadedFile) {
+            $originalName = $fileTanggapan
+                ->getClientOriginalName();
+
+            $newPath = $fileTanggapan->store(
+                'keberatan/tanggapan',
+                'local'
+            );
+
+            if (! is_string($newPath)) {
+                throw new RuntimeException(
+                    'Dokumen tanggapan gagal disimpan.'
+                );
+            }
+        }
+
+        DB::transaction(function () use (
+            $keberatan,
+            $admin,
+            $data,
+            $newPath,
+            $originalName
+        ): void {
+            $oldPath = $keberatan->file_tanggapan;
+
+            $keberatan->update([
+                'hasil' => $data['hasil'],
+                'jenis_tindak_lanjut' =>
+                $data['jenis_tindak_lanjut'],
+                'tanggapan' => $data['tanggapan'],
+
+                'file_tanggapan' =>
+                $newPath
+                    ?? $keberatan->file_tanggapan,
+
+                'nama_file_tanggapan' =>
+                $originalName
+                    ?? $keberatan->nama_file_tanggapan,
+
+                'tanggal_tanggapan' =>
+                now()->toDateString(),
+
+                'tanggal_selesai' =>
+                now()->toDateString(),
+
+                'adminid' => $admin->id,
+                'status' => Keberatan::STATUS_SELESAI,
             ]);
-        }
-        if ($admin->isAdminPembantu()) {
-            abort_if(
-                empty($admin->ppid_pembantuid),
-                403,
-                'Akun Admin Pembantu belum terhubung dengan PPID Pembantu.'
-            );
 
-            $query->whereHas(
-                'permohonan',
-                function (
-                    Builder $permohonanQuery
-                ) use ($admin): void {
-                    $permohonanQuery->where(
-                        'ppid_pembantuid',
-                        $admin->ppid_pembantuid
-                    );
-                }
-            );
-        }
+            if (
+                $newPath !== null
+                && filled($oldPath)
+                && $oldPath !== $newPath
+                && Storage::disk('local')->exists($oldPath)
+            ) {
+                Storage::disk('local')->delete($oldPath);
+            }
+        });
 
-        return $query;
+        return $keberatan
+            ->refresh()
+            ->load([
+                'permohonan.userPublic',
+                'admin',
+            ]);
     }
 
     private function ensureAdminUtama(
         Authorization $admin
     ): void {
-        if (! $admin->isAdminUtama()) {
+        if ((int) $admin->role !== 1) {
             throw new AuthorizationException(
-                'Hanya Admin Utama yang dapat memberikan tanggapan keberatan.'
+                'Hanya Admin Utama yang dapat memproses keberatan.'
             );
         }
     }

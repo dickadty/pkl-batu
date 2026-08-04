@@ -562,22 +562,7 @@
                     {{-- Nama informasi --}}
                     <td class="px-4 py-3.5 sm:px-6">
                         <div class="flex items-center gap-3">
-                            <div
-                                class="
-                                    flex
-                                    h-10
-                                    w-10
-                                    shrink-0
-                                    items-center
-                                    justify-center
-                                    rounded-full
-                                    bg-indigo-50
-                                    text-indigo-600
-                                    dark:bg-indigo-500/15
-                                    dark:text-indigo-400
-                                ">
-                                <i class="ri-file-text-line text-lg"></i>
-                            </div>
+
 
                             <div class="min-w-0">
                                 <p
@@ -727,9 +712,7 @@
                             </a>
 
                             {{-- Hapus --}}
-                            <form
-                                action="{{ route('admin.informasi-publik.destroy', $item->id) }}"
-                                method="POST"
+                            <form action="{{ route('admin.informasi-publik.destroy', $item->id) }}" method="POST"
                                 onsubmit="
                                     return confirm(
                                         'Apakah Anda yakin ingin menghapus data ini?'

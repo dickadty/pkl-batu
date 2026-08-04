@@ -43,6 +43,8 @@
 
     $permohonanActive = request()->routeIs('admin.permohonan.*');
 
+    $keberatanActive = request()->routeIs('admin.keberatan.*');
+
     $notifikasiActive = request()->routeIs('admin.notifikasi.*');
 
     $chatActive = request()->routeIs('admin.pesan-masuk.*');
@@ -1221,6 +1223,56 @@
                                         dark:border-gray-900
                                     "></span>
                             @endif
+                        </a>
+                    </li>
+                @endif
+
+                {{-- ====================================================
+                    KEBERATAN INFORMASI
+                ===================================================== --}}
+
+                @if ($canAccessSharedModule && \Illuminate\Support\Facades\Route::has('admin.keberatan.index'))
+                    <li>
+                        <a href="{{ route('admin.keberatan.index') }}" title="Keberatan Informasi"
+                            @click="closeMobileSidebar()"
+                            class="
+                                menu-item
+                                group
+                                relative
+                                flex
+                                min-h-10
+                                w-full
+                                items-center
+                                gap-3
+                                rounded-lg
+                                px-3
+                                py-2
+                                text-[13px]
+                                font-medium
+                                leading-5
+                                transition-colors
+                                duration-200
+                                {{ $keberatanActive ? 'menu-item-active' : 'menu-item-inactive' }}
+                            "
+                            :class="$store.sidebar.isCompact() ?
+                                'xl:justify-center' :
+                                'justify-start'">
+                            <span
+                                class="
+                                    flex
+                                    h-6
+                                    w-6
+                                    shrink-0
+                                    items-center
+                                    justify-center
+                                    {{ $keberatanActive ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}
+                                ">
+                                <i class="ri-file-warning-line text-lg"></i>
+                            </span>
+
+                            <span x-cloak x-show="$store.sidebar.isWide()" class="min-w-0 flex-1 truncate">
+                                Keberatan Informasi
+                            </span>
                         </a>
                     </li>
                 @endif

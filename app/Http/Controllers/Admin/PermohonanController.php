@@ -246,9 +246,7 @@ class PermohonanController extends Controller
         return $response;
     }
 
-    /**
-     * Meneruskan permohonan ke PPID Pembantu.
-     */
+
     public function teruskan(
         Request $request,
         int $id
@@ -309,9 +307,6 @@ class PermohonanController extends Controller
             );
     }
 
-    /**
-     * PPID Pembantu mengirimkan jawaban.
-     */
     public function jawabPembantu(
         Request $request,
         int $id
@@ -379,9 +374,7 @@ class PermohonanController extends Controller
             );
     }
 
-    /**
-     * Admin Utama memvalidasi jawaban.
-     */
+
     public function validasi(
         Request $request,
         int $id
@@ -430,9 +423,7 @@ class PermohonanController extends Controller
             );
     }
 
-    /**
-     * Admin Utama meminta revisi.
-     */
+
     public function revisi(
         Request $request,
         int $id
@@ -481,9 +472,6 @@ class PermohonanController extends Controller
             );
     }
 
-    /**
-     * Admin Utama menolak permohonan pada pemeriksaan awal.
-     */
     public function tolak(
         Request $request,
         int $id

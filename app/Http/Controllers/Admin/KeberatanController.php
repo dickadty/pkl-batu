@@ -6,11 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Authorization;
 use App\Models\Keberatan;
 use App\Services\Admin\KeberatanService;
-use Illuminate\Contracts\View\View;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
+use Illuminate\View\View;
+use RuntimeException;
+use Throwable;
 
 class KeberatanController extends Controller
 {
@@ -18,217 +19,231 @@ class KeberatanController extends Controller
         protected KeberatanService $keberatanService
     ) {}
 
-    public function index(
-        Request $request
-    ): View {
-        $admin = $this
-            ->getAuthenticatedAdmin();
+    public function show(int $id): View
+    {
+        /** @var Authorization $admin */
+        $admin = auth('admin')->user();
 
-        $validated = $request->validate(
-            [
-                'q' => [
-                    'nullable',
-                    'string',
-                    'max:255',
-                ],
-
-                'status' => [
-                    'nullable',
-                    'string',
-                    Rule::in(
-                        array_keys(
-                            Keberatan::statusOptions()
-                        )
-                    ),
-                ],
-
-                'ppid_pembantuid' => [
-                    'nullable',
-                    'integer',
-                    Rule::exists(
-                        'ppid_pembantu',
-                        'id'
-                    ),
-                ],
-
-                'per_page' => [
-                    'nullable',
-                    'integer',
-                    'in:10,15,25,50,100',
-                ],
-            ],
-            [
-                'q.string' =>
-                    'Kata pencarian harus berupa teks.',
-
-                'q.max' =>
-                    'Kata pencarian maksimal 255 karakter.',
-
-                'status.in' =>
-                    'Status keberatan tidak valid.',
-
-                'ppid_pembantuid.integer' =>
-                    'PPID Pembantu tidak valid.',
-
-                'ppid_pembantuid.exists' =>
-                    'PPID Pembantu tidak ditemukan.',
-
-                'per_page.integer' =>
-                    'Jumlah data per halaman tidak valid.',
-
-                'per_page.in' =>
-                    'Pilihan jumlah data per halaman tidak valid.',
-            ]
-        );
-
-        $keberatan = $this
-            ->keberatanService
-            ->getForAdmin(
-                $admin,
-                $validated
-            );
-
-        $summary = $this
-            ->keberatanService
-            ->getSummaryForAdmin(
-                $admin
-            );
-
-        $ppidPembantuList = $this
-            ->keberatanService
-            ->getPpidPembantuListForAdmin(
-                $admin
-            );
-
-        return view(
-            'pages.admin.keberatan.index',
-            [
-                'admin' => $admin,
-                'keberatan' => $keberatan,
-                'summary' => $summary,
-                'ppidPembantuList' =>
-                    $ppidPembantuList,
-                'statusOptions' =>
-                    Keberatan::statusOptions(),
-            ]
-        );
-    }
-
-
-    public function show(
-        int $id
-    ): View {
-        $admin = $this
-            ->getAuthenticatedAdmin();
-
-        $keberatan = $this
-            ->keberatanService
-            ->getDetailForAdmin(
-                $id,
-                $admin
-            );
+        $keberatan = $this->keberatanService
+            ->getDetail($id, $admin);
 
         return view(
             'pages.admin.keberatan.show',
             [
-                'admin' => $admin,
                 'keberatan' => $keberatan,
-                'statusOptions' =>
-                    Keberatan::statusOptions(),
+                'hasilOptions' =>
+                Keberatan::hasilOptions(),
+                'tindakLanjutOptions' =>
+                Keberatan::tindakLanjutOptions(),
             ]
         );
     }
 
+    public function proses(int $id): RedirectResponse
+    {
+        /** @var Authorization $admin */
+        $admin = auth('admin')->user();
 
-    public function update(
+        try {
+            $this->keberatanService->proses(
+                $id,
+                $admin
+            );
+
+            return back()->with(
+                'success',
+                'Keberatan berhasil diproses.'
+            );
+        } catch (
+            AuthorizationException | RuntimeException $exception
+        ) {
+            return back()->with(
+                'error',
+                $exception->getMessage()
+            );
+        }
+    }
+
+    public function selesaikan(
         Request $request,
         int $id
     ): RedirectResponse {
-        $admin = $this
-            ->getAuthenticatedAdmin();
+        /** @var Authorization $admin */
+        $admin = auth('admin')->user();
 
-        $validated = $request->validate(
-            [
-                'status' => [
-                    'bail',
-                    'required',
-                    'string',
-                    Rule::in(
-                        array_keys(
-                            Keberatan::statusOptions()
-                        )
-                    ),
-                ],
-
-                'tanggapan' => [
-                    'bail',
-                    Rule::requiredIf(
-                        in_array(
-                            $request->input('status'),
-                            [
-                                Keberatan::STATUS_SELESAI,
-                                Keberatan::STATUS_DITOLAK,
-                            ],
-                            true
-                        )
-                    ),
-                    'nullable',
-                    'string',
-                    'max:10000',
-                ],
+        $validated = $request->validate([
+            'hasil' => [
+                'required',
+                'string',
+                'in:Diterima,Diterima Sebagian,Ditolak',
             ],
+
+            'jenis_tindak_lanjut' => [
+                'required',
+                'string',
+                'in:Penjelasan,Dokumen Tambahan,Dokumen Pengganti,Perbaikan Dokumen,Tanpa Dokumen',
+            ],
+
+            'tanggapan' => [
+                'required',
+                'string',
+                'min:10',
+                'max:10000',
+            ],
+
+            'file_tanggapan' => [
+                'nullable',
+                'file',
+                'mimes:pdf,doc,docx,xls,xlsx',
+                'max:10240',
+            ],
+        ], [
+            'hasil.required' =>
+            'Hasil keberatan wajib dipilih.',
+
+            'jenis_tindak_lanjut.required' =>
+            'Jenis tindak lanjut wajib dipilih.',
+
+            'tanggapan.required' =>
+            'Tanggapan final wajib diisi.',
+
+            'tanggapan.min' =>
+            'Tanggapan final minimal 10 karakter.',
+
+            'file_tanggapan.mimes' =>
+            'Dokumen harus berformat PDF, DOC, DOCX, XLS, atau XLSX.',
+
+            'file_tanggapan.max' =>
+            'Ukuran dokumen maksimal 10 MB.',
+        ]);
+
+        try {
+            $this->keberatanService->selesaikan(
+                id: $id,
+                admin: $admin,
+                data: $validated,
+                fileTanggapan: $request->file('file_tanggapan')
+            );
+
+            return redirect()
+                ->route(
+                    'admin.keberatan.show',
+                    ['id' => $id]
+                )
+                ->with(
+                    'success',
+                    'Tanggapan final berhasil disimpan dan keberatan telah diselesaikan.'
+                );
+        } catch (
+            AuthorizationException | RuntimeException $exception
+        ) {
+            return back()
+                ->withInput()
+                ->with(
+                    'error',
+                    $exception->getMessage()
+                );
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return back()
+                ->withInput()
+                ->with(
+                    'error',
+                    'Terjadi kesalahan saat menyimpan tanggapan final.'
+                );
+        }
+    }
+    public function index(Request $request): View
+    {
+        $admin = auth('admin')->user();
+
+        abort_unless($admin, 401);
+
+        $search = trim((string) $request->query('search', ''));
+        $status = trim((string) $request->query('status', ''));
+
+        $query = Keberatan::query()
+            ->with([
+                'permohonan',
+                'admin',
+            ]);
+
+        /*
+     * Admin PPID Pembantu hanya melihat keberatan dari
+     * permohonan yang menjadi tanggung jawab unitnya.
+     */
+        if (
+            (int) data_get($admin, 'role') === 2
+            && filled(data_get($admin, 'ppid_pembantuid'))
+        ) {
+            $query->whereHas(
+                'permohonan',
+                function ($permohonanQuery) use ($admin): void {
+                    $permohonanQuery->where(
+                        'ppid_pembantuid',
+                        (int) data_get($admin, 'ppid_pembantuid')
+                    );
+                }
+            );
+        }
+
+        if ($search !== '') {
+            $query->where(
+                function ($searchQuery) use ($search): void {
+                    $searchQuery
+                        ->where(
+                            'no_keberatan',
+                            'like',
+                            '%' . $search . '%'
+                        )
+                        ->orWhere(
+                            'alasan',
+                            'like',
+                            '%' . $search . '%'
+                        )
+                        ->orWhere(
+                            'tanggapan',
+                            'like',
+                            '%' . $search . '%'
+                        );
+                }
+            );
+        }
+
+        if (
+            $status !== ''
+            && in_array(
+                $status,
+                [
+                    Keberatan::STATUS_DIAJUKAN,
+                    Keberatan::STATUS_DIPROSES,
+                    Keberatan::STATUS_SELESAI,
+                ],
+                true
+            )
+        ) {
+            $query->where('status', $status);
+        }
+
+        $keberatans = $query
+            ->orderByDesc('tanggal_pengajuan')
+            ->orderByDesc('id')
+            ->paginate(15)
+            ->withQueryString();
+
+        return view(
+            'pages.admin.keberatan.index',
             [
-                'status.required' =>
-                    'Status keberatan wajib dipilih.',
-
-                'status.in' =>
-                    'Status keberatan tidak valid.',
-
-                'tanggapan.required' =>
-                    'Tanggapan wajib diisi ketika keberatan selesai atau ditolak.',
-
-                'tanggapan.string' =>
-                    'Tanggapan harus berupa teks.',
-
-                'tanggapan.max' =>
-                    'Tanggapan maksimal 10.000 karakter.',
+                'keberatans' => $keberatans,
+                'search' => $search,
+                'status' => $status,
+                'statusOptions' => [
+                    Keberatan::STATUS_DIAJUKAN,
+                    Keberatan::STATUS_DIPROSES,
+                    Keberatan::STATUS_SELESAI,
+                ],
             ]
         );
-
-        $keberatan = $this
-            ->keberatanService
-            ->updateResponse(
-                $id,
-                $admin,
-                $validated
-            );
-
-        return redirect()
-            ->route(
-                'admin.keberatan.show',
-                [
-                    'id' => $keberatan->id,
-                ]
-            )
-            ->with(
-                'success',
-                'Data keberatan berhasil diperbarui.'
-            );
-    }
-
-
-    private function getAuthenticatedAdmin(): Authorization
-    {
-        $admin = Auth::guard(
-            'admin'
-        )->user();
-
-        abort_unless(
-            $admin instanceof Authorization,
-            401,
-            'Sesi admin tidak ditemukan.'
-        );
-
-        return $admin;
     }
 }

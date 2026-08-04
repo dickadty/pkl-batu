@@ -1042,10 +1042,15 @@ Route::prefix('admin')
                     AdminKeberatanController::class
                 )
                 ->group(function (): void {
-                    Route::get('/', 'index')
-                        ->name('index');
+                    Route::get(
+                        '/',
+                        'index'
+                    )->name('index');
 
-                    Route::get('/{id}', 'show')
+                    Route::get(
+                        '/{id}',
+                        'show'
+                    )
                         ->whereNumber('id')
                         ->name('show');
                 });
