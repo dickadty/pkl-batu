@@ -1291,6 +1291,96 @@
             </ul>
         </nav>
 
+{{-- ====================================================
+    CMS
+===================================================== --}}
+@if (
+    \Illuminate\Support\Facades\Route::has('admin.pages.index') ||
+    \Illuminate\Support\Facades\Route::has('admin.menu.index')
+)
+    <li x-data="{ open: {{ request()->routeIs('admin.pages.*') || request()->routeIs('admin.menu.*') ? 'true' : 'false' }} }">
+
+        <button
+            @click="open = !open"
+            class="
+                menu-item
+                group
+                relative
+                flex
+                min-h-10
+                w-full
+                items-center
+                gap-3
+                rounded-lg
+                px-3
+                py-2
+                text-[13px]
+                font-medium
+                leading-5
+                transition-colors
+                duration-200
+                {{ request()->routeIs('admin.pages.*') || request()->routeIs('admin.menus.*')
+                    ? 'menu-item-active'
+                    : 'menu-item-inactive' }}
+            "
+            :class="$store.sidebar.isCompact()
+                ? 'xl:justify-center'
+                : 'justify-start'">
+
+            <span
+                class="
+                    flex
+                    h-6
+                    w-6
+                    shrink-0
+                    items-center
+                    justify-center
+                ">
+                <i class="ri-pages-line text-lg"></i>
+            </span>
+
+            <span
+                x-cloak
+                x-show="$store.sidebar.isWide()"
+                class="min-w-0 flex-1 truncate">
+                CMS
+            </span>
+
+            <i
+                x-show="$store.sidebar.isWide()"
+                :class="open ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'">
+            </i>
+        </button>
+
+        <ul
+            x-show="open"
+            x-transition
+            class="mt-1 ml-6 space-y-1">
+
+            <li>
+                <a href="{{ route('admin.pages.index') }}"
+                    class="menu-item flex items-center rounded-lg px-3 py-2 text-sm">
+                    Manajemen Halaman
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ route('admin.menu.index') }}"
+                    class="menu-item flex items-center rounded-lg px-3 py-2 text-sm">
+                    Manajemen Menu
+                </a>
+            </li>
+
+            <li>
+    <a href="{{ route('admin.module.index') }}">
+        Module
+    </a>
+</li>
+
+        </ul>
+    </li>
+@endif
+
         {{-- ================================================================
             PROFIL ADMIN
         ================================================================= --}}

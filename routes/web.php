@@ -24,7 +24,13 @@ use App\Http\Controllers\Publik\InformasiController;
 use App\Http\Controllers\Publik\KtpOcrController;
 use App\Http\Controllers\Publik\PermohonanController as PublikPermohonanController;
 use App\Http\Controllers\Publik\PesanController as PublikPesanController;
+use App\Http\Controllers\Admin\MenuController;
+use App\Http\Controllers\Admin\PageController;
+use App\Http\Controllers\Admin\ModuleController;
 use Illuminate\Support\Facades\Route;
+
+Route::view('/404', 'components.error.not-found-page')
+    ->name('not-found');
 
 /*
 |--------------------------------------------------------------------------
@@ -73,6 +79,37 @@ Route::post(
     ->middleware('auth:public')
     ->name('public.logout');
 
+/*
+|--------------------------------------------------------------------------
+| MANAJEMEN MENU
+|--------------------------------------------------------------------------
+*/
+
+   Route::prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+
+        Route::resource('pages', PageController::class);
+
+    });
+    
+    Route::prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+
+        Route::resource('menu', MenuController::class);
+
+    });
+
+
+    Route::prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+
+    Route::resource('module', ModuleController::class);
+
+        
+    });
 /*
 |--------------------------------------------------------------------------
 | INFORMASI PUBLIK

@@ -3,7 +3,7 @@
 namespace App\Services\Publik;
 
 use App\Models\Berita;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class BeritaService
 {
@@ -11,14 +11,21 @@ class BeritaService
         protected Berita $berita
     ) {}
 
-    public function getAll(): Collection
-    {
+    /**
+     * Menampilkan daftar berita untuk publik.
+     */
+    public function getAll(
+        int $perPage = 9
+    ): LengthAwarePaginator {
         return $this->berita
             ->newQuery()
             ->orderByDesc('id')
-            ->get();
+            ->paginate($perPage);
     }
 
+    /**
+     * Detail berita.
+     */
     public function findById(int $id): Berita
     {
         return $this->berita

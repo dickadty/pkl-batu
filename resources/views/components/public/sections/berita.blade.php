@@ -1,4 +1,4 @@
-<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 pb-10">
+<section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 pb-10">
 
     {{-- Heading --}}
     <div class="flex flex-col md:flex-row md:items-end md:justify-between mb-10">

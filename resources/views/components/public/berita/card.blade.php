@@ -15,12 +15,12 @@
                         {{ $item->judul }}
                     </h3>
 
-                    <p class="text-slate-600 text-sm line-clamp-3 mb-5">
+                    <p class="text-slate-600 text-xs line-clamp-3 mb-5">
                         {{ \Illuminate\Support\Str::limit(strip_tags($item->caption), 120) }}
                     </p>
 
                     <a href="{{ route('public.berita.show', $item->id) }}"
-                        class="font-semibold text-slate-700 transition duration-200 group-hover:text-green-600">
+                        class="font-semibold text-xs text-slate-700 transition duration-200 group-hover:text-green-600">
                         Baca Selengkapnya →
                     </a>
 

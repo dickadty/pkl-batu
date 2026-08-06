@@ -7,6 +7,7 @@ use App\Services\SidebarService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use App\View\Components\MenuComposer;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -57,5 +58,10 @@ class AppServiceProvider extends ServiceProvider
                 $view->with($sidebarData);
             }
         );
+
+        View::composer(
+        'components.public.navbar',
+        MenuComposer::class
+    );
     }
 }

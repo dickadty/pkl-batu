@@ -12,16 +12,17 @@ class BeritaController extends Controller
     ) {}
 
     public function index()
-    {
-        $berita = $this->beritaService->getAll();
+{
+    $berita = $this->beritaService->getAll();
 
-        return view('pages.public.berita.index', compact('berita'));
-    }
-
-    public function show($id)
-    {
-        $berita = $this->beritaService->findById((int) $id);
-
-        return view('pages.public.berita.show', compact('berita'));
-    }
+    return view(
+        'pages.public.berita.index',
+        compact('berita')
+    );
+}
+    public function getAll()
+{
+    return Berita::orderBy('id', 'desc')
+        ->paginate(9);
+}
 }

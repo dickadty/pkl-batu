@@ -41,7 +41,7 @@ $heroSlides = [
                 <img src="{{ $slide['image'] }}"
                     alt="{{ $slide['alt'] }}"
                     class="h-full w-full object-cover">
-                <div class="absolute inset-0 bg-gradient-to-b from-[#033927]/60 via-[#033927]/30 to-[#033927]/80"></div>
+                <div class="absolute inset-0 bg-gradient-to-b from-[#033927]/30 via-[#033927]/30 to-[#033927]/30"></div>
             </div>
         @endforeach
     </div>
@@ -54,9 +54,9 @@ $heroSlides = [
                     {!! $slide['title'] !!}
                 </h1>
 
-                <p class="mx-auto mt-6 max-w-xl text-base leading-relaxed text-slate-100/90 sm:text-lg">
+                <!-- <p class="mx-auto mt-6 max-w-xl text-base leading-relaxed text-slate-100/90 sm:text-lg">
                     {{ $slide['description'] }}
-                </p>
+                </p> -->
 
                 <div class="mt-9 flex flex-wrap items-center justify-center gap-4">
                     <a href="{{ $slide['primary_link'] }}"
