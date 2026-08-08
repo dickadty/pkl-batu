@@ -273,7 +273,7 @@
             </li>
         </ul>
 
-        <form method="POST" action="{{ route('public.logout') }}" class="mt-3">
+        <form method="POST" action="{{ route('admin.logout') }}" class="mt-3">
             @csrf
 
             <button type="submit"

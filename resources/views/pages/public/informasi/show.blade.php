@@ -1,6 +1,9 @@
 @extends('layouts.public.app')
+<<<<<<< HEAD
 
 @section('title', 'Informasi Publik | PPID Kota Batu')
+=======
+>>>>>>> d17110db5947dbc40bd999c4dc2309fb76a78326
 
 @section('content')
 
