@@ -9,39 +9,36 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
-    {
-        Schema::create('halamen', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+   public function up(): void
+{
+    Schema::table('pages', function (Blueprint $table) {
 
-        Schema::create('pages', function (Blueprint $table) {
-    $table->id();
+        $table->foreignId('module_id')
+            ->nullable()
+            ->after('judul')
+            ->constrained('modules')
+            ->nullOnDelete();
 
-    $table->string('judul');
-    $table->string('slug')->unique();
+        $table->string('gambar')
+            ->nullable()
+            ->after('slug');
 
-    $table->longText('content')->nullable();
+    });
+}
 
-    $table->enum('status', [
-        'draft',
-        'published'
-    ])->default('draft');
+public function down(): void
+{
+    Schema::table('pages', function (Blueprint $table) {
 
-    $table->timestamps();
-});
-    }
+        $table->dropForeign(['module_id']);
 
-    
+        $table->dropColumn([
+            'module_id',
+            'gambar'
+        ]);
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('halamen');
-    }
+    });
+}
 };
 
 

@@ -5,39 +5,37 @@
 @section('content')
     <div class="space-y-6">
         {{-- ============================================================
-            JUDUL HALAMAN
+        JUDUL HALAMAN
         ============================================================= --}}
 
-        <x-admin.page-header
-            title="Tambah Halaman"
+        <x-admin.page-header title="Tambah Halaman"
             description="Tambahkan halaman baru yang akan ditampilkan pada website. Isi judul, status publikasi, dan konten halaman sesuai kebutuhan."
             :breadcrumbs="[
-                [
-                    'label' => 'Dashboard',
-                    'url' => route('admin.dashboard'),
-                    'icon' => 'ri-dashboard-line',
-                ],
-                [
-                    'label' => 'Konten & Informasi',
-                ],
-                [
-                    'label' => 'Halaman',
-                    'url' => route('admin.pages.create'),
-                ],
-                [
-                    'label' => 'Tambah Halaman',
-                ],
-            ]"
-        />
+            [
+                'label' => 'Dashboard',
+                'url' => route('admin.dashboard'),
+                'icon' => 'ri-dashboard-line',
+            ],
+            [
+                'label' => 'Konten & Informasi',
+            ],
+            [
+                'label' => 'Halaman',
+                'url' => route('admin.pages.create'),
+            ],
+            [
+                'label' => 'Tambah Halaman',
+            ],
+        ]" />
 
         {{-- ============================================================
-            FLASH MESSAGE DAN VALIDATION ERROR
+        FLASH MESSAGE DAN VALIDATION ERROR
         ============================================================= --}}
 
         <x-ui.flash-messages />
 
         {{-- ============================================================
-            FORM HALAMAN
+        FORM HALAMAN
         ============================================================= --}}
 
         <div class="bg-white rounded-xl border border-slate-200 shadow-sm">
@@ -50,117 +48,190 @@
                 </p>
             </div>
 
-            <form action="{{ route('admin.pages.store') }}" method="POST" class="p-6 space-y-6">
+            <form action="{{ route('admin.pages.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
 
-                {{-- Judul --}}
-                <div>
-                    <label for="title" class="block mb-2 text-sm font-medium text-slate-700">
-                        Judul Halaman <span class="text-red-500">*</span>
-                    </label>
+                <div class="p-6 space-y-6">
 
-                    <input
-                        type="text"
-                        id="judul"
-                        name="judul"
-                        value="{{ old('judul') }}"
-                        class="w-full rounded-lg border-slate-300 focus:border-emerald-500 focus:ring-emerald-500"
-                        placeholder="Masukkan judul halaman">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-                    @error('judul')
-                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
+                        {{-- =========================
+                        KIRI
+                        ========================== --}}
+                        <div class="lg:col-span-2 space-y-6">
+
+                            {{-- Judul --}}
+                            <div>
+                                <label class="block mb-2 text-sm font-medium text-slate-700">
+                                    Judul Halaman <span class="text-red-500">*</span>
+                                </label>
+
+                                <input type="text" name="judul" value="{{ old('judul') }}"
+                                    placeholder="Masukkan judul halaman..."
+                                    class="w-full rounded-lg border-slate-300 focus:border-emerald-500 focus:ring-emerald-500">
+
+                                @error('judul')
+                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            {{-- Status --}}
+                            <div>
+                                <label class="block mb-2 text-sm font-medium text-slate-700">
+                                    Status Publikasi
+                                </label>
+
+                                <select name="status"
+                                    class="w-full rounded-lg border-slate-300 focus:border-emerald-500 focus:ring-emerald-500">
+
+                                    <option value="draft" {{ old('status') == 'draft' ? 'selected' : '' }}>
+                                        Draft
+                                    </option>
+
+                                    <option value="published" {{ old('status') == 'published' ? 'selected' : '' }}>
+                                        Published
+                                    </option>
+
+                                </select>
+
+                                @error('status')
+                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                        </div>
+
+                        {{-- =========================
+                        KANAN
+                        ========================== --}}
+                        <div>
+
+                            <label class="block mb-2 text-sm font-medium text-slate-700">
+                                Gambar Halaman
+                            </label>
+
+                            <div id="drop-area"
+                                class="relative flex min-h-[260px] flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 hover:border-emerald-500 hover:bg-emerald-50 transition">
+
+                                <input type="file" id="gambar" name="gambar" accept="image/*"
+                                    class="absolute inset-0 opacity-0 cursor-pointer">
+
+                                <img id="preview-gambar" class="hidden max-h-60 rounded-lg object-cover">
+
+                                <div id="upload-placeholder" class="text-center">
+
+                                    <div
+                                        class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100">
+
+                                        <i class="ri-image-add-line text-3xl text-emerald-600"></i>
+
+                                    </div>
+
+                                    <h3 class="mt-4 font-semibold text-slate-700">
+                                        Upload Gambar
+                                    </h3>
+
+                                    <p class="mt-1 text-sm text-slate-500">
+                                        JPG, PNG, WEBP
+                                    </p>
+
+                                    <p class="text-xs text-slate-400">
+                                        Maksimal 2 MB
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                            @error('gambar')
+                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+
+                        </div>
+
+                    </div>
+
+                    {{-- =========================
+                    KONTEN
+                    ========================== --}}
+
+                    <div>
+
+                        <label class="block mb-2 text-sm font-medium text-slate-700">
+                            Isi Halaman
+                        </label>
+
+                        <textarea name="content" rows="14" class="editor w-full">{{ old('content') }}</textarea>
+
+                        @error('content')
+                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+
+                    </div>
+
                 </div>
 
-                {{-- Module --}}
-<div>
-    <label for="module_id" class="block mb-2 text-sm font-medium text-slate-700">
-        Jenis Halaman <span class="text-red-500">*</span>
-    </label>
+                {{-- Footer --}}
+                <div
+                    class="flex items-center justify-end gap-3 rounded-b-xl border-t border-slate-200 bg-slate-50 px-6 py-5">
 
-    <select
-        id="module_id"
-        name="module_id"
-        class="w-full rounded-lg border-slate-300 focus:border-emerald-500 focus:ring-emerald-500">
-
-        @foreach ($modules as $module)
-            <option
-                value="{{ $module->id }}"
-                {{ old('module_id') == $module->id ? 'selected' : '' }}>
-
-                {{ $module->nama }}
-
-            </option>
-        @endforeach
-
-    </select>
-
-    <p class="mt-2 text-sm text-slate-500">
-        Pilih jenis halaman yang akan dibuat.
-    </p>
-
-    @error('module_id')
-        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-    @enderror
-</div>
-
-                {{-- Status --}}
-                <div>
-                    <label for="status" class="block mb-2 text-sm font-medium text-slate-700">
-                        Status Publikasi
-                    </label>
-
-                    <select
-                        id="status"
-                        name="status"
-                        class="w-full rounded-lg border-slate-300 focus:border-emerald-500 focus:ring-emerald-500">
-
-                        <option value="draft" {{ old('status') == 'draft' ? 'selected' : '' }}>
-                            Draft
-                        </option>
-
-                        <option value="published" {{ old('status') == 'published' ? 'selected' : '' }}>
-                            Published
-                        </option>
-                    </select>
-
-                    @error('status')
-                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                {{-- Konten --}}
-                <div>
-                    <label for="content" class="block mb-2 text-sm font-medium text-slate-700">
-                        Isi Halaman
-                    </label>
-
-                    <textarea
-                        id="content"
-                        name="content"
-                        rows="12"
-                        class="w-full rounded-lg border-slate-300 focus:border-emerald-500 focus:ring-emerald-500"
-                        placeholder="Tulis isi halaman di sini...">{{ old('content') }}</textarea>
-
-                    @error('content')
-                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                {{-- Tombol --}}
-                <div class="flex items-center justify-end gap-3 border-t border-slate-200 pt-6">
                     <a href="{{ route('admin.pages.index') }}"
-                        class="inline-flex items-center rounded-lg border border-slate-300 px-5 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100 transition">
+                        class="rounded-lg border border-slate-300 px-5 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100">
+
                         Batal
+
                     </a>
 
-                    <button
-                        type="submit"
-                        class="inline-flex items-center rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-emerald-700 transition">
+                    <button type="submit"
+                        class="inline-flex items-center rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-emerald-700">
+
+                        <i class="ri-save-line mr-2"></i>
+
                         Simpan Halaman
+
                     </button>
+
                 </div>
+
             </form>
         </div>
     </div>
+
+
 @endsection
+
+@stack('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const input = document.getElementById('gambar');
+        const preview = document.getElementById('preview-gambar');
+        const placeholder = document.getElementById('upload-placeholder');
+
+        if (!input) return;
+
+        input.addEventListener('change', function (e) {
+
+            const file = e.target.files[0];
+
+            if (!file) return;
+
+            const reader = new FileReader();
+
+            reader.onload = function (event) {
+
+                preview.src = event.target.result;
+
+                preview.classList.remove('hidden');
+
+                placeholder.classList.add('hidden');
+
+            };
+
+            reader.readAsDataURL(file);
+
+        });
+
+    });
+</script>
+@endstack

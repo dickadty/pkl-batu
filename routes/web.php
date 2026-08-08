@@ -15,6 +15,8 @@ use App\Http\Controllers\Admin\PesanMasukController;
 use App\Http\Controllers\Admin\PpidPembantuController;
 use App\Http\Controllers\Admin\ProkerController;
 use App\Http\Controllers\Admin\SliderController;
+use App\Http\Controllers\Admin\MenuController;
+use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Auth\UnifiedLoginController;
 use App\Http\Controllers\Publik\AccountActivationController;
 use App\Http\Controllers\Publik\AuthController as PublikAuthController;
@@ -26,8 +28,6 @@ use App\Http\Controllers\Publik\KeberatanController as PublikKeberatanController
 use App\Http\Controllers\Publik\KtpOcrController;
 use App\Http\Controllers\Publik\PermohonanController as PublikPermohonanController;
 use App\Http\Controllers\Publik\PesanController as PublikPesanController;
-use App\Http\Controllers\Admin\MenuController;
-use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\ModuleController;
 use Illuminate\Support\Facades\Route;
 
@@ -94,6 +94,9 @@ Route::post(
         Route::resource('pages', PageController::class);
 
     });
+
+    Route::get('/page/{slug}', [PageController::class, 'show'])
+    ->name('public.pages.show');
     
     Route::prefix('admin')
     ->name('admin.')

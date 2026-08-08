@@ -11,6 +11,8 @@ class Pages extends Model
 {
     protected $fillable = [
         'judul',
+        'gambar',
+        'module_id',
         'slug',
         'content',
         'status'

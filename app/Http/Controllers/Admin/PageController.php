@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Module;
 use App\Models\Pages;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class PageController extends Controller
@@ -27,14 +27,7 @@ class PageController extends Controller
      */
     public function create()
     {
-        $modules = Module::where('is_active', 1)
-            ->orderBy('nama')
-            ->get();
-
-        return view(
-            'pages.admin.pages.create',
-            compact('modules')
-        );
+        return view('pages.admin.pages.create');
     }
 
     /**
@@ -43,15 +36,22 @@ class PageController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'judul'     => 'required|max:255',
-            'module_id' => 'required|exists:modules,id',
-            'status'    => 'required',
+            'judul'  => 'required|max:255',
+            'gambar' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'status' => 'required',
         ]);
+
+        $gambar = null;
+
+        if ($request->hasFile('gambar')) {
+            $gambar = $request->file('gambar')->store('pages', 'public');
+        }
 
         Pages::create([
             'judul'     => $request->judul,
             'slug'      => Str::slug($request->judul),
-            'module_id' => $request->module_id,
+            'module_id' => 1,
+            'gambar'    => $gambar,
             'content'   => $request->input('content'),
             'status'    => $request->status,
         ]);
@@ -71,19 +71,6 @@ class PageController extends Controller
             ->where('status', 'published')
             ->firstOrFail();
 
-        $module = $page->module;
-
-        // Jika module memiliki route khusus
-        if ($module && !empty($module->route_name)) {
-            return redirect()->route($module->route_name);
-        }
-
-        // Jika menggunakan view custom
-        if ($module && !empty($module->view_name)) {
-            return view($module->view_name, compact('page'));
-        }
-
-        // Default
         return view('pages.public.page', compact('page'));
     }
 
@@ -94,16 +81,9 @@ class PageController extends Controller
     {
         $page = Pages::findOrFail($id);
 
-        $modules = Module::where('is_active', 1)
-            ->orderBy('nama')
-            ->get();
-
         return view(
             'pages.admin.pages.edit',
-            compact(
-                'page',
-                'modules'
-            )
+            compact('page')
         );
     }
 
@@ -113,17 +93,32 @@ class PageController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'judul'     => 'required|max:255',
-            'module_id' => 'required|exists:modules,id',
-            'status'    => 'required',
+            'judul'  => 'required|max:255',
+            'gambar' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'status' => 'required',
         ]);
 
         $page = Pages::findOrFail($id);
 
+        $gambar = $page->gambar;
+
+        if ($request->hasFile('gambar')) {
+
+            if (
+                $page->gambar &&
+                Storage::disk('public')->exists($page->gambar)
+            ) {
+                Storage::disk('public')->delete($page->gambar);
+            }
+
+            $gambar = $request->file('gambar')->store('pages', 'public');
+        }
+
         $page->update([
             'judul'     => $request->judul,
             'slug'      => Str::slug($request->judul),
-            'module_id' => $request->module_id,
+            'module_id' => 1,
+            'gambar'    => $gambar,
             'content'   => $request->input('content'),
             'status'    => $request->status,
         ]);
@@ -139,6 +134,13 @@ class PageController extends Controller
     public function destroy($id)
     {
         $page = Pages::findOrFail($id);
+
+        if (
+            $page->gambar &&
+            Storage::disk('public')->exists($page->gambar)
+        ) {
+            Storage::disk('public')->delete($page->gambar);
+        }
 
         $page->delete();
 

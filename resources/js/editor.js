@@ -1,24 +1,15 @@
-import {
-    ClassicEditor,
-    Essentials,
-    Paragraph,
-    Bold,
-    Italic,
-    Underline,
-    Heading,
-    List,
-    Link,
-    Table,
-    Image,
-    ImageToolbar,
-    ImageCaption,
-    ImageStyle,
-    ImageResize,
-    ImageUpload
-} from 'ckeditor5';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
-ClassicEditor
-    .create(document.querySelector('#editor'))
-    .catch(error => {
-        console.error(error);
+document.addEventListener('DOMContentLoaded', () => {
+
+    document.querySelectorAll('.editor').forEach((element) => {
+
+        ClassicEditor
+            .create(element)
+            .catch(error => {
+                console.error(error);
+            });
+
     });
+
+});

@@ -3,269 +3,290 @@
 @section('title', 'Edit Menu')
 
 @section('content')
+<div class="space-y-6">
 
-<div class="panel-card">
+    {{-- Header --}}
+    <x-admin.page-header
+        title="Edit Menu"
+        description="Perbarui data menu navigasi website."
+        :breadcrumbs="[
+            [
+                'label' => 'Dashboard',
+                'url' => route('admin.dashboard'),
+                'icon' => 'ri-dashboard-line',
+            ],
+            [
+                'label' => 'Menu',
+                'url' => route('admin.menu.index'),
+            ],
+            [
+                'label' => 'Edit',
+            ],
+        ]">
 
-    <div class="panel-card-header">
-        Edit Menu
-    </div>
+        <a href="{{ route('admin.menu.index') }}"
+            class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition">
 
-    <div class="panel-card-body">
+            <i class="ri-arrow-left-line"></i>
+            Kembali
 
-        <form action="{{ route('admin.menu.update', $menu->id) }}" method="POST">
+        </a>
+
+    </x-admin.page-header>
+
+    <x-ui.flash-messages />
+
+    <div class="rounded-xl border border-slate-200 bg-white shadow-sm">
+
+        <form
+            action="{{ route('admin.menu.update', $menu->id) }}"
+            method="POST">
 
             @csrf
             @method('PUT')
 
-            {{-- Nama --}}
-            <div class="mb-4">
-                <label class="form-label">Nama Menu</label>
+            <div class="grid grid-cols-1 gap-6 p-6 lg:grid-cols-2">
 
-                <input
-                    type="text"
-                    id="nama"
-                    name="nama"
-                    class="form-control"
-                    value="{{ old('nama', $menu->nama) }}"
-                    required>
-            </div>
+                {{-- Nama --}}
+                <div>
 
-            {{-- Jenis --}}
-            <div class="mb-4">
-                <label class="form-label">Jenis Menu</label>
+                    <label class="mb-2 block text-sm font-medium text-slate-700">
+                        Nama Menu
+                    </label>
 
-                <select
-                    id="tipe"
-                    name="tipe"
-                    class="form-control">
+                    <input
+                        type="text"
+                        name="nama"
+                        value="{{ old('nama', $menu->nama) }}"
+                        class="w-full rounded-lg border border-slate-300 px-4 py-2.5 focus:border-emerald-500 focus:ring-emerald-500"
+                        required>
 
-                    <option value="">-- Pilih Jenis Menu --</option>
+                </div>
 
-                    <option value="page"
-                        {{ old('tipe', $menu->tipe) == 'page' ? 'selected' : '' }}>
+                {{-- Jenis --}}
+                <div>
+
+                    <label class="mb-2 block text-sm font-medium text-slate-700">
+                        Jenis Menu
+                    </label>
+
+                    <select
+                        id="tipe"
+                        name="tipe"
+                        class="w-full rounded-lg border border-slate-300 px-4 py-2.5 focus:border-emerald-500 focus:ring-emerald-500">
+
+                        <option value="">Pilih Jenis</option>
+
+                        <option value="page"
+                            {{ old('tipe',$menu->tipe)=='page'?'selected':'' }}>
+                            Halaman
+                        </option>
+
+                        <option value="module"
+                            {{ old('tipe',$menu->tipe)=='module'?'selected':'' }}>
+                            Module
+                        </option>
+
+                        <option value="url"
+                            {{ old('tipe',$menu->tipe)=='url'?'selected':'' }}>
+                            URL
+                        </option>
+
+                    </select>
+
+                </div>
+
+                {{-- Halaman --}}
+                <div id="pageField" style="display:none">
+
+                    <label class="mb-2 block text-sm font-medium text-slate-700">
                         Halaman
-                    </option>
+                    </label>
 
-                    <option value="module"
-                        {{ old('tipe', $menu->tipe) == 'module' ? 'selected' : '' }}>
+                    <select
+                        name="page_id"
+                        class="w-full rounded-lg border border-slate-300 px-4 py-2.5">
+
+                        <option value="">Pilih Halaman</option>
+
+                        @foreach($pages as $page)
+
+                            <option
+                                value="{{ $page->id }}"
+                                {{ old('page_id',$menu->page_id)==$page->id?'selected':'' }}>
+
+                                {{ $page->judul }}
+
+                            </option>
+
+                        @endforeach
+
+                    </select>
+
+                </div>
+
+                {{-- Module --}}
+                <div id="moduleField" style="display:none">
+
+                    <label class="mb-2 block text-sm font-medium text-slate-700">
                         Module
-                    </option>
+                    </label>
 
-                    <option value="url"
-                        {{ old('tipe', $menu->tipe) == 'url' ? 'selected' : '' }}>
+                    <select
+                        name="module_id"
+                        class="w-full rounded-lg border border-slate-300 px-4 py-2.5">
+
+                        <option value="">Pilih Module</option>
+
+                        @foreach($modules as $module)
+
+                            <option
+                                value="{{ $module->id }}"
+                                {{ old('module_id',$menu->module_id)==$module->id?'selected':'' }}>
+
+                                {{ $module->nama }}
+
+                            </option>
+
+                        @endforeach
+
+                    </select>
+
+                </div>
+
+                {{-- URL --}}
+                <div id="urlField" style="display:none">
+
+                    <label class="mb-2 block text-sm font-medium text-slate-700">
                         URL
-                    </option>
+                    </label>
 
-                </select>
-            </div>
+                    <input
+                        type="text"
+                        name="url"
+                        value="{{ old('url',$menu->url) }}"
+                        placeholder="https://example.com"
+                        class="w-full rounded-lg border border-slate-300 px-4 py-2.5">
 
-            {{-- Halaman --}}
-            <div
-                id="pageField"
-                class="mb-4"
-                style="display:none;">
+                </div>
 
-                <label class="form-label">Halaman</label>
+                {{-- Parent --}}
+                <div>
 
-                <select
-                    id="page_id"
-                    name="page_id"
-                    class="form-control">
+                    <label class="mb-2 block text-sm font-medium text-slate-700">
+                        Parent Menu
+                    </label>
 
-                    <option value="">-- Pilih Halaman --</option>
+                    <select
+                        name="parent_id"
+                        class="w-full rounded-lg border border-slate-300 px-4 py-2.5">
 
-                    @foreach($pages as $page)
+                        <option value="">Tidak Ada</option>
 
-                        <option
-                            value="{{ $page->id }}"
-                            {{ old('page_id', $menu->page_id) == $page->id ? 'selected' : '' }}>
+                        @foreach($parents as $parent)
 
-                            {{ $page->judul }}
+                            <option
+                                value="{{ $parent->id }}"
+                                {{ old('parent_id',$menu->parent_id)==$parent->id?'selected':'' }}>
 
+                                {{ $parent->nama }}
+
+                            </option>
+
+                        @endforeach
+
+                    </select>
+
+                </div>
+
+                {{-- Urutan --}}
+                <div>
+
+                    <label class="mb-2 block text-sm font-medium text-slate-700">
+                        Urutan
+                    </label>
+
+                    <input
+                        type="number"
+                        name="sort_order"
+                        value="{{ old('sort_order',$menu->sort_order) }}"
+                        class="w-full rounded-lg border border-slate-300 px-4 py-2.5">
+
+                </div>
+
+                {{-- Status --}}
+                <div>
+
+                    <label class="mb-2 block text-sm font-medium text-slate-700">
+                        Status
+                    </label>
+
+                    <select
+                        name="is_active"
+                        class="w-full rounded-lg border border-slate-300 px-4 py-2.5">
+
+                        <option value="1"
+                            {{ old('is_active',$menu->is_active)==1?'selected':'' }}>
+                            Aktif
                         </option>
 
-                    @endforeach
-
-                </select>
-
-            </div>
-
-            {{-- Module --}}
-            <div
-                id="moduleField"
-                class="mb-4"
-                style="display:none;">
-
-                <label class="form-label">Module</label>
-
-                <select
-                    id="module_id"
-                    name="module_id"
-                    class="form-control">
-
-                    <option value="">-- Pilih Module --</option>
-
-                    @foreach($modules as $module)
-
-                        <option
-                            value="{{ $module->id }}"
-                            {{ old('module_id', $menu->module_id) == $module->id ? 'selected' : '' }}>
-
-                            {{ $module->nama }}
-
+                        <option value="0"
+                            {{ old('is_active',$menu->is_active)==0?'selected':'' }}>
+                            Tidak Aktif
                         </option>
 
-                    @endforeach
+                    </select>
 
-                </select>
-
-            </div>
-
-            {{-- URL --}}
-            <div
-                id="urlField"
-                class="mb-4"
-                style="display:none;">
-
-                <label class="form-label">URL</label>
-
-                <input
-                    type="text"
-                    id="url"
-                    name="url"
-                    class="form-control"
-                    value="{{ old('url', $menu->url) }}"
-                    placeholder="https://example.com">
+                </div>
 
             </div>
 
-            {{-- Parent --}}
-            <div class="mb-4">
+            <div class="flex justify-end gap-3 border-t border-slate-200 px-6 py-4">
 
-                <label class="form-label">Parent Menu</label>
+                <a
+                    href="{{ route('admin.menu.index') }}"
+                    class="rounded-lg border border-slate-300 px-5 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100">
 
-                <select
-                    name="parent_id"
-                    class="form-control">
+                    Batal
 
-                    <option value="">
-                        Tidak Ada
-                    </option>
+                </a>
 
-                    @foreach($parents as $parent)
+                <button
+                    type="submit"
+                    class="rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-emerald-700">
 
-                        <option
-                            value="{{ $parent->id }}"
-                            {{ old('parent_id', $menu->parent_id) == $parent->id ? 'selected' : '' }}>
+                    <i class="ri-save-line mr-1"></i>
+                    Update Menu
 
-                            {{ $parent->nama }}
-
-                        </option>
-
-                    @endforeach
-
-                </select>
+                </button>
 
             </div>
-
-            {{-- Urutan --}}
-            <div class="mb-4">
-
-                <label class="form-label">Urutan</label>
-
-                <input
-                    type="number"
-                    name="sort_order"
-                    class="form-control"
-                    value="{{ old('sort_order', $menu->sort_order) }}">
-
-            </div>
-
-            {{-- Status --}}
-            <div class="mb-4">
-
-                <label class="form-label">Status</label>
-
-                <select
-                    name="is_active"
-                    class="form-control">
-
-                    <option
-                        value="1"
-                        {{ old('is_active', $menu->is_active) == 1 ? 'selected' : '' }}>
-                        Aktif
-                    </option>
-
-                    <option
-                        value="0"
-                        {{ old('is_active', $menu->is_active) == 0 ? 'selected' : '' }}>
-                        Tidak Aktif
-                    </option>
-
-                </select>
-
-            </div>
-
-            <button
-                type="submit"
-                class="btn btn-primary">
-
-                Update Menu
-
-            </button>
-
-            <a
-                href="{{ route('admin.menu.index') }}"
-                class="btn btn-secondary">
-
-                Kembali
-
-            </a>
 
         </form>
 
     </div>
 
 </div>
-
 @endsection
 
 @push('scripts')
-
 <script>
+const tipe=document.getElementById('tipe');
+const pageField=document.getElementById('pageField');
+const moduleField=document.getElementById('moduleField');
+const urlField=document.getElementById('urlField');
 
-const tipe = document.getElementById('tipe');
+function tampilkanField(){
+    pageField.style.display='none';
+    moduleField.style.display='none';
+    urlField.style.display='none';
 
-const pageField = document.getElementById('pageField');
-const moduleField = document.getElementById('moduleField');
-const urlField = document.getElementById('urlField');
-
-function tampilkanField()
-{
-    pageField.style.display = 'none';
-    moduleField.style.display = 'none';
-    urlField.style.display = 'none';
-
-    if (tipe.value === 'page')
-    {
-        pageField.style.display = 'block';
-    }
-
-    if (tipe.value === 'module')
-    {
-        moduleField.style.display = 'block';
-    }
-
-    if (tipe.value === 'url')
-    {
-        urlField.style.display = 'block';
-    }
+    if(tipe.value==='page') pageField.style.display='block';
+    if(tipe.value==='module') moduleField.style.display='block';
+    if(tipe.value==='url') urlField.style.display='block';
 }
 
-tipe.addEventListener('change', tampilkanField);
-
 document.addEventListener('DOMContentLoaded', tampilkanField);
-
+tipe.addEventListener('change', tampilkanField);
 </script>
-
 @endpush

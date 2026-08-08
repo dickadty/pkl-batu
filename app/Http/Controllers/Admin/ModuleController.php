@@ -31,7 +31,6 @@ class ModuleController extends Controller
         $request->validate([
             'nama' => 'required|max:255',
             'route_name' => 'required|max:255',
-            'view_name' => 'required|max:255',
             'icon' => 'nullable|max:100',
             'description' => 'nullable',
             'is_active' => 'required|boolean',
@@ -41,7 +40,6 @@ class ModuleController extends Controller
             'nama' => $request->nama,
             'slug' => Str::slug($request->nama),
             'route_name' => $request->route_name,
-            'view_name' => $request->view_name,
             'icon' => $request->icon,
             'description' => $request->description,
             'is_active' => $request->is_active,
@@ -79,7 +77,6 @@ class ModuleController extends Controller
             'nama' => $request->nama,
             'slug' => Str::slug($request->nama),
             'route_name' => $request->route_name,
-            'view_name' => $request->view_name,
             'icon' => $request->icon,
             'description' => $request->description,
             'is_active' => $request->is_active,

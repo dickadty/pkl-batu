@@ -100,10 +100,6 @@
                             Route
                         </th>
 
-                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">
-                            View
-                        </th>
-
                         <th class="px-6 py-3 text-center text-xs font-semibold uppercase tracking-wider text-slate-600">
                             Status
                         </th>
@@ -140,11 +136,7 @@
                                 </code>
                             </td>
 
-                            <td class="px-6 py-4">
-                                <code class="rounded bg-slate-100 px-2 py-1 text-xs text-slate-700">
-                                    {{ $module->view_name }}
-                                </code>
-                            </td>
+                            
 
                             <td class="px-6 py-4 text-center">
 

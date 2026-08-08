@@ -4,16 +4,25 @@
 
 @section('content')
 
-<div class="container mx-auto py-10">
+<section class="py-16">
+    <div class="max-w-6xl mx-auto px-6">
 
-    <h1 class="text-3xl font-bold mb-6">
-        {{ $page->judul }}
-    </h1>
+        <h1 class="text-4xl font-bold mb-8">
+            {{ $page->judul }}
+        </h1>
 
-    <div class="prose max-w-none">
-        {!! $page->content !!}
+        @if($page->gambar)
+            <img
+                src="{{ asset('storage/' . $page->gambar) }}"
+                alt="{{ $page->judul }}"
+                class="w-full max-h-[500px] object-cover rounded-2xl shadow-lg mb-10">
+        @endif
+
+        <div class="prose prose-lg max-w-none">
+            {!! $page->content !!}
+        </div>
+
     </div>
-
-</div>
+</section>
 
 @endsection

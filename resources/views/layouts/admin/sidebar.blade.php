@@ -51,9 +51,7 @@
 
     /* Helper Filter Menu */
 
-    $filterMenus = static function (\Illuminate\Support\Collection $menus) use (
-        $adminRole,
-    ): \Illuminate\Support\Collection {
+    $filterMenus = static function (\Illuminate\Support\Collection $menus) use ($adminRole, ): \Illuminate\Support\Collection {
         return $menus
             ->filter(static function (array $menu) use ($adminRole): bool {
                 $routeExists = \Illuminate\Support\Facades\Route::has($menu['route']);
@@ -387,8 +385,7 @@
     closeMobileSidebar() {
         this.$store.sidebar.setMobileOpen(false);
     }
-}"
-    class="
+}" class="
         fixed
         left-0
         top-0
@@ -409,17 +406,15 @@
         dark:bg-gray-900
         dark:text-white
         dark:shadow-none
-    "
-    :class="{
+    " :class="{
         'w-[272px]': $store.sidebar.isWide(),
         'w-[82px]': $store.sidebar.isCompact(),
         'translate-x-0': $store.sidebar.isMobileOpen,
         '-translate-x-full xl:translate-x-0':
             !$store.sidebar.isMobileOpen
-    }"
-    @mouseenter="$store.sidebar.setHovered(true)" @mouseleave="$store.sidebar.setHovered(false)">
+    }" @mouseenter="$store.sidebar.setHovered(true)" @mouseleave="$store.sidebar.setHovered(false)">
     {{-- ================================================================
-        LOGO
+    LOGO
     ================================================================= --}}
 
     <div class="
@@ -431,8 +426,7 @@
             border-gray-100
             px-2
             dark:border-gray-800
-        "
-        :class="$store.sidebar.isCompact() ?
+        " :class="$store.sidebar.isCompact() ?
             'xl:justify-center' :
             'justify-start'">
         <a href="{{ route('admin.dashboard') }}" class="flex min-w-0 items-center overflow-hidden"
@@ -449,8 +443,7 @@
                 </span>
 
                 <span class="flex min-w-0 flex-col leading-none">
-                    <span
-                        class="
+                    <span class="
                             text-[11px]
                             font-semibold
                             uppercase
@@ -461,8 +454,7 @@
                         PPID
                     </span>
 
-                    <span
-                        class="
+                    <span class="
                             mt-1
                             truncate
                             text-[15px]
@@ -490,11 +482,10 @@
     </div>
 
     {{-- ================================================================
-        ISI SIDEBAR
+    ISI SIDEBAR
     ================================================================= --}}
 
-    <div
-        class="
+    <div class="
             no-scrollbar
             flex
             min-h-0
@@ -510,13 +501,11 @@
                     h-6
                     items-center
                     px-3
-                "
-                :class="$store.sidebar.isCompact() ?
+                " :class="$store.sidebar.isCompact() ?
                     'xl:justify-center' :
                     'justify-start'">
                 <template x-if="$store.sidebar.isWide()">
-                    <span
-                        class="
+                    <span class="
                             text-[11px]
                             font-semibold
                             uppercase
@@ -529,8 +518,7 @@
                 </template>
 
                 <template x-if="$store.sidebar.isCompact()">
-                    <i
-                        class="
+                    <i class="
                             ri-more-fill
                             text-xl
                             text-gray-400
@@ -540,12 +528,11 @@
 
             <ul class="flex flex-col gap-1">
                 {{-- ====================================================
-                    DASHBOARD
+                DASHBOARD
                 ===================================================== --}}
 
                 <li>
-                    <a href="{{ route('admin.dashboard') }}" title="Dashboard" @click="closeMobileSidebar()"
-                        class="
+                    <a href="{{ route('admin.dashboard') }}" title="Dashboard" @click="closeMobileSidebar()" class="
                             menu-item
                             group
                             flex
@@ -562,12 +549,10 @@
                             transition-colors
                             duration-200
                             {{ $dashboardActive ? 'menu-item-active' : 'menu-item-inactive' }}
-                        "
-                        :class="$store.sidebar.isCompact() ?
+                        " :class="$store.sidebar.isCompact() ?
                             'xl:justify-center' :
                             'justify-start'">
-                        <span
-                            class="
+                        <span class="
                                 flex
                                 h-6
                                 w-6
@@ -586,94 +571,84 @@
                 </li>
 
                 {{-- ====================================================
-                    MASTER DATA
+                MASTER DATA
                 ===================================================== --}}
 
                 @if ($isAdminUtama && $masterMenus->isNotEmpty())
                     <li>
                         <button type="button" title="Master Data" @click="toggleSubmenu('master')"
-                            :aria-expanded="isSubmenuOpen('master')"
-                            class="
-                                menu-item
-                                group
-                                flex
-                                min-h-10
-                                w-full
-                                items-center
-                                gap-3
-                                rounded-lg
-                                px-3
-                                py-2
-                                text-[13px]
-                                font-medium
-                                leading-5
-                                transition-colors
-                                duration-200
-                            "
-                            :class="[
-                                isMenuActive('master') ?
-                                'menu-item-active' :
-                                'menu-item-inactive',
-                            
-                                $store.sidebar.isCompact() ?
-                                'xl:justify-center' :
-                                'justify-start'
-                            ]">
-                            <span
-                                class="
+                            :aria-expanded="isSubmenuOpen('master')" class="
+                                    menu-item
+                                    group
                                     flex
-                                    h-6
-                                    w-6
-                                    shrink-0
+                                    min-h-10
+                                    w-full
                                     items-center
-                                    justify-center
-                                "
-                                :class="isMenuActive('master') ?
-                                    'menu-item-icon-active' :
-                                    'menu-item-icon-inactive'">
+                                    gap-3
+                                    rounded-lg
+                                    px-3
+                                    py-2
+                                    text-[13px]
+                                    font-medium
+                                    leading-5
+                                    transition-colors
+                                    duration-200
+                                " :class="[
+                                    isMenuActive('master') ?
+                                    'menu-item-active' :
+                                    'menu-item-inactive',
+
+                                    $store.sidebar.isCompact() ?
+                                    'xl:justify-center' :
+                                    'justify-start'
+                                ]">
+                            <span class="
+                                        flex
+                                        h-6
+                                        w-6
+                                        shrink-0
+                                        items-center
+                                        justify-center
+                                    " :class="isMenuActive('master') ?
+                                        'menu-item-icon-active' :
+                                        'menu-item-icon-inactive'">
                                 <i class="ri-database-2-line text-lg"></i>
                             </span>
 
-                            <span x-cloak x-show="$store.sidebar.isWide()"
-                                class="
-                                    min-w-0
-                                    flex-1
-                                    truncate
-                                    text-left
-                                ">
+                            <span x-cloak x-show="$store.sidebar.isWide()" class="
+                                        min-w-0
+                                        flex-1
+                                        truncate
+                                        text-left
+                                    ">
                                 Master Data
                             </span>
 
-                            <i x-cloak x-show="$store.sidebar.isWide()"
-                                class="
-                                    ri-arrow-down-s-line
-                                    ml-auto
-                                    shrink-0
-                                    text-base
-                                    transition-transform
-                                    duration-200
-                                "
-                                :class="isSubmenuOpen('master') ?
-                                    'rotate-180 text-brand-500' :
-                                    ''"></i>
+                            <i x-cloak x-show="$store.sidebar.isWide()" class="
+                                        ri-arrow-down-s-line
+                                        ml-auto
+                                        shrink-0
+                                        text-base
+                                        transition-transform
+                                        duration-200
+                                    " :class="isSubmenuOpen('master') ?
+                                        'rotate-180 text-brand-500' :
+                                        ''"></i>
                         </button>
 
-                        <div x-cloak
-                            x-show="
-                                isSubmenuOpen('master')
-                                && $store.sidebar.isWide()
-                            "
-                            x-transition>
-                            <ul
-                                class="
-                                    ml-[22px]
-                                    mt-1
-                                    space-y-0.5
-                                    border-l
-                                    border-gray-200
-                                    pl-[17px]
-                                    dark:border-gray-700
-                                ">
+                        <div x-cloak x-show="
+                                    isSubmenuOpen('master')
+                                    && $store.sidebar.isWide()
+                                " x-transition>
+                            <ul class="
+                                        ml-[22px]
+                                        mt-1
+                                        space-y-0.5
+                                        border-l
+                                        border-gray-200
+                                        pl-[17px]
+                                        dark:border-gray-700
+                                    ">
                                 @foreach ($masterMenus as $menu)
                                     @php
                                         $menuPatterns = \Illuminate\Support\Arr::wrap(
@@ -684,36 +659,33 @@
                                     @endphp
 
                                     <li>
-                                        <a href="{{ route($menu['route']) }}" @click="closeMobileSidebar()"
-                                            class="
-                                                menu-dropdown-item
-                                                flex
-                                                min-h-9
-                                                items-center
-                                                gap-2.5
-                                                rounded-lg
-                                                px-2.5
-                                                py-1.5
-                                                text-[13px]
-                                                font-medium
-                                                leading-5
-                                                transition-colors
-                                                duration-200
-                                                {{ $menuActive ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive' }}
-                                            ">
-                                            <i
-                                                class="
-                                                    {{ $menu['icon'] }}
-                                                    shrink-0
-                                                    text-base
-                                                "></i>
+                                        <a href="{{ route($menu['route']) }}" @click="closeMobileSidebar()" class="
+                                                        menu-dropdown-item
+                                                        flex
+                                                        min-h-9
+                                                        items-center
+                                                        gap-2.5
+                                                        rounded-lg
+                                                        px-2.5
+                                                        py-1.5
+                                                        text-[13px]
+                                                        font-medium
+                                                        leading-5
+                                                        transition-colors
+                                                        duration-200
+                                                        {{ $menuActive ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive' }}
+                                                    ">
+                                            <i class="
+                                                            {{ $menu['icon'] }}
+                                                            shrink-0
+                                                            text-base
+                                                        "></i>
 
-                                            <span
-                                                class="
-                                                    min-w-0
-                                                    flex-1
-                                                    truncate
-                                                ">
+                                            <span class="
+                                                            min-w-0
+                                                            flex-1
+                                                            truncate
+                                                        ">
                                                 {{ $menu['label'] }}
                                             </span>
                                         </a>
@@ -725,94 +697,84 @@
                 @endif
 
                 {{-- ====================================================
-                    KONTEN DAN INFORMASI
+                KONTEN DAN INFORMASI
                 ===================================================== --}}
 
                 @if ($contentMenus->isNotEmpty())
                     <li>
                         <button type="button" title="Konten dan Informasi" @click="toggleSubmenu('content')"
-                            :aria-expanded="isSubmenuOpen('content')"
-                            class="
-                                menu-item
-                                group
-                                flex
-                                min-h-10
-                                w-full
-                                items-center
-                                gap-3
-                                rounded-lg
-                                px-3
-                                py-2
-                                text-[13px]
-                                font-medium
-                                leading-5
-                                transition-colors
-                                duration-200
-                            "
-                            :class="[
-                                isMenuActive('content') ?
-                                'menu-item-active' :
-                                'menu-item-inactive',
-                            
-                                $store.sidebar.isCompact() ?
-                                'xl:justify-center' :
-                                'justify-start'
-                            ]">
-                            <span
-                                class="
+                            :aria-expanded="isSubmenuOpen('content')" class="
+                                    menu-item
+                                    group
                                     flex
-                                    h-6
-                                    w-6
-                                    shrink-0
+                                    min-h-10
+                                    w-full
                                     items-center
-                                    justify-center
-                                "
-                                :class="isMenuActive('content') ?
-                                    'menu-item-icon-active' :
-                                    'menu-item-icon-inactive'">
+                                    gap-3
+                                    rounded-lg
+                                    px-3
+                                    py-2
+                                    text-[13px]
+                                    font-medium
+                                    leading-5
+                                    transition-colors
+                                    duration-200
+                                " :class="[
+                                    isMenuActive('content') ?
+                                    'menu-item-active' :
+                                    'menu-item-inactive',
+
+                                    $store.sidebar.isCompact() ?
+                                    'xl:justify-center' :
+                                    'justify-start'
+                                ]">
+                            <span class="
+                                        flex
+                                        h-6
+                                        w-6
+                                        shrink-0
+                                        items-center
+                                        justify-center
+                                    " :class="isMenuActive('content') ?
+                                        'menu-item-icon-active' :
+                                        'menu-item-icon-inactive'">
                                 <i class="ri-layout-grid-line text-lg"></i>
                             </span>
 
-                            <span x-cloak x-show="$store.sidebar.isWide()"
-                                class="
-                                    min-w-0
-                                    flex-1
-                                    truncate
-                                    text-left
-                                ">
+                            <span x-cloak x-show="$store.sidebar.isWide()" class="
+                                        min-w-0
+                                        flex-1
+                                        truncate
+                                        text-left
+                                    ">
                                 Konten & Informasi
                             </span>
 
-                            <i x-cloak x-show="$store.sidebar.isWide()"
-                                class="
-                                    ri-arrow-down-s-line
-                                    ml-auto
-                                    shrink-0
-                                    text-base
-                                    transition-transform
-                                    duration-200
-                                "
-                                :class="isSubmenuOpen('content') ?
-                                    'rotate-180 text-brand-500' :
-                                    ''"></i>
+                            <i x-cloak x-show="$store.sidebar.isWide()" class="
+                                        ri-arrow-down-s-line
+                                        ml-auto
+                                        shrink-0
+                                        text-base
+                                        transition-transform
+                                        duration-200
+                                    " :class="isSubmenuOpen('content') ?
+                                        'rotate-180 text-brand-500' :
+                                        ''"></i>
                         </button>
 
-                        <div x-cloak
-                            x-show="
-                                isSubmenuOpen('content')
-                                && $store.sidebar.isWide()
-                            "
-                            x-transition>
-                            <ul
-                                class="
-                                    ml-[22px]
-                                    mt-1
-                                    space-y-0.5
-                                    border-l
-                                    border-gray-200
-                                    pl-[17px]
-                                    dark:border-gray-700
-                                ">
+                        <div x-cloak x-show="
+                                    isSubmenuOpen('content')
+                                    && $store.sidebar.isWide()
+                                " x-transition>
+                            <ul class="
+                                        ml-[22px]
+                                        mt-1
+                                        space-y-0.5
+                                        border-l
+                                        border-gray-200
+                                        pl-[17px]
+                                        dark:border-gray-700
+                                    ">
                                 @foreach ($contentMenus as $menu)
                                     @php
                                         $menuPatterns = \Illuminate\Support\Arr::wrap(
@@ -823,36 +785,33 @@
                                     @endphp
 
                                     <li>
-                                        <a href="{{ route($menu['route']) }}" @click="closeMobileSidebar()"
-                                            class="
-                                                menu-dropdown-item
-                                                flex
-                                                min-h-9
-                                                items-center
-                                                gap-2.5
-                                                rounded-lg
-                                                px-2.5
-                                                py-1.5
-                                                text-[13px]
-                                                font-medium
-                                                leading-5
-                                                transition-colors
-                                                duration-200
-                                                {{ $menuActive ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive' }}
-                                            ">
-                                            <i
-                                                class="
-                                                    {{ $menu['icon'] }}
-                                                    shrink-0
-                                                    text-base
-                                                "></i>
+                                        <a href="{{ route($menu['route']) }}" @click="closeMobileSidebar()" class="
+                                                        menu-dropdown-item
+                                                        flex
+                                                        min-h-9
+                                                        items-center
+                                                        gap-2.5
+                                                        rounded-lg
+                                                        px-2.5
+                                                        py-1.5
+                                                        text-[13px]
+                                                        font-medium
+                                                        leading-5
+                                                        transition-colors
+                                                        duration-200
+                                                        {{ $menuActive ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive' }}
+                                                    ">
+                                            <i class="
+                                                            {{ $menu['icon'] }}
+                                                            shrink-0
+                                                            text-base
+                                                        "></i>
 
-                                            <span
-                                                class="
-                                                    min-w-0
-                                                    flex-1
-                                                    truncate
-                                                ">
+                                            <span class="
+                                                            min-w-0
+                                                            flex-1
+                                                            truncate
+                                                        ">
                                                 {{ $menu['label'] }}
                                             </span>
                                         </a>
@@ -864,94 +823,84 @@
                 @endif
 
                 {{-- ====================================================
-                    PENGADAAN
+                PENGADAAN
                 ===================================================== --}}
 
                 @if ($canAccessSharedModule && $pengadaanMenus->isNotEmpty())
                     <li>
                         <button type="button" title="Pengadaan" @click="toggleSubmenu('pengadaan')"
-                            :aria-expanded="isSubmenuOpen('pengadaan')"
-                            class="
-                                menu-item
-                                group
-                                flex
-                                min-h-10
-                                w-full
-                                items-center
-                                gap-3
-                                rounded-lg
-                                px-3
-                                py-2
-                                text-[13px]
-                                font-medium
-                                leading-5
-                                transition-colors
-                                duration-200
-                            "
-                            :class="[
-                                isMenuActive('pengadaan') ?
-                                'menu-item-active' :
-                                'menu-item-inactive',
-                            
-                                $store.sidebar.isCompact() ?
-                                'xl:justify-center' :
-                                'justify-start'
-                            ]">
-                            <span
-                                class="
+                            :aria-expanded="isSubmenuOpen('pengadaan')" class="
+                                    menu-item
+                                    group
                                     flex
-                                    h-6
-                                    w-6
-                                    shrink-0
+                                    min-h-10
+                                    w-full
                                     items-center
-                                    justify-center
-                                "
-                                :class="isMenuActive('pengadaan') ?
-                                    'menu-item-icon-active' :
-                                    'menu-item-icon-inactive'">
+                                    gap-3
+                                    rounded-lg
+                                    px-3
+                                    py-2
+                                    text-[13px]
+                                    font-medium
+                                    leading-5
+                                    transition-colors
+                                    duration-200
+                                " :class="[
+                                    isMenuActive('pengadaan') ?
+                                    'menu-item-active' :
+                                    'menu-item-inactive',
+
+                                    $store.sidebar.isCompact() ?
+                                    'xl:justify-center' :
+                                    'justify-start'
+                                ]">
+                            <span class="
+                                        flex
+                                        h-6
+                                        w-6
+                                        shrink-0
+                                        items-center
+                                        justify-center
+                                    " :class="isMenuActive('pengadaan') ?
+                                        'menu-item-icon-active' :
+                                        'menu-item-icon-inactive'">
                                 <i class="ri-shopping-cart-2-line text-lg"></i>
                             </span>
 
-                            <span x-cloak x-show="$store.sidebar.isWide()"
-                                class="
-                                    min-w-0
-                                    flex-1
-                                    truncate
-                                    text-left
-                                ">
+                            <span x-cloak x-show="$store.sidebar.isWide()" class="
+                                        min-w-0
+                                        flex-1
+                                        truncate
+                                        text-left
+                                    ">
                                 Pengadaan
                             </span>
 
-                            <i x-cloak x-show="$store.sidebar.isWide()"
-                                class="
-                                    ri-arrow-down-s-line
-                                    ml-auto
-                                    shrink-0
-                                    text-base
-                                    transition-transform
-                                    duration-200
-                                "
-                                :class="isSubmenuOpen('pengadaan') ?
-                                    'rotate-180 text-brand-500' :
-                                    ''"></i>
+                            <i x-cloak x-show="$store.sidebar.isWide()" class="
+                                        ri-arrow-down-s-line
+                                        ml-auto
+                                        shrink-0
+                                        text-base
+                                        transition-transform
+                                        duration-200
+                                    " :class="isSubmenuOpen('pengadaan') ?
+                                        'rotate-180 text-brand-500' :
+                                        ''"></i>
                         </button>
 
-                        <div x-cloak
-                            x-show="
-                                isSubmenuOpen('pengadaan')
-                                && $store.sidebar.isWide()
-                            "
-                            x-transition>
-                            <ul
-                                class="
-                                    ml-[22px]
-                                    mt-1
-                                    space-y-0.5
-                                    border-l
-                                    border-gray-200
-                                    pl-[17px]
-                                    dark:border-gray-700
-                                ">
+                        <div x-cloak x-show="
+                                    isSubmenuOpen('pengadaan')
+                                    && $store.sidebar.isWide()
+                                " x-transition>
+                            <ul class="
+                                        ml-[22px]
+                                        mt-1
+                                        space-y-0.5
+                                        border-l
+                                        border-gray-200
+                                        pl-[17px]
+                                        dark:border-gray-700
+                                    ">
                                 @foreach ($pengadaanMenus as $menu)
                                     @php
                                         $menuPatterns = \Illuminate\Support\Arr::wrap(
@@ -962,36 +911,33 @@
                                     @endphp
 
                                     <li>
-                                        <a href="{{ route($menu['route']) }}" @click="closeMobileSidebar()"
-                                            class="
-                                                menu-dropdown-item
-                                                flex
-                                                min-h-9
-                                                items-center
-                                                gap-2.5
-                                                rounded-lg
-                                                px-2.5
-                                                py-1.5
-                                                text-[13px]
-                                                font-medium
-                                                leading-5
-                                                transition-colors
-                                                duration-200
-                                                {{ $menuActive ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive' }}
-                                            ">
-                                            <i
-                                                class="
-                                                    {{ $menu['icon'] }}
-                                                    shrink-0
-                                                    text-base
-                                                "></i>
+                                        <a href="{{ route($menu['route']) }}" @click="closeMobileSidebar()" class="
+                                                        menu-dropdown-item
+                                                        flex
+                                                        min-h-9
+                                                        items-center
+                                                        gap-2.5
+                                                        rounded-lg
+                                                        px-2.5
+                                                        py-1.5
+                                                        text-[13px]
+                                                        font-medium
+                                                        leading-5
+                                                        transition-colors
+                                                        duration-200
+                                                        {{ $menuActive ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive' }}
+                                                    ">
+                                            <i class="
+                                                            {{ $menu['icon'] }}
+                                                            shrink-0
+                                                            text-base
+                                                        "></i>
 
-                                            <span
-                                                class="
-                                                    min-w-0
-                                                    flex-1
-                                                    truncate
-                                                ">
+                                            <span class="
+                                                            min-w-0
+                                                            flex-1
+                                                            truncate
+                                                        ">
                                                 {{ $menu['label'] }}
                                             </span>
                                         </a>
@@ -1003,94 +949,84 @@
                 @endif
 
                 {{-- ====================================================
-                    PROGRAM KERJA
+                PROGRAM KERJA
                 ===================================================== --}}
 
                 @if ($canAccessSharedModule && $prokerMenus->isNotEmpty())
                     <li>
                         <button type="button" title="Program Kerja" @click="toggleSubmenu('proker')"
-                            :aria-expanded="isSubmenuOpen('proker')"
-                            class="
-                                menu-item
-                                group
-                                flex
-                                min-h-10
-                                w-full
-                                items-center
-                                gap-3
-                                rounded-lg
-                                px-3
-                                py-2
-                                text-[13px]
-                                font-medium
-                                leading-5
-                                transition-colors
-                                duration-200
-                            "
-                            :class="[
-                                isMenuActive('proker') ?
-                                'menu-item-active' :
-                                'menu-item-inactive',
-                            
-                                $store.sidebar.isCompact() ?
-                                'xl:justify-center' :
-                                'justify-start'
-                            ]">
-                            <span
-                                class="
+                            :aria-expanded="isSubmenuOpen('proker')" class="
+                                    menu-item
+                                    group
                                     flex
-                                    h-6
-                                    w-6
-                                    shrink-0
+                                    min-h-10
+                                    w-full
                                     items-center
-                                    justify-center
-                                "
-                                :class="isMenuActive('proker') ?
-                                    'menu-item-icon-active' :
-                                    'menu-item-icon-inactive'">
+                                    gap-3
+                                    rounded-lg
+                                    px-3
+                                    py-2
+                                    text-[13px]
+                                    font-medium
+                                    leading-5
+                                    transition-colors
+                                    duration-200
+                                " :class="[
+                                    isMenuActive('proker') ?
+                                    'menu-item-active' :
+                                    'menu-item-inactive',
+
+                                    $store.sidebar.isCompact() ?
+                                    'xl:justify-center' :
+                                    'justify-start'
+                                ]">
+                            <span class="
+                                        flex
+                                        h-6
+                                        w-6
+                                        shrink-0
+                                        items-center
+                                        justify-center
+                                    " :class="isMenuActive('proker') ?
+                                        'menu-item-icon-active' :
+                                        'menu-item-icon-inactive'">
                                 <i class="ri-calendar-todo-line text-lg"></i>
                             </span>
 
-                            <span x-cloak x-show="$store.sidebar.isWide()"
-                                class="
-                                    min-w-0
-                                    flex-1
-                                    truncate
-                                    text-left
-                                ">
+                            <span x-cloak x-show="$store.sidebar.isWide()" class="
+                                        min-w-0
+                                        flex-1
+                                        truncate
+                                        text-left
+                                    ">
                                 Program Kerja
                             </span>
 
-                            <i x-cloak x-show="$store.sidebar.isWide()"
-                                class="
-                                    ri-arrow-down-s-line
-                                    ml-auto
-                                    shrink-0
-                                    text-base
-                                    transition-transform
-                                    duration-200
-                                "
-                                :class="isSubmenuOpen('proker') ?
-                                    'rotate-180 text-brand-500' :
-                                    ''"></i>
+                            <i x-cloak x-show="$store.sidebar.isWide()" class="
+                                        ri-arrow-down-s-line
+                                        ml-auto
+                                        shrink-0
+                                        text-base
+                                        transition-transform
+                                        duration-200
+                                    " :class="isSubmenuOpen('proker') ?
+                                        'rotate-180 text-brand-500' :
+                                        ''"></i>
                         </button>
 
-                        <div x-cloak
-                            x-show="
-                                isSubmenuOpen('proker')
-                                && $store.sidebar.isWide()
-                            "
-                            x-transition>
-                            <ul
-                                class="
-                                    ml-[22px]
-                                    mt-1
-                                    space-y-0.5
-                                    border-l
-                                    border-gray-200
-                                    pl-[17px]
-                                    dark:border-gray-700
-                                ">
+                        <div x-cloak x-show="
+                                    isSubmenuOpen('proker')
+                                    && $store.sidebar.isWide()
+                                " x-transition>
+                            <ul class="
+                                        ml-[22px]
+                                        mt-1
+                                        space-y-0.5
+                                        border-l
+                                        border-gray-200
+                                        pl-[17px]
+                                        dark:border-gray-700
+                                    ">
                                 @foreach ($prokerMenus as $menu)
                                     @php
                                         $menuPatterns = \Illuminate\Support\Arr::wrap(
@@ -1101,36 +1037,33 @@
                                     @endphp
 
                                     <li>
-                                        <a href="{{ route($menu['route']) }}" @click="closeMobileSidebar()"
-                                            class="
-                                                menu-dropdown-item
-                                                flex
-                                                min-h-9
-                                                items-center
-                                                gap-2.5
-                                                rounded-lg
-                                                px-2.5
-                                                py-1.5
-                                                text-[13px]
-                                                font-medium
-                                                leading-5
-                                                transition-colors
-                                                duration-200
-                                                {{ $menuActive ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive' }}
-                                            ">
-                                            <i
-                                                class="
-                                                    {{ $menu['icon'] }}
-                                                    shrink-0
-                                                    text-base
-                                                "></i>
+                                        <a href="{{ route($menu['route']) }}" @click="closeMobileSidebar()" class="
+                                                        menu-dropdown-item
+                                                        flex
+                                                        min-h-9
+                                                        items-center
+                                                        gap-2.5
+                                                        rounded-lg
+                                                        px-2.5
+                                                        py-1.5
+                                                        text-[13px]
+                                                        font-medium
+                                                        leading-5
+                                                        transition-colors
+                                                        duration-200
+                                                        {{ $menuActive ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive' }}
+                                                    ">
+                                            <i class="
+                                                            {{ $menu['icon'] }}
+                                                            shrink-0
+                                                            text-base
+                                                        "></i>
 
-                                            <span
-                                                class="
-                                                    min-w-0
-                                                    flex-1
-                                                    truncate
-                                                ">
+                                            <span class="
+                                                            min-w-0
+                                                            flex-1
+                                                            truncate
+                                                        ">
                                                 {{ $menu['label'] }}
                                             </span>
                                         </a>
@@ -1142,45 +1075,42 @@
                 @endif
 
                 {{-- ====================================================
-                    PERMOHONAN INFORMASI
+                PERMOHONAN INFORMASI
                 ===================================================== --}}
 
                 @if (\Illuminate\Support\Facades\Route::has('admin.permohonan.index'))
                     <li>
                         <a href="{{ route('admin.permohonan.index') }}" title="Permohonan Informasi"
-                            @click="closeMobileSidebar()"
-                            class="
-                                menu-item
-                                group
-                                relative
-                                flex
-                                min-h-10
-                                w-full
-                                items-center
-                                gap-3
-                                rounded-lg
-                                px-3
-                                py-2
-                                text-[13px]
-                                font-medium
-                                leading-5
-                                transition-colors
-                                duration-200
-                                {{ $permohonanActive ? 'menu-item-active' : 'menu-item-inactive' }}
-                            "
-                            :class="$store.sidebar.isCompact() ?
-                                'xl:justify-center' :
-                                'justify-start'">
-                            <span
-                                class="
+                            @click="closeMobileSidebar()" class="
+                                    menu-item
+                                    group
+                                    relative
                                     flex
-                                    h-6
-                                    w-6
-                                    shrink-0
+                                    min-h-10
+                                    w-full
                                     items-center
-                                    justify-center
-                                    {{ $permohonanActive ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}
-                                ">
+                                    gap-3
+                                    rounded-lg
+                                    px-3
+                                    py-2
+                                    text-[13px]
+                                    font-medium
+                                    leading-5
+                                    transition-colors
+                                    duration-200
+                                    {{ $permohonanActive ? 'menu-item-active' : 'menu-item-inactive' }}
+                                " :class="$store.sidebar.isCompact() ?
+                                    'xl:justify-center' :
+                                    'justify-start'">
+                            <span class="
+                                        flex
+                                        h-6
+                                        w-6
+                                        shrink-0
+                                        items-center
+                                        justify-center
+                                        {{ $permohonanActive ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}
+                                    ">
                                 <i class="ri-file-search-line text-lg"></i>
                             </span>
 
@@ -1189,84 +1119,79 @@
                             </span>
 
                             @if ($permohonanNotificationCount > 0)
-                                <span x-cloak x-show="$store.sidebar.isWide()"
-                                    class="
-                                        ml-auto
-                                        flex
-                                        h-5
-                                        min-w-5
-                                        shrink-0
-                                        items-center
-                                        justify-center
-                                        rounded-full
-                                        bg-red-500
-                                        px-1.5
-                                        text-[10px]
-                                        font-bold
-                                        leading-none
-                                        text-white
-                                    ">
+                                <span x-cloak x-show="$store.sidebar.isWide()" class="
+                                                ml-auto
+                                                flex
+                                                h-5
+                                                min-w-5
+                                                shrink-0
+                                                items-center
+                                                justify-center
+                                                rounded-full
+                                                bg-red-500
+                                                px-1.5
+                                                text-[10px]
+                                                font-bold
+                                                leading-none
+                                                text-white
+                                            ">
                                     {{ $permohonanNotificationCount > 99 ? '99+' : $permohonanNotificationCount }}
                                 </span>
 
-                                <span x-cloak x-show="$store.sidebar.isCompact()"
-                                    class="
-                                        absolute
-                                        right-2.5
-                                        top-1.5
-                                        h-2.5
-                                        w-2.5
-                                        rounded-full
-                                        border-2
-                                        border-white
-                                        bg-red-500
-                                        dark:border-gray-900
-                                    "></span>
+                                <span x-cloak x-show="$store.sidebar.isCompact()" class="
+                                                absolute
+                                                right-2.5
+                                                top-1.5
+                                                h-2.5
+                                                w-2.5
+                                                rounded-full
+                                                border-2
+                                                border-white
+                                                bg-red-500
+                                                dark:border-gray-900
+                                            "></span>
                             @endif
                         </a>
                     </li>
                 @endif
 
                 {{-- ====================================================
-                    KEBERATAN INFORMASI
+                KEBERATAN INFORMASI
                 ===================================================== --}}
 
                 @if ($canAccessSharedModule && \Illuminate\Support\Facades\Route::has('admin.keberatan.index'))
                     <li>
                         <a href="{{ route('admin.keberatan.index') }}" title="Keberatan Informasi"
-                            @click="closeMobileSidebar()"
-                            class="
-                                menu-item
-                                group
-                                relative
-                                flex
-                                min-h-10
-                                w-full
-                                items-center
-                                gap-3
-                                rounded-lg
-                                px-3
-                                py-2
-                                text-[13px]
-                                font-medium
-                                leading-5
-                                transition-colors
-                                duration-200
-                                {{ $keberatanActive ? 'menu-item-active' : 'menu-item-inactive' }}
-                            "
-                            :class="$store.sidebar.isCompact() ?
-                                'xl:justify-center' :
-                                'justify-start'">
-                            <span
-                                class="
+                            @click="closeMobileSidebar()" class="
+                                    menu-item
+                                    group
+                                    relative
                                     flex
-                                    h-6
-                                    w-6
-                                    shrink-0
+                                    min-h-10
+                                    w-full
                                     items-center
-                                    justify-center
-                                    {{ $keberatanActive ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}
-                                ">
+                                    gap-3
+                                    rounded-lg
+                                    px-3
+                                    py-2
+                                    text-[13px]
+                                    font-medium
+                                    leading-5
+                                    transition-colors
+                                    duration-200
+                                    {{ $keberatanActive ? 'menu-item-active' : 'menu-item-inactive' }}
+                                " :class="$store.sidebar.isCompact() ?
+                                    'xl:justify-center' :
+                                    'justify-start'">
+                            <span class="
+                                        flex
+                                        h-6
+                                        w-6
+                                        shrink-0
+                                        items-center
+                                        justify-center
+                                        {{ $keberatanActive ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}
+                                    ">
                                 <i class="ri-file-warning-line text-lg"></i>
                             </span>
 
@@ -1278,45 +1203,42 @@
                 @endif
 
                 {{-- ====================================================
-                    NOTIFIKASI
+                NOTIFIKASI
                 ===================================================== --}}
 
                 @if (\Illuminate\Support\Facades\Route::has('admin.notifikasi.index'))
                     <li>
-                        <a href="{{ route('admin.notifikasi.index') }}" title="Notifikasi"
-                            @click="closeMobileSidebar()"
+                        <a href="{{ route('admin.notifikasi.index') }}" title="Notifikasi" @click="closeMobileSidebar()"
                             class="
-                                menu-item
-                                group
-                                relative
-                                flex
-                                min-h-10
-                                w-full
-                                items-center
-                                gap-3
-                                rounded-lg
-                                px-3
-                                py-2
-                                text-[13px]
-                                font-medium
-                                leading-5
-                                transition-colors
-                                duration-200
-                                {{ $notifikasiActive ? 'menu-item-active' : 'menu-item-inactive' }}
-                            "
-                            :class="$store.sidebar.isCompact() ?
-                                'xl:justify-center' :
-                                'justify-start'">
-                            <span
-                                class="
+                                    menu-item
+                                    group
+                                    relative
                                     flex
-                                    h-6
-                                    w-6
-                                    shrink-0
+                                    min-h-10
+                                    w-full
                                     items-center
-                                    justify-center
-                                    {{ $notifikasiActive ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}
-                                ">
+                                    gap-3
+                                    rounded-lg
+                                    px-3
+                                    py-2
+                                    text-[13px]
+                                    font-medium
+                                    leading-5
+                                    transition-colors
+                                    duration-200
+                                    {{ $notifikasiActive ? 'menu-item-active' : 'menu-item-inactive' }}
+                                " :class="$store.sidebar.isCompact() ?
+                                    'xl:justify-center' :
+                                    'justify-start'">
+                            <span class="
+                                        flex
+                                        h-6
+                                        w-6
+                                        shrink-0
+                                        items-center
+                                        justify-center
+                                        {{ $notifikasiActive ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}
+                                    ">
                                 <i class="ri-notification-3-line text-lg"></i>
                             </span>
 
@@ -1325,8 +1247,87 @@
                             </span>
 
                             @if ($unreadNotificationCount > 0)
-                                <span x-cloak x-show="$store.sidebar.isWide()"
-                                    class="
+                                <span x-cloak x-show="$store.sidebar.isWide()" class="
+                                                ml-auto
+                                                flex
+                                                h-5
+                                                min-w-5
+                                                shrink-0
+                                                items-center
+                                                justify-center
+                                                rounded-full
+                                                bg-red-500
+                                                px-1.5
+                                                text-[10px]
+                                                font-bold
+                                                leading-none
+                                                text-white
+                                            ">
+                                    {{ $unreadNotificationCount > 99 ? '99+' : $unreadNotificationCount }}
+                                </span>
+
+                                <span x-cloak x-show="$store.sidebar.isCompact()" class="
+                                                absolute
+                                                right-2.5
+                                                top-1.5
+                                                h-2.5
+                                                w-2.5
+                                                rounded-full
+                                                border-2
+                                                border-white
+                                                bg-red-500
+                                                dark:border-gray-900
+                                            "></span>
+                            @endif
+                        </a>
+                    </li>
+                @endif
+
+                {{-- ====================================================
+                CHAT
+                ===================================================== --}}
+
+                @if ($isAdminUtama && \Illuminate\Support\Facades\Route::has('admin.pesan-masuk.index'))
+                    <li>
+                        <a href="{{ route('admin.pesan-masuk.index') }}" title="Chat" @click="closeMobileSidebar()" class="
+                                    menu-item
+                                    group
+                                    relative
+                                    flex
+                                    min-h-10
+                                    w-full
+                                    items-center
+                                    gap-3
+                                    rounded-lg
+                                    px-3
+                                    py-2
+                                    text-[13px]
+                                    font-medium
+                                    leading-5
+                                    transition-colors
+                                    duration-200
+                                    {{ $chatActive ? 'menu-item-active' : 'menu-item-inactive' }}
+                                " :class="$store.sidebar.isCompact() ?
+                                    'xl:justify-center' :
+                                    'justify-start'">
+                            <span class="
+                                        flex
+                                        h-6
+                                        w-6
+                                        shrink-0
+                                        items-center
+                                        justify-center
+                                        {{ $chatActive ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}
+                                    ">
+                                <i class="ri-chat-3-line text-lg"></i>
+                            </span>
+
+                            <span x-cloak x-show="$store.sidebar.isWide()" class="min-w-0 flex-1 truncate">
+                                Chat
+                            </span>
+
+                            <span x-cloak x-show="$store.sidebar.isWide() && chatUnreadCount > 0"
+                                x-text="chatUnreadCount > 99 ? '99+' : chatUnreadCount" class="
                                         ml-auto
                                         flex
                                         h-5
@@ -1341,12 +1342,9 @@
                                         font-bold
                                         leading-none
                                         text-white
-                                    ">
-                                    {{ $unreadNotificationCount > 99 ? '99+' : $unreadNotificationCount }}
-                                </span>
+                                    " aria-label="Jumlah chat baru"></span>
 
-                                <span x-cloak x-show="$store.sidebar.isCompact()"
-                                    class="
+                            <span x-cloak x-show="$store.sidebar.isCompact() && chatUnreadCount > 0" class="
                                         absolute
                                         right-2.5
                                         top-1.5
@@ -1357,114 +1355,31 @@
                                         border-white
                                         bg-red-500
                                         dark:border-gray-900
-                                    "></span>
-                            @endif
+                                    " aria-hidden="true"></span>
                         </a>
                     </li>
                 @endif
 
-                {{-- ====================================================
-                    CHAT
-                ===================================================== --}}
 
-                @if ($isAdminUtama && \Illuminate\Support\Facades\Route::has('admin.pesan-masuk.index'))
-                    <li>
-                        <a href="{{ route('admin.pesan-masuk.index') }}" title="Chat"
-                            @click="closeMobileSidebar()"
-                            class="
-                                menu-item
-                                group
-                                relative
-                                flex
-                                min-h-10
-                                w-full
-                                items-center
-                                gap-3
-                                rounded-lg
-                                px-3
-                                py-2
-                                text-[13px]
-                                font-medium
-                                leading-5
-                                transition-colors
-                                duration-200
-                                {{ $chatActive ? 'menu-item-active' : 'menu-item-inactive' }}
-                            "
-                            :class="$store.sidebar.isCompact() ?
-                                'xl:justify-center' :
-                                'justify-start'">
-                            <span
-                                class="
-                                    flex
-                                    h-6
-                                    w-6
-                                    shrink-0
-                                    items-center
-                                    justify-center
-                                    {{ $chatActive ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}
-                                ">
-                                <i class="ri-chat-3-line text-lg"></i>
-                            </span>
-
-                            <span x-cloak x-show="$store.sidebar.isWide()" class="min-w-0 flex-1 truncate">
-                                Chat
-                            </span>
-
-                            <span x-cloak x-show="$store.sidebar.isWide() && chatUnreadCount > 0"
-                                x-text="chatUnreadCount > 99 ? '99+' : chatUnreadCount"
-                                class="
-                                    ml-auto
-                                    flex
-                                    h-5
-                                    min-w-5
-                                    shrink-0
-                                    items-center
-                                    justify-center
-                                    rounded-full
-                                    bg-red-500
-                                    px-1.5
-                                    text-[10px]
-                                    font-bold
-                                    leading-none
-                                    text-white
-                                "
-                                aria-label="Jumlah chat baru"></span>
-
-                            <span x-cloak x-show="$store.sidebar.isCompact() && chatUnreadCount > 0"
-                                class="
-                                    absolute
-                                    right-2.5
-                                    top-1.5
-                                    h-2.5
-                                    w-2.5
-                                    rounded-full
-                                    border-2
-                                    border-white
-                                    bg-red-500
-                                    dark:border-gray-900
-                                "
-                                aria-hidden="true"></span>
-                        </a>
-                    </li>
-                @endif
-            </ul>
-        </nav>
-
-{{-- ====================================================
+              {{-- ====================================================
     CMS
 ===================================================== --}}
 @if (
-    \Illuminate\Support\Facades\Route::has('admin.pages.index') ||
-    \Illuminate\Support\Facades\Route::has('admin.menu.index')
+    Route::has('admin.pages.index') ||
+    Route::has('admin.menu.index') ||
+    Route::has('admin.module.index')
 )
-    <li x-data="{ open: {{ request()->routeIs('admin.pages.*') || request()->routeIs('admin.menu.*') ? 'true' : 'false' }} }">
+    <li
+        x-data="{
+            open: {{ request()->routeIs('admin.pages.*') || request()->routeIs('admin.menu.*') || request()->routeIs('admin.module.*') ? 'true' : 'false' }}
+        }">
 
         <button
+            type="button"
             @click="open = !open"
             class="
                 menu-item
                 group
-                relative
                 flex
                 min-h-10
                 w-full
@@ -1478,7 +1393,9 @@
                 leading-5
                 transition-colors
                 duration-200
-                {{ request()->routeIs('admin.pages.*') || request()->routeIs('admin.menus.*')
+                {{ request()->routeIs('admin.pages.*') ||
+                    request()->routeIs('admin.menu.*') ||
+                    request()->routeIs('admin.module.*')
                     ? 'menu-item-active'
                     : 'menu-item-inactive' }}
             "
@@ -1486,66 +1403,135 @@
                 ? 'xl:justify-center'
                 : 'justify-start'">
 
-            <span
-                class="
-                    flex
-                    h-6
-                    w-6
-                    shrink-0
-                    items-center
-                    justify-center
-                ">
+            <span class="flex h-6 w-6 shrink-0 items-center justify-center">
                 <i class="ri-pages-line text-lg"></i>
             </span>
 
             <span
                 x-cloak
                 x-show="$store.sidebar.isWide()"
-                class="min-w-0 flex-1 truncate">
+                class="min-w-0 flex-1 truncate text-left">
                 CMS
             </span>
 
             <i
+                x-cloak
                 x-show="$store.sidebar.isWide()"
-                :class="open ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'">
+                class="ri-arrow-down-s-line ml-auto transition-transform duration-200"
+                :class="open ? 'rotate-180 text-brand-500' : ''">
             </i>
         </button>
 
-        <ul
-            x-show="open"
-            x-transition
-            class="mt-1 ml-6 space-y-1">
+        <div
+            x-cloak
+            x-show="open && $store.sidebar.isWide()"
+            x-transition>
 
-            <li>
-                <a href="{{ route('admin.pages.index') }}"
-                    class="menu-item flex items-center rounded-lg px-3 py-2 text-sm">
-                    Manajemen Halaman
-                </a>
-            </li>
+            <ul
+                class="
+                    ml-[22px]
+                    mt-1
+                    space-y-0.5
+                    border-l
+                    border-gray-200
+                    pl-[17px]
+                    dark:border-gray-700
+                ">
 
-            <li>
-                <a href="{{ route('admin.menu.index') }}"
-                    class="menu-item flex items-center rounded-lg px-3 py-2 text-sm">
-                    Manajemen Menu
-                </a>
-            </li>
+                <li>
+                    <a
+                        href="{{ route('admin.pages.index') }}"
+                        class="
+                            menu-dropdown-item
+                            flex
+                            min-h-9
+                            items-center
+                            gap-2.5
+                            rounded-lg
+                            px-2.5
+                            py-1.5
+                            text-[13px]
+                            font-medium
+                            leading-5
+                            transition-colors
+                            duration-200
+                            {{ request()->routeIs('admin.pages.*')
+                                ? 'menu-dropdown-item-active'
+                                : 'menu-dropdown-item-inactive' }}
+                        ">
+                        <i class="ri-file-list-3-line"></i>
+                        <span>Manajemen Halaman</span>
+                    </a>
+                </li>
 
-            <li>
-    <a href="{{ route('admin.module.index') }}">
-        Module
-    </a>
-</li>
+                <li>
+                    <a
+                        href="{{ route('admin.menu.index') }}"
+                        class="
+                            menu-dropdown-item
+                            flex
+                            min-h-9
+                            items-center
+                            gap-2.5
+                            rounded-lg
+                            px-2.5
+                            py-1.5
+                            text-[13px]
+                            font-medium
+                            leading-5
+                            transition-colors
+                            duration-200
+                            {{ request()->routeIs('admin.menu.*')
+                                ? 'menu-dropdown-item-active'
+                                : 'menu-dropdown-item-inactive' }}
+                        ">
+                        <i class="ri-menu-line"></i>
+                        <span>Manajemen Menu</span>
+                    </a>
+                </li>
 
-        </ul>
+                <li>
+                    <a
+                        href="{{ route('admin.module.index') }}"
+                        class="
+                            menu-dropdown-item
+                            flex
+                            min-h-9
+                            items-center
+                            gap-2.5
+                            rounded-lg
+                            px-2.5
+                            py-1.5
+                            text-[13px]
+                            font-medium
+                            leading-5
+                            transition-colors
+                            duration-200
+                            {{ request()->routeIs('admin.module.*')
+                                ? 'menu-dropdown-item-active'
+                                : 'menu-dropdown-item-inactive' }}
+                        ">
+                        <i class="ri-apps-2-line"></i>
+                        <span>Manajemen Module</span>
+                    </a>
+                </li>
+
+            </ul>
+
+        </div>
+
     </li>
 @endif
 
+            </ul>
+
+        </nav>
+
         {{-- ================================================================
-            PROFIL ADMIN
+        PROFIL ADMIN
         ================================================================= --}}
 
-        <div
-            class="
+        <div class="
                 mt-4
                 shrink-0
                 border-t
@@ -1553,8 +1539,7 @@
                 pt-3
                 dark:border-gray-800
             ">
-            <div x-cloak x-show="$store.sidebar.isWide()" x-transition.opacity
-                class="
+            <div x-cloak x-show="$store.sidebar.isWide()" x-transition.opacity class="
                     flex
                     min-w-0
                     items-center
@@ -1566,8 +1551,7 @@
                     hover:bg-gray-50
                     dark:hover:bg-white/[0.03]
                 ">
-                <div
-                    class="
+                <div class="
                         flex
                         h-9
                         w-9
@@ -1584,8 +1568,7 @@
                 </div>
 
                 <div class="min-w-0 flex-1">
-                    <div
-                        class="
+                    <div class="
                             truncate
                             text-[13px]
                             font-semibold
@@ -1595,8 +1578,7 @@
                         {{ $adminDisplayName }}
                     </div>
 
-                    <div
-                        class="
+                    <div class="
                             mt-0.5
                             truncate
                             text-[11px]
@@ -1608,16 +1590,13 @@
                 </div>
             </div>
 
-            <div x-cloak x-show="$store.sidebar.isCompact()"
-                class="
+            <div x-cloak x-show="$store.sidebar.isCompact()" class="
                     hidden
                     justify-center
                     py-2
                     xl:flex
-                "
-                title="{{ $adminDisplayName }}">
-                <div
-                    class="
+                " title="{{ $adminDisplayName }}">
+                <div class="
                         flex
                         h-9
                         w-9
