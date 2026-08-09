@@ -9,6 +9,15 @@ import 'flatpickr/dist/flatpickr.min.css';
 // FullCalendar
 import { Calendar } from '@fullcalendar/core';
 
+import AOS from 'aos';
+import 'aos/dist/aos.css';
+
+AOS.init({
+    duration: 800,
+    once: true,
+    offset: 100,
+});
+
 
 
 window.Alpine = Alpine;

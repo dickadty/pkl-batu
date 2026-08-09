@@ -1,4 +1,8 @@
-{{-- DEBUG --}}
+
+
+@php
+    $isHome = request()->is('/');
+@endphp
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
@@ -7,7 +11,7 @@
     }
 </style>
 
-<svg class="size-full absolute -z-10 inset-0" width="1440" height="720" viewBox="0 0 1440 720" fill="none"
+<!-- <svg class="size-full absolute -z-10 inset-0" width="1440" height="720" viewBox="0 0 1440 720" fill="none"
     xmlns="http://www.w3.org/2000/svg">
     <path stroke="#ffffff" stroke-opacity=".7" d="M-15.227 702.342H1439.7" />
     <circle cx="711.819" cy="372.562" r="308.334" stroke="#E2E8F0" stroke-opacity=".7" />
@@ -15,9 +19,9 @@
     <path stroke="#E2E8F0" stroke-opacity=".7" d="M-15.227 573.66H1439.7M-15.227 164.029H1439.7" />
     <circle cx="782.595" cy="411.166" r="308.334" stroke="#E2E8F0" stroke-opacity=".7" />
 </svg>
-
-<!-- Top contact banner -->
-<div class="hidden sm:flex items-center justify-between w-full px-4 md:px-8 lg:px-12 xl:px-16 py-1.5 text-xs text-white"
+<!-- 
+<- Top contact banner -->
+<!-- <div class="hidden sm:flex items-center justify-between w-full px-4 md:px-8 lg:px-12 xl:px-16 py-1.5 text-xs text-white"
      style="background: linear-gradient(135deg, #022c22 0%, #064e3b 50%, #047857 100%);">
     <div class="flex items-center gap-5">
         <a href="tel:+62341591234" class="flex items-center gap-1.5 hover:text-white/80 transition">
@@ -46,113 +50,274 @@
             Jl. Panglima Sudirman, Kota Batu, Jawa Timur
         </span>
     </div>
-</div>
+</div>  -->
 
 <!-- Main navbar -->
-<nav
-    class="sticky top-0 z-50 flex items-center justify-between w-full py-2.5 pl-3 pr-4 md:pl-8 md:pr-10 lg:pl-12 lg:pr-16 xl:pl-16 xl:pr-20 bg-white border-b border-slate-100 shadow-sm text-sm">
-    <a href="{{ url('/') }}" class="w-auto px-2 py-2 flex items-center gap-3 rounded-xl">
-        <img src="{{ asset('assets/img/logo/LogoKotaBatu.webp') }}" alt="Logo PPID Kota Batu"
-            class="w-10 h-10 object-contain shrink-0">
+ <nav
+    id="navbar"
+    class="
+        fixed top-0 left-0 right-0 z-50
+        transition-all duration-300
 
-        <div>
-            <h1 class="text-[1.25rem] font-bold leading-none tracking-tight" style="color:#033927">
-                PPID Kota Batu
-            </h1>
-            <p class="mt-0.5 text-[0.70rem] leading-5 text-slate-500">
-                Pejabat Pengelola Informasi dan Dokumentasi
-            </p>
-        </div
-    </a>
+        {{ $isHome
+            ? 'bg-transparent'
+            : 'bg-white shadow-md'
+        }}
+    ">
+    <div class="max-w-6xl mx-auto px-5 lg:px-8">
 
-    <div class="hidden md:flex items-center gap-4">
+    <div class="flex items-center justify-between h-20">
 
-    @foreach($menus as $menu)
+        {{-- Logo --}}
+        <a href="{{ url('/') }}" class="flex items-center gap-3">
 
-        @if($menu->children->count())
+            <img
+                src="{{ asset('assets/img/logo/LogoKotaBatu.webp') }}"
+                class="h-12 w-auto"
+                alt="PPID">
 
-            <div class="relative group">
+            <div>
+                <h1
+                    class="navbar-title text-[1rem] font-bold leading-none tracking-tight transition-all duration-300
+                    {{ $isHome ? 'text-white' : 'text-[#033927]' }}">
 
-                <button
-                    type="button"
-                    class="inline-flex items-center gap-1 text-sm font-medium text-slate-700 hover:text-[#033927] transition">
+                    PPID Kota Batu
 
-                    {{ $menu->nama }}
+                </h1>
 
-                    <svg xmlns="http://www.w3.org/2000/svg"
-                        class="h-4 w-4"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2">
+                <p
+                    class="navbar-subtitle mt-0.5 text-[0.50rem] leading-5 transition-all duration-300
+                    {{ $isHome ? 'text-slate-200' : 'text-slate-500' }}">
 
-                        <path d="M6 9l6 6l6-6"/>
+                    Pejabat Pengelola Informasi dan Dokumentasi
 
-                    </svg>
+                </p>
+            </div>
 
-                </button>
+        </a>
 
-                <div class="pointer-events-none absolute left-0 top-full pt-2 hidden w-72 group-hover:block group-hover:pointer-events-auto z-50">
+        {{-- Menu --}}
+        <div class="hidden md:flex items-center gap-8 text-[0.875rem] font-medium">
 
-                    <div class="rounded-2xl border border-slate-200 bg-white p-3 shadow-lg">
+            @foreach($menus as $menu)
 
-                        @foreach($menu->children as $child)
+                @if($menu->children->count())
 
-                            <a
-                                href="{{ $child->link }}"
-                                @if($child->tipe === 'url')
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                @endif
-                                class="block rounded-xl px-3 py-2 hover:bg-slate-50 transition">
+                    <div class="relative group">
 
-                                {{ $child->nama }}
+                        <button
+                            type="button"
+                            class="
+                                navbar-link
+                                inline-flex items-center gap-1
+                                text-[0.875rem]
+                                font-medium
+                                transition
 
-                            </a>
+                                {{ $isHome
+                                    ? 'text-white hover:text-emerald-300'
+                                    : 'text-slate-700 hover:text-emerald-900'
+                                }}
+                            ">
 
-                        @endforeach
+                            {{ $menu->nama }}
+
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                class="h-4 w-4"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2">
+
+                                <path d="M6 9l6 6l6-6"/>
+
+                            </svg>
+
+                        </button>
+
+                        <div class="pointer-events-none absolute left-0 top-full pt-2 hidden w-50 group-hover:block group-hover:pointer-events-auto z-50">
+
+                            <div class="rounded-xl border border-slate-200 bg-white p-3 shadow-xl">
+
+                                @foreach($menu->children as $child)
+
+                                    <a
+                                        href="{{ $child->link }}"
+                                        @if($child->tipe === 'url')
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        @endif
+                                        class="block rounded-xl px-1 py-1 text-[0.875rem] hover:bg-slate-50 transition">
+
+                                        {{ $child->nama }}
+
+                                    </a>
+
+                                @endforeach
+
+                            </div>
+
+                        </div>
 
                     </div>
 
-                </div>
+                @else
 
-            </div>
+                    <a
+                        href="{{ $menu->link }}"
+                        @if($menu->tipe === 'url')
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        @endif
+                        class="
+                            navbar-link
+                            text-[0.875rem]
+                            font-medium
+                            transition
 
-        @else
+                            {{ $isHome
+                                ? 'text-white hover:text-emerald-300'
+                                : 'text-slate-700 hover:text-emerald-900'
+                            }}
+                        ">
 
-            <a
-                href="{{ $menu->link }}"
-                @if($menu->tipe === 'url')
-                    target="_blank"
-                    rel="noopener noreferrer"
+                        {{ $menu->nama }}
+
+                    </a>
+
                 @endif
-                class="text-sm font-medium text-slate-700 hover:text-[#033927] transition">
 
-                {{ $menu->nama }}
+            @endforeach
 
-            </a>
+        </div>
 
-        @endif
+        {{-- Login --}}
+        <div class="hidden md:block">
 
-    @endforeach
+            @if (Auth::guard('public')->check())
+
+                <form action="{{ route('public.logout') }}" method="POST">
+                    @csrf
+
+                    <button
+                        id="navbar-login"
+                        type="submit"
+                        class="
+                            px-4 py-2 rounded-full text-[0.875rem] font-medium transition-all duration-300
+
+                            {{ $isHome
+                                ? 'border border-white text-white'
+                                : 'border border-slate-300 text-slate-700'
+                            }}
+                        ">
+
+                        Logout
+
+                    </button>
+
+                </form>
+
+            @else
+
+                <a
+                    href="{{ route('login') }}"
+                    id="navbar-login"
+                    class="
+                        inline-block px-4 py-2 rounded-full text-[0.875rem] font-medium transition-all duration-300
+
+                        {{ $isHome
+                            ? 'border border-white text-white'
+                            : 'border border-slate-300 text-slate-700'
+                        }}
+                    ">
+
+                    Login
+
+                </a>
+
+            @endif
+
+        </div>
+
+    </div>
 
 </div>
-
-    <button type="button" class="hidden md:block px-5 py-2 text-sm font-medium text-white active:scale-95 transition-all rounded-full bg-emerald-800">
-         @if (Auth::guard('public')->check())
-                    <form action="{{ route('public.logout') }}" method="POST">
-                        @csrf
-                        <button type="submit" class="text-slate-50">
-                            Logout
-                        </button>
-                    </form>
-                @else
-                    <a href="{{ route('login') }}" class="text-slate-50">
-                        Login
-                    </a>
-                @endif
-    </button>
-    <!-- <button type="button" id="open-menu" class="md:hidden text-[#033927] active:scale-90 transition">
-        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16"/><path d="M4 12h16"/><path d="M4 19h16"/></svg>
-    </button> -->
 </nav>
+
+
+@if($isHome)
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    const navbar = document.getElementById('navbar');
+
+    const title = document.querySelector('.navbar-title');
+    const subtitle = document.querySelector('.navbar-subtitle');
+
+    const links = document.querySelectorAll('.navbar-link');
+
+    const login = document.getElementById('navbar-login');
+
+    function updateNavbar() {
+
+        if (window.scrollY > 50) {
+
+            navbar.classList.remove('bg-transparent');
+            navbar.classList.add('bg-white', 'shadow-md');
+
+            title.classList.remove('text-white');
+            title.classList.add('text-[#033927]');
+
+            subtitle.classList.remove('text-slate-200');
+            subtitle.classList.add('text-slate-500');
+
+            links.forEach(link => {
+                link.classList.remove('text-white');
+                link.classList.add('text-slate-700');
+            });
+
+            login.classList.remove(
+                'border-white',
+                'text-white'
+            );
+
+            login.classList.add(
+                'border-slate-300',
+                'text-slate-700'
+            );
+
+        } else {
+
+            navbar.classList.remove('bg-white', 'shadow-md');
+            navbar.classList.add('bg-transparent');
+
+            title.classList.remove('text-[#033927]');
+            title.classList.add('text-white');
+
+            subtitle.classList.remove('text-slate-500');
+            subtitle.classList.add('text-slate-200');
+
+            links.forEach(link => {
+                link.classList.remove('text-slate-700');
+                link.classList.add('text-white');
+            });
+
+            login.classList.remove(
+                'border-slate-300',
+                'text-slate-700'
+            );
+
+            login.classList.add(
+                'border-white',
+                'text-white'
+            );
+        }
+    }
+
+    updateNavbar();
+
+    window.addEventListener('scroll', updateNavbar);
+
+});
+</script>
+@endif

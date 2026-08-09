@@ -18,9 +18,9 @@
 
     @include('components.public.navbar')
 
-    <main>
-        @yield('content')
-    </main>
+    <main class="{{ request()->is('/') ? '' : 'pt-28' }}">
+    @yield('content')
+</main>
 
     @include('components.public.footer')
 

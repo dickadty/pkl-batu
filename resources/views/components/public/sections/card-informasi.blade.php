@@ -1,72 +1,103 @@
-<section class="relative z-30 -mt-20 pb-11 lg:-mt-24 lg:pb-24">
-    <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+<section class="relative lg:-mt-17 lg:pb-24">
+    <div class="mx-auto max-w-5xl lg:px-11">
+        <div class="relative py-6">
+            <div class="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-5">
 
-        <div class="relative rounded-3xl bg-white p-4 shadow-2xl shadow-black/10 sm:p-6 lg:p-8">
-
-            <div class="grid grid-cols-1 gap-3 sm:grid-cols-4 lg:gap-4">
-
+                {{-- Permohonan Informasi --}}
                 <a href="{{ url('/pelayanan-informasi-publik') }}"
-                    class="group flex flex-col items-start rounded-2xl border border-slate-100 p-4 text-left transition hover:-translate-y-1 hover:border-slate-200 hover:shadow-lg sm:p-5">
-                    <span class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[#033927]/10 text-[#033927] transition group-hover:scale-105">
-                        <svg class="h-5 w-5 heroicon" data-icon="document-text" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                    </span>
-                    <h3 class="text-sm font-bold text-slate-800">Permohonan Informasi</h3>
-                    <p class="mt-2 text-xs leading-relaxed text-slate-500">
-                        Ajukan permohonan informasi publik secara online dengan mudah dan cepat.
-                    </p>
-                    <span class="mt-4 inline-flex items-center gap-1 text-xs font-medium text-[#033927] opacity-0 transition group-hover:opacity-100">
-                        Ajukan sekarang
-                        <svg class="h-3 w-3 transition group-hover:translate-x-0.5 heroicon" data-icon="chevron-right" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
-                    </span>
+                  data-aos="fade-up"
+                    class="group flex flex-col items-center rounded-2xl bg-gradient-to-br from-green-950 via-green-900 to-emerald-700 p-5 text-center shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl">
+
+                    <div
+                        class="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-sm transition group-hover:bg-white/20">
+
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8"
+                            stroke="currentColor" class="h-6 w-6">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M19.5 14.25v-8.25a2.25 2.25 0 00-2.25-2.25h-10.5A2.25 2.25 0 004.5 6v12a2.25 2.25 0 002.25 2.25h5.25" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 7.5h6M9 12h6M9 16.5h3" />
+                        </svg>
+
+                    </div>
+
+                    <h3 class="text-sm font-semibold text-white">
+                        Permohonan Informasi
+                    </h3>
+
                 </a>
 
+                {{-- Layanan Cepat --}}
                 <a href="{{ url('/kontak') }}"
-                    class="group flex flex-col items-start rounded-2xl border border-slate-100 p-4 text-left transition hover:-translate-y-1 hover:border-slate-200 hover:shadow-lg sm:p-5">
-                    <span class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[#033927]/10 text-[#033927] transition group-hover:scale-105">
-                        <svg class="h-5 w-5 heroicon" data-icon="clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                    </span>
-                    <h3 class="text-sm font-bold text-slate-800">Layanan Cepat &amp; Responsif</h3>
-                    <p class="mt-2 text-xs leading-relaxed text-slate-500">
-                        Tim PPID siap merespon setiap permohonan dan keberatan tepat waktu.
-                    </p>
-                    <span class="mt-4 inline-flex items-center gap-1 text-xs font-medium text-[#033927] opacity-0 transition group-hover:opacity-100">
-                        Hubungi kami
-                        <svg class="h-3 w-3 transition group-hover:translate-x-0.5 heroicon" data-icon="chevron-right" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
-                    </span>
+                  data-aos="fade-up"
+                    class="group flex flex-col items-center rounded-2xl bg-gradient-to-br from-green-950 via-green-900 to-emerald-700 p-5 text-center shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl">
+
+                    <div
+                        class="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-sm transition group-hover:bg-white/20">
+
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8"
+                            stroke="currentColor" class="h-6 w-6">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M13.5 3L4.5 14.25h6l-1.5 6.75L18 9.75h-6L13.5 3z" />
+                        </svg>
+
+                    </div>
+
+                    <h3 class="text-sm font-semibold text-white">
+                        Layanan Cepat
+                    </h3>
+
+
                 </a>
 
-                <a href="{{ url('/profil-kota-batu') }}"
-                    class="group flex flex-col items-start rounded-2xl border border-slate-100 p-4 text-left transition hover:-translate-y-1 hover:border-slate-200 hover:shadow-lg sm:p-5">
-                    <span class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[#033927]/10 text-[#033927] transition group-hover:scale-105">
-                        <svg class="h-5 w-5 heroicon" data-icon="shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                    </span>
-                    <h3 class="text-sm font-bold text-slate-800">Data Terpercaya</h3>
-                    <p class="mt-2 text-xs leading-relaxed text-slate-500">
-                        Seluruh informasi disajikan secara akurat, terbuka, dan dapat dipertanggungjawabkan.
-                    </p>
-                    <span class="mt-4 inline-flex items-center gap-1 text-xs font-medium text-[#033927] opacity-0 transition group-hover:opacity-100">
-                        Pelajari lebih lanjut
-                        <svg class="h-3 w-3 transition group-hover:translate-x-0.5 heroicon" data-icon="chevron-right" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
-                    </span>
+                {{-- Informasi Publik --}}
+                <a href="{{ url('/informasi-publik') }}"
+                  data-aos="fade-up"
+                    class="group flex flex-col items-center rounded-2xl bg-gradient-to-br from-green-950 via-green-900 to-emerald-700 p-5 text-center shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl">
+
+                    <div
+                        class="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-sm transition group-hover:bg-white/20">
+
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8"
+                            stroke="currentColor" class="h-6 w-6">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M3.75 21h16.5M4.5 18.75V8.25l7.5-4.5 7.5 4.5v10.5" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 21v-6h6v6" />
+                        </svg>
+
+                    </div>
+
+                    <h3 class="text-sm font-semibold text-white">
+                        Informasi Publik
+                    </h3>
+
                 </a>
 
-                <a href="{{ url('/profil-kota-batu') }}"
-                    class="group flex flex-col items-start rounded-2xl border border-slate-100 p-4 text-left transition hover:-translate-y-1 hover:border-slate-200 hover:shadow-lg sm:p-5">
-                    <span class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[#033927]/10 text-[#033927] transition group-hover:scale-105">
-                        <svg class="h-5 w-5 heroicon" data-icon="shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                    </span>
-                    <h3 class="text-sm font-bold text-slate-800">Data Terpercaya</h3>
-                    <p class="mt-2 text-xs leading-relaxed text-slate-500">
-                        Seluruh informasi disajikan secara akurat, terbuka, dan dapat dipertanggungjawabkan.
-                    </p>
-                    <span class="mt-4 inline-flex items-center gap-1 text-xs font-medium text-[#033927] opacity-0 transition group-hover:opacity-100">
-                        Pelajari lebih lanjut
-                        <svg class="h-3 w-3 transition group-hover:translate-x-0.5 heroicon" data-icon="chevron-right" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
-                    </span>
+                {{-- FAQ --}}
+                <a href="{{ url('/faq') }}"
+                  data-aos="fade-up"
+                    class="group flex flex-col items-center rounded-2xl bg-gradient-to-br from-green-950 via-green-900 to-emerald-700 p-5 text-center shadow-lg transition-all duration-500 hover:-translate-y-5 hover:shadow-2xl">
+
+                    <div
+                        class="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-sm transition group-hover:bg-white/20">
+
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8"
+                            stroke="currentColor" class="h-6 w-6">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M8.25 9a3.75 3.75 0 117.5 0c0 1.33-.69 2.3-1.75 3.05-.97.69-1.75 1.3-1.75 2.45v.75" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 17.25h.008v.008H12v-.008z" />
+                        </svg>
+
+                    </div>
+
+                    <h3 class="text-sm font-semibold text-white">
+                        FAQ
+                    </h3>
+
                 </a>
 
             </div>
 
         </div>
+
     </div>
 </section>
