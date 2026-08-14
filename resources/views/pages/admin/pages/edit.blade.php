@@ -127,6 +127,35 @@
 
                         </div>
 
+                        <div>
+
+                            <label class="block mb-2 text-sm font-medium text-slate-700">
+                                Lampiran File
+                            </label>
+
+                            <input type="file" name="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.zip" class="block w-full text-sm text-slate-600
+                   file:mr-4
+                   file:rounded-lg
+                   file:border-0
+                   file:bg-emerald-600
+                   file:px-4
+                   file:py-2
+                   file:text-sm
+                   file:font-medium
+                   file:text-white
+                   hover:file:bg-emerald-700">
+
+                            <p class="mt-2 text-xs text-slate-500">
+                                PDF, DOCX, XLSX, ZIP (maks. 10 MB)
+                            </p>
+
+                            @error('file')
+                                <p class="mt-2 text-sm text-red-600">
+                                    {{ $message }}
+                                </p>
+                            @enderror
+
+                        </div>
                     </div>
 
                     {{-- Konten --}}

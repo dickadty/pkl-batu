@@ -36,8 +36,9 @@ class PageController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'judul'  => 'required|max:255',
+            'judul' => 'required|max:255',
             'gambar' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'file' => 'nullable|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,zip|max:10240',
             'status' => 'required',
         ]);
 
@@ -47,13 +48,24 @@ class PageController extends Controller
             $gambar = $request->file('gambar')->store('pages', 'public');
         }
 
+        $file = null;
+
+        if ($request->hasFile('file')) {
+
+            $file = $request
+                ->file('file')
+                ->store('pages/files', 'public');
+
+        }
+
         Pages::create([
-            'judul'     => $request->judul,
-            'slug'      => Str::slug($request->judul),
+            'judul' => $request->judul,
+            'slug' => Str::slug($request->judul),
             'module_id' => 1,
-            'gambar'    => $gambar,
-            'content'   => $request->input('content'),
-            'status'    => $request->status,
+            'gambar' => $gambar,
+            'file' => $file,
+            'content' => $request->input('content'),
+            'status' => $request->status,
         ]);
 
         return redirect()
@@ -93,8 +105,9 @@ class PageController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'judul'  => 'required|max:255',
+            'judul' => 'required|max:255',
             'gambar' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'file' => 'nullable|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,zip|max:10240',
             'status' => 'required',
         ]);
 
@@ -114,13 +127,30 @@ class PageController extends Controller
             $gambar = $request->file('gambar')->store('pages', 'public');
         }
 
+        $file = $page->file;
+
+        if ($request->hasFile('file')) {
+
+            if (
+                $page->file &&
+                Storage::disk('public')->exists($page->file)
+            ) {
+                Storage::disk('public')->delete($page->file);
+            }
+
+            $file = $request
+                ->file('file')
+                ->store('pages/files', 'public');
+        }
+
         $page->update([
-            'judul'     => $request->judul,
-            'slug'      => Str::slug($request->judul),
+            'judul' => $request->judul,
+            'slug' => Str::slug($request->judul),
             'module_id' => 1,
-            'gambar'    => $gambar,
-            'content'   => $request->input('content'),
-            'status'    => $request->status,
+            'gambar' => $gambar,
+            'file' => $file,
+            'content' => $request->input('content'),
+            'status' => $request->status,
         ]);
 
         return redirect()

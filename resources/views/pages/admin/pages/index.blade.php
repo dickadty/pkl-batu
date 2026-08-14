@@ -86,6 +86,9 @@
                             <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">
                                 Gambar
                             </th>
+                            <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">
+                                FIle
+                            </th>
 
                             <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">
                                 Nama Halaman
@@ -133,6 +136,28 @@
                                             <i class="ri-image-line text-2xl text-slate-400"></i>
 
                                         </div>
+
+                                    @endif
+
+                                </td>
+
+                                <td>
+
+                                    @if($page->file)
+
+                                        <a
+                                            href="{{ asset('storage/'.$page->file) }}"
+                                            target="_blank"
+                                            class="text-red-600 font-medium text-xs">
+
+                                            Lihat File
+
+                                        </a>
+
+                                    @else
+                                        <span class=" text-slate-800 font-medium text-xs">
+                                            Tidak ada file
+                                        </span>
 
                                     @endif
 

@@ -149,6 +149,57 @@
 
                         </div>
 
+                        <div>
+
+                            <label class="block mb-2 text-sm font-medium text-slate-700">
+                                Lampiran File
+                            </label>
+
+                            <label for="file"
+                                class="flex cursor-pointer items-center justify-center gap-3 rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 px-6 py-8 transition hover:border-emerald-500 hover:bg-emerald-50">
+
+                                <i class="ri-file-upload-line text-3xl text-emerald-600"></i>
+
+                                <div>
+
+                                    <label class="block mb-2 text-sm font-medium text-slate-700">
+                                        Lampiran File
+                                    </label>
+
+                                    <input type="file" name="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.zip" class="block w-full text-sm text-slate-600
+                                        file:mr-4
+                                        file:rounded-lg
+                                        file:border-0
+                                        file:bg-emerald-600
+                                        file:px-4
+                                        file:py-2
+                                        file:text-sm
+                                        file:font-medium
+                                        file:text-white
+                                        hover:file:bg-emerald-700">
+
+                                    <p class="mt-2 text-xs text-slate-500">
+                                        PDF, DOCX, XLSX, ZIP (maks. 10 MB)
+                                    </p>
+
+                                    @error('file')
+                                        <p class="mt-2 text-sm text-red-600">
+                                            {{ $message }}
+                                        </p>
+                                    @enderror
+
+                                </div>
+
+                            </label>
+
+                            <input type="file" id="file" name="file" class="hidden">
+
+                            <div id="file-name"
+                                class="hidden mt-3 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+                            </div>
+
+                        </div>
+
                     </div>
 
                     {{-- =========================
@@ -233,5 +284,31 @@
         });
 
     });
+
+    document.addEventListener('DOMContentLoaded', () => {
+
+        const input = document.getElementById('file');
+        const fileName = document.getElementById('file-name');
+
+        if (!input) return;
+
+        input.addEventListener('change', function () {
+
+            if (!this.files.length) {
+                fileName.classList.add('hidden');
+                return;
+            }
+
+            fileName.innerHTML = `
+            <i class="ri-file-text-line mr-2"></i>
+            ${this.files[0].name}
+        `;
+
+            fileName.classList.remove('hidden');
+
+        });
+
+    });
+
 </script>
 @endstack

@@ -12,6 +12,7 @@ class Pages extends Model
     protected $fillable = [
         'judul',
         'gambar',
+        'file',
         'module_id',
         'slug',
         'content',
