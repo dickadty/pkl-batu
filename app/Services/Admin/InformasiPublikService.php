@@ -28,7 +28,8 @@ class InformasiPublikService
         protected Dokumentasi $dokumentasi,
         protected PpidPembantu $ppidPembantu,
         protected FilesystemFactory $storage
-    ) {}
+    ) {
+    }
 
     /**
      * Mengambil daftar informasi publik untuk halaman index admin.
@@ -72,7 +73,9 @@ class InformasiPublikService
             $this->queryForAdmin($admin)
                 ->with([
                     'ppidPembantu:id,nama',
+                    'kategori:id,nama',
                 ]),
+
             $filters
         )
             ->latest('id')
@@ -90,6 +93,7 @@ class InformasiPublikService
         return $this->queryForAdmin($admin)
             ->with([
                 'ppidPembantu:id,nama',
+                'kategori:id,nama',
             ])
             ->findOrFail($id);
     }
@@ -132,11 +136,7 @@ class InformasiPublikService
 
         try {
             $dokumentasi = DB::transaction(
-                function () use (
-                    $data,
-                    $storedPath,
-                    $admin
-                ): Dokumentasi {
+                function () use ($data, $storedPath, $admin): Dokumentasi {
                     $data = $this->applyAdminOwnership(
                         $data,
                         $admin,
@@ -163,6 +163,7 @@ class InformasiPublikService
 
         $dokumentasi->load([
             'ppidPembantu:id,nama',
+            'kategori:id,nama',
         ]);
 
         $this->kirimNotifikasiSetelahDibuat(
@@ -205,12 +206,7 @@ class InformasiPublikService
 
         try {
             $updatedDokumentasi = DB::transaction(
-                function () use (
-                    $data,
-                    $admin,
-                    $dokumentasi,
-                    $newFilePath
-                ): Dokumentasi {
+                function () use ($data, $admin, $dokumentasi, $newFilePath): Dokumentasi {
                     $data = $this->applyAdminOwnership(
                         $data,
                         $admin,
@@ -232,6 +228,7 @@ class InformasiPublikService
                         ->refresh()
                         ->load([
                             'ppidPembantu:id,nama',
+                            'kategori:id,nama',
                         ]);
                 }
             );
@@ -276,7 +273,7 @@ class InformasiPublikService
         $sudahDiverifikasi =
             (int) $dokumentasi->is_verifikasi === 1;
 
-        if (! $sudahDiverifikasi) {
+        if (!$sudahDiverifikasi) {
             $dokumentasi->update([
                 'is_verifikasi' => 1,
             ]);
@@ -376,7 +373,7 @@ class InformasiPublikService
         Dokumentasi $dokumentasi,
         Authorization $admin
     ): void {
-        if (! $this->isAdminPembantu($admin)) {
+        if (!$this->isAdminPembantu($admin)) {
             return;
         }
 
@@ -447,7 +444,7 @@ class InformasiPublikService
         string $icon,
         Authorization $actor
     ): void {
-        if (! $dokumentasi->ppid_pembantuid) {
+        if (!$dokumentasi->ppid_pembantuid) {
             return;
         }
 
@@ -504,7 +501,7 @@ class InformasiPublikService
             'nama' => $dokumentasi->nama,
             'slug' => $dokumentasi->slug,
             'tahun' => $dokumentasi->tahun,
-            'sifat' => $dokumentasi->sifat,
+            'kategori_id' => $dokumentasi->kategori_id,
             'is_verifikasi' => (int) $dokumentasi->is_verifikasi,
             'ppid_pembantuid' => $dokumentasi->ppid_pembantuid,
             'ppid_pembantu' => $this->namaPpidPembantu(
@@ -530,7 +527,7 @@ class InformasiPublikService
             ->newQuery();
 
         if ($this->isAdminPembantu($admin)) {
-            if (! $admin->ppid_pembantuid) {
+            if (!$admin->ppid_pembantuid) {
                 throw new AuthorizationException(
                     'Admin tidak memiliki PPID Pembantu.'
                 );
@@ -558,9 +555,7 @@ class InformasiPublikService
 
         if ($search !== '') {
             $query->where(
-                function (Builder $subQuery) use (
-                    $search
-                ): void {
+                function (Builder $subQuery) use ($search): void {
                     $subQuery
                         ->where(
                             'nama',
@@ -574,9 +569,7 @@ class InformasiPublikService
                         )
                         ->orWhereHas(
                             'ppidPembantu',
-                            function (
-                                Builder $relationQuery
-                            ) use ($search): void {
+                            function (Builder $relationQuery) use ($search): void {
                                 $relationQuery->where(
                                     'nama',
                                     'like',
@@ -624,14 +617,12 @@ class InformasiPublikService
             );
         }
 
-        $sifat = trim(
-            (string) ($filters['sifat'] ?? '')
-        );
+        $kategoriId = $filters['kategori_id'] ?? null;
 
-        if ($sifat !== '') {
+        if (is_numeric($kategoriId)) {
             $query->where(
-                'sifat',
-                $sifat
+                'kategori_id',
+                (int) $kategoriId
             );
         }
 
@@ -666,7 +657,7 @@ class InformasiPublikService
         bool $isCreating
     ): array {
         if ($this->isAdminPembantu($admin)) {
-            if (! $admin->ppid_pembantuid) {
+            if (!$admin->ppid_pembantuid) {
                 throw new AuthorizationException(
                     'Admin tidak memiliki PPID Pembantu.'
                 );
@@ -738,7 +729,7 @@ class InformasiPublikService
             'public'
         );
 
-        if (! $path) {
+        if (!$path) {
             throw new RuntimeException(
                 'File dokumentasi gagal disimpan.'
             );
@@ -753,7 +744,7 @@ class InformasiPublikService
     private function deleteFile(
         ?string $path
     ): void {
-        if (! $path) {
+        if (!$path) {
             return;
         }
 
@@ -803,7 +794,7 @@ class InformasiPublikService
     private function ensureAdminUtama(
         Authorization $admin
     ): void {
-        if (! $this->isAdminUtama($admin)) {
+        if (!$this->isAdminUtama($admin)) {
             throw new AuthorizationException(
                 'Akses hanya diperbolehkan untuk Admin PPID Utama.'
             );
@@ -814,8 +805,8 @@ class InformasiPublikService
         Authorization $admin
     ): void {
         if (
-            ! $this->isAdminUtama($admin) &&
-            ! $this->isAdminPembantu($admin)
+            !$this->isAdminUtama($admin) &&
+            !$this->isAdminPembantu($admin)
         ) {
             throw new AuthorizationException(
                 'Peran admin tidak valid.'

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Authorization;
+use App\Models\KategoriInformasi;
 use App\Services\Admin\InformasiPublikService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -16,7 +17,8 @@ class DokumentasiController extends Controller
 {
     public function __construct(
         protected InformasiPublikService $informasiPublikService
-    ) {}
+    ) {
+    }
 
     /**
      * Menampilkan daftar informasi publik.
@@ -53,22 +55,25 @@ class DokumentasiController extends Controller
     /**
      * Menampilkan halaman tambah informasi publik.
      */
-    public function create(): View
-    {
-        $admin = $this->currentAdmin();
+   public function create(): View
+{
+    $admin = $this->currentAdmin();
 
-        $ppidPembantu = $admin->isAdminUtama()
-            ? $this->informasiPublikService->getPpidPembantuList()
-            : collect();
+    $ppidPembantu = $admin->isAdminUtama()
+        ? $this->informasiPublikService->getPpidPembantuList()
+        : collect();
 
-        return view(
-            'pages.admin.dokumentasi.create',
-            compact(
-                'admin',
-                'ppidPembantu'
-            )
-        );
-    }
+    $kategori = KategoriInformasi::orderBy('nama')->get();
+
+    return view(
+        'pages.admin.dokumentasi.create',
+        compact(
+            'admin',
+            'ppidPembantu',
+            'kategori'
+        )
+    );
+}
 
     /**
      * Menyimpan informasi publik.
@@ -127,6 +132,7 @@ class DokumentasiController extends Controller
     public function edit(int $id): View
     {
         $admin = $this->currentAdmin();
+        $kategori = KategoriInformasi::orderBy('nama')->get();
 
         $dokumentasi = $this->informasiPublikService->getByIdForAdmin(
             $id,
@@ -142,7 +148,8 @@ class DokumentasiController extends Controller
             compact(
                 'admin',
                 'dokumentasi',
-                'ppidPembantu'
+                'ppidPembantu',
+                'kategori'
             )
         );
     }
@@ -235,7 +242,7 @@ class DokumentasiController extends Controller
             ),
 
             'status' => $request->input('status'),
-            'sifat' => $request->input('sifat'),
+           
             'tahun' => $request->input('tahun'),
             'ppid_pembantuid' => $request->input(
                 'ppid_pembantuid'
@@ -284,17 +291,6 @@ class DokumentasiController extends Controller
                 'string',
             ],
 
-            'sifat' => [
-                'nullable',
-                'string',
-                Rule::in([
-                    'setiap saat',
-                    'berkala',
-                    'serta merta',
-                    'dikecualikan',
-                ]),
-            ],
-
             'ppid_pembantuid' => [
                 'nullable',
                 'integer',
@@ -304,10 +300,19 @@ class DokumentasiController extends Controller
                 ),
             ],
 
+            'kategori_id' => [
+                'required',
+                'integer',
+                Rule::exists(
+                    'kategori_informasi',
+                    'id'
+                ),
+            ],
+
             'file' => [
                 $fileRequired
-                    ? 'required'
-                    : 'nullable',
+                ? 'required'
+                : 'nullable',
 
                 'file',
 

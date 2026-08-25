@@ -1,6 +1,6 @@
 <footer
     class="px-6 md:px-16 lg:px-24 xl:px-32 pt-10 w-full text-slate-100"
-    style="background: linear-gradient(135deg, #022c22 0%, #064e3b 50%, #047857 100%);">
+    style="background: linear-gradient(to top right, #022c22 0%, #064e3b 50%, #047857 100%);">
 
     <div class="flex flex-col md:flex-row justify-between gap-10 border-b border-white/10 pb-8">
 
@@ -19,38 +19,8 @@
             </p>
         </div>
 
-        <!-- Menu -->
-        <div class="flex flex-wrap gap-16">
-
-            <div>
-                <h3 class="font-semibold text-white mb-4 uppercase tracking-wide">
-                    Menu
-                </h3>
-
-                <ul class="space-y-3 text-sm">
-                    <li>
-                        <a href="{{ url('/') }}"
-                            class="hover:text-amber-300 transition">
-                            Beranda
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="{{ route('public.informasi.index') }}"
-                            class="hover:text-amber-300 transition">
-                            Informasi Publik
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="#"
-                            class="hover:text-amber-300 transition">
-                            Profil PPID
-                        </a>
-                    </li>
-                </ul>
-            </div>
-
+        <!-- Kontak -->
+        <div class="flex flex-col gap-6">
             <div>
                 <h3 class="font-semibold text-white mb-4 uppercase tracking-wide">
                     Kontak

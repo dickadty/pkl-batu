@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\BeritaController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DokumentasiController as AdminInformasiPublikController;
+use App\Http\Controllers\Admin\kategoriInformasiController;
 use App\Http\Controllers\Admin\FaqController as AdminFaqController;
 use App\Http\Controllers\Admin\KeberatanController as AdminKeberatanController;
 use App\Http\Controllers\Admin\NotifikasiController;
@@ -29,6 +30,7 @@ use App\Http\Controllers\Publik\KtpOcrController;
 use App\Http\Controllers\Publik\PermohonanController as PublikPermohonanController;
 use App\Http\Controllers\Publik\PesanController as PublikPesanController;
 use App\Http\Controllers\Admin\ModuleController;
+use App\Http\Controllers\Publik\FaqController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/404', 'components.error.not-found-page')
@@ -124,38 +126,58 @@ Route::post(
 Route::prefix('informasi')
     ->name('public.informasi.')
     ->controller(InformasiController::class)
-    ->group(function (): void {
-        Route::get('/', 'index')
-            ->name('index');
+    ->group(function () {
 
         Route::get(
-            '/{id}/download',
+            '/berkala',
+            'berkala'
+        )->name('berkala');
+
+        Route::get(
+            '/setiap-saat',
+            'setiapSaat'
+        )->name('setiap-saat');
+
+        Route::get(
+            '/serta-merta',
+            'sertaMerta'
+        )->name('serta-merta');
+
+        Route::get(
+            '/dikecualikan',
+            'dikecualikan'
+        )->name('dikecualikan');
+
+        Route::get(
+            '/download/{id}',
             'download'
-        )
-            ->whereNumber('id')
-            ->name('download');
+        )->name('download');
 
         Route::get(
             '/{slug}',
             'show'
-        )
-            ->where(
-                'slug',
-                '[A-Za-z0-9\-]+'
-            )
-            ->name('show');
+        )->name('show');
     });
+    /*
 
-/*
 |--------------------------------------------------------------------------
 | FAQ PUBLIK
 |--------------------------------------------------------------------------
 */
 
-Route::get(
-    '/faq',
-    [PublikFaqController::class, 'index']
-)->name('public.faq.index');
+Route::prefix('faq')
+    ->name('public.faq.')
+    ->controller(
+        FaqController::class
+    )
+    ->group(function (): void {
+        Route::get('/', 'index')
+            ->name('index');
+
+        Route::get('/{id}', 'show')
+            ->whereNumber('id')
+            ->name('show');
+    });
 
 /*
 |--------------------------------------------------------------------------
@@ -921,6 +943,64 @@ Route::prefix('admin')
                         ->whereNumber('id')
                         ->name('destroy');
                 });
+
+            /*
+            |--------------------------------------------------------------------------
+            | KATEGORI INFORMASI
+            |--------------------------------------------------------------------------
+            */
+            Route::prefix('kategori-informasi')
+                ->name('kategori-informasi.')
+                ->controller(
+                    KategoriInformasiController::class
+                )
+                ->group(function (): void {
+                    Route::get(
+                        '/',
+                        'index'
+                    )->name('index');
+
+                    Route::get(
+                        '/tambah',
+                        'create'
+                    )->name('create');
+
+                    Route::post(
+                        '/tambah',
+                        'store'
+                    )->name('store');
+
+                    Route::get(
+                        '/{id}',
+                        'show'
+                    )
+                        ->whereNumber('id')
+                        ->name('show');
+
+                    Route::get(
+                        '/{id}/edit',
+                        'edit'
+                    )
+                        ->whereNumber('id')
+                        ->name('edit');
+
+                    Route::put(
+                        '/{id}',
+                        'update'
+                    )
+                        ->whereNumber('id')
+                        ->name('update');
+
+                    Route::delete(
+                        '/{id}',
+                        'destroy'
+                    )
+                        ->whereNumber('id')
+                        ->name('destroy');
+                });
+
+
+/*
 
             /*
             |--------------------------------------------------------------------------

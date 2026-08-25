@@ -9,6 +9,12 @@
     <meta name="description" content="Portal layanan informasi publik PPID Kota Batu.">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    <style>
+        html {
+            font-size: 90%;
+        }
+    </style>
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     @stack('styles')

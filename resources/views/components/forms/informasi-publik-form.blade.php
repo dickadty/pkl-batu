@@ -3,6 +3,7 @@
     'method' => 'POST',
     'informasi' => null,
     'admin' => null,
+    'kategori' => [],
     'ppidPembantu' => [],
     'title' => 'Informasi Dokumen Publik',
     'description' => 'Lengkapi informasi dokumen, klasifikasi, ringkasan, unit PPID, dan berkas informasi publik.',
@@ -37,7 +38,7 @@
 
     /*
     |--------------------------------------------------------------------------
-    | Normalisasi sifat informasi
+    | Normalisasi kategori informasi
     |--------------------------------------------------------------------------
     |
     | Nilai yang dikirim ke controller harus menggunakan huruf kecil:
@@ -52,7 +53,9 @@
     |
     */
 
-    $sifatValue = strtolower(trim((string) old('sifat', data_get($informasi, 'sifat', ''))));
+    $kategoriValue = old( 'kategori_id', data_get($informasi, 'kategori_id', '') );
+
+    $kategoriList = collect($kategori ?? []);
 
     $ppidPembantuValue = (string) old('ppid_pembantuid', data_get($informasi, 'ppid_pembantuid', ''));
 
@@ -68,7 +71,7 @@
 
     /*
     |--------------------------------------------------------------------------
-    | Pilihan sifat informasi
+    | Pilihan kategori informasi
     |--------------------------------------------------------------------------
     |
     | Key digunakan sebagai value yang dikirim ke server.
@@ -76,12 +79,8 @@
     |
     */
 
-    $sifatOptions = [
-        'berkala' => 'Berkala',
-        'serta merta' => 'Serta Merta',
-        'setiap saat' => 'Setiap Saat',
-        'dikecualikan' => 'Dikecualikan',
-    ];
+    $kategoriOptions = $kategoriList->pluck('nama', 'id')->toArray();
+
 @endphp
 
 <x-common.component-card :title="$title">
@@ -145,7 +144,7 @@
 
         <form action="{{ $action }}" method="POST" enctype="multipart/form-data" x-data="{
             submitting: false,
-            selectedSifat: @js($sifatValue),
+            selectedKategori: @js($kategoriValue),
             selectedPpid: @js($ppidPembantuValue),
             fileName: @js($currentFileName ?? ''),
             initialFileName: @js($currentFileName ?? ''),
@@ -449,9 +448,9 @@
             </section>
 
             {{-- ========================================================
-                KLASIFIKASI DAN UNIT PPID
+                KLASIFIKASI DAN UNIT PPIDdata
             ========================================================= --}}
-
+x
             <section class="space-y-5">
                 <div
                     class="
@@ -497,7 +496,7 @@
                                 text-gray-500
                                 dark:text-gray-400
                             ">
-                            Tentukan sifat informasi dan unit PPID yang bertanggung jawab.
+                            Tentukan kategori informasi dan unit PPID yang bertanggung jawab.
                         </p>
                     </div>
                 </div>
@@ -509,9 +508,9 @@
                         gap-5
                         {{ $isAdminUtama ? 'lg:grid-cols-2' : '' }}
                     ">
-                    {{-- Sifat informasi --}}
+                    {{--kategori informasi --}}
                     <div>
-                        <label for="sifat"
+                        <label for="kategori_id"
                             class="
                                 mb-1.5
                                 block
@@ -520,12 +519,12 @@
                                 text-gray-700
                                 dark:text-gray-400
                             ">
-                            Sifat Informasi
+                            Kategori Informasi
                         </label>
 
                         <div class="relative z-20 bg-transparent">
-                            <select id="sifat" name="sifat" x-model="selectedSifat"
-                                :class="selectedSifat !== ''
+                            <select id="kategori_id" name="kategori_id" x-model="selectedKategori"
+                                :class="selectedKategori !== ''
                                     ?
                                     'text-gray-800 dark:text-white/90' :
                                     'text-gray-400 dark:text-white/30'"
@@ -551,7 +550,7 @@
                                     focus:outline-hidden
                                     dark:border-gray-700
                                     dark:bg-gray-900
-                                    @error('sifat')
+                                    @error('kategori_id')
                                         border-red-500
                                         focus:border-red-500
                                         focus:ring-red-500/10
@@ -564,11 +563,11 @@
                                         dark:bg-gray-900
                                         dark:text-gray-400
                                     ">
-                                    Pilih sifat informasi
+                                    Pilih kategori informasi
                                 </option>
 
-                                @foreach ($sifatOptions as $optionValue => $optionLabel)
-                                    <option value="{{ $optionValue }}" @selected($sifatValue === $optionValue)
+                                @foreach ($kategoriOptions as $optionValue => $optionLabel)
+                                    <option value="{{ $optionValue }}" @selected($kategoriValue === $optionValue)
                                         class="
                                             text-gray-700
                                             dark:bg-gray-900
@@ -598,7 +597,7 @@
                             </span>
                         </div>
 
-                        @error('sifat')
+                        @error('kategori_id')
                             <p
                                 class="
                                     mt-1.5
@@ -620,7 +619,7 @@
                                     text-gray-500
                                     dark:text-gray-400
                                 ">
-                                Pilih klasifikasi akses informasi publik.
+                                Pilih kategori informasi publik.
                             </p>
                         @enderror
                     </div>

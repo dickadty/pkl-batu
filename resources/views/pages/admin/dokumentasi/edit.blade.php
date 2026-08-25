@@ -42,7 +42,7 @@
             FORM EDIT INFORMASI PUBLIK
         ============================================================= --}}
 
-        <x-forms.informasi-publik-form :action="route('admin.informasi-publik.update', $dokumentasi->id)" method="PUT" :informasi="$dokumentasi" :admin="$admin" :ppid-pembantu="$ppidPembantu"
+        <x-forms.informasi-publik-form :action="route('admin.informasi-publik.update', $dokumentasi->id)" method="PUT" :informasi="$dokumentasi" :admin="$admin" :ppid-pembantu="$ppidPembantu" :kategori="$kategori"
             title="Edit Informasi Publik"
             description="Periksa kembali seluruh informasi sebelum menyimpan perubahan. File lama tetap digunakan apabila Anda tidak mengunggah file pengganti."
             submit-label="Simpan Perubahan" :cancel-url="route('admin.informasi-publik.show', $dokumentasi->id)" />

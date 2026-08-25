@@ -139,6 +139,13 @@
                 'roles' => [1, 2],
             ],
             [
+                'label' => 'Kategori Informasi',
+                'route' => 'admin.kategori-informasi.index',
+                'active' => ['admin.kategori-informasi.index', 'admin.kategori-informasi.create', 'admin.kategori-informasi.edit'],
+                'icon' => 'ri-folder-add-line',
+                'roles' => [1, 2],
+            ],
+            [
                 'label' => 'Daftar Berita',
                 'route' => 'admin.berita.index',
                 'active' => ['admin.berita.index', 'admin.berita.show', 'admin.berita.edit'],

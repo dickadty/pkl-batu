@@ -13,30 +13,77 @@ class InformasiController extends Controller
         protected InformasiService $informasiService
     ) {}
 
-    public function index()
-    {
-        $dokumentasi = $this->informasiService->getVerifiedInformation();
+    public function berkala()
+{
+    $dokumentasi = $this->informasiService
+        ->getBySifat('berkala');
 
-        return view('pages.public.informasi.index', compact('dokumentasi'));
+    $jumlahKategori = $dokumentasi->count();
+
+    $jumlahDokumen = $dokumentasi
+        ->flatten()
+        ->count();
+
+    return view(
+        'pages.public.informasi.berkala',
+        compact(
+            'dokumentasi',
+            'jumlahKategori',
+            'jumlahDokumen'
+        )
+    );
+}
+
+    public function setiapSaat()
+    {
+        $dokumentasi = $this->informasiService
+            ->getBySifat('setiap saat');
+
+        $jumlahKategori = $dokumentasi->count();
+        $jumlahDokumen = $dokumentasi->flatten()->count();
+
+        return view(
+            'pages.public.informasi.setiap-saat',
+            compact('dokumentasi', 'jumlahKategori', 'jumlahDokumen')
+        );
+    }
+
+    public function sertaMerta()
+    {
+        $dokumentasi = $this->informasiService
+            ->getBySifat('serta merta');
+
+        $jumlahKategori = $dokumentasi->count();
+        $jumlahDokumen = $dokumentasi->flatten()->count();
+
+        return view(
+            'pages.public.informasi.serta-merta',
+            compact('dokumentasi', 'jumlahKategori', 'jumlahDokumen')
+        );
+    }
+
+    public function dikecualikan()
+    {
+        $dokumentasi = $this->informasiService
+            ->getBySifat('dikecualikan');
+        
+        $jumlahKategori = $dokumentasi->count();
+        $jumlahDokumen = $dokumentasi->flatten()->count();
+
+        return view(
+            'pages.public.informasi.dikecualikan',
+            compact('dokumentasi', 'jumlahKategori', 'jumlahDokumen')
+        );
     }
 
     public function show($slug)
     {
-        $dokumen = $this->informasiService->findVerifiedBySlug($slug);
+        $dokumen = $this->informasiService
+            ->findVerifiedBySlug($slug);
 
-        return view('pages.public.informasi.show', compact('dokumen'));
-    }
-
-    public function download(Request $request, $id)
-    {
-        $user = Auth::guard('public')->user();
-
-        $filePath = $this->informasiService->getVerifiedDownloadPath(
-            (int) $id,
-            $user,
-            $request->input('tujuan')
+        return view(
+            'pages.public.informasi.show',
+            compact('dokumen')
         );
-
-        return response()->download($filePath);
     }
 }

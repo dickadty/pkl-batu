@@ -39,21 +39,19 @@
 
 <x-tables.basic-tables.basic-tables-two title="Data Informasi Publik"
     description="Kelola dokumen, klasifikasi, tahun, unit PPID, ringkasan, status verifikasi, dan file informasi publik."
-    :row-ids="$rowIds" :paginator="$isPaginated ? $dokumentasi : null" :selectable="true" :show-actions="false" :show-pagination="true" :show-pagination-summary="true"
-    :pagination-window="1" min-width="min-w-[1940px]">
+    :row-ids="$rowIds" :paginator="$isPaginated ? $dokumentasi : null" :selectable="true" :show-actions="false"
+    :show-pagination="true" :show-pagination-summary="true" :pagination-window="1" min-width="min-w-[1940px]">
     <x-slot:filter>
         <form action="{{ route('admin.informasi-publik.index') }}" method="GET"
             class="grid grid-cols-1 gap-5 md:grid-cols-2">
-            <div
-                class="
+            <div class="
                     border-b
                     border-gray-100
                     pb-3
                     dark:border-gray-800
                     md:col-span-2
                 ">
-                <h4
-                    class="
+                <h4 class="
                         text-sm
                         font-semibold
                         text-gray-800
@@ -62,8 +60,7 @@
                     Filter Informasi Publik
                 </h4>
 
-                <p
-                    class="
+                <p class="
                         mt-1
                         text-xs
                         leading-5
@@ -76,8 +73,7 @@
             </div>
 
             <div class="md:col-span-2">
-                <label for="informasi_q"
-                    class="
+                <label for="informasi_q" class="
                         mb-1.5
                         block
                         text-sm
@@ -89,8 +85,7 @@
                 </label>
 
                 <input id="informasi_q" type="search" name="q" value="{{ request('q') }}"
-                    placeholder="Cari nama atau ringkasan informasi" autocomplete="off"
-                    class="
+                    placeholder="Cari nama atau ringkasan informasi" autocomplete="off" class="
                         h-11
                         w-full
                         rounded-lg
@@ -113,8 +108,7 @@
             </div>
 
             <div>
-                <label for="informasi_status"
-                    class="
+                <label for="informasi_status" class="
                         mb-1.5
                         block
                         text-sm
@@ -125,8 +119,7 @@
                     Status
                 </label>
 
-                <select id="informasi_status" name="status"
-                    class="
+                <select id="informasi_status" name="status" class="
                         h-11
                         w-full
                         rounded-lg
@@ -156,8 +149,7 @@
             </div>
 
             <div>
-                <label for="informasi_sifat"
-                    class="
+                <label for="informasi_sifat" class="
                         mb-1.5
                         block
                         text-sm
@@ -168,8 +160,7 @@
                     Sifat Informasi
                 </label>
 
-                <select id="informasi_sifat" name="sifat"
-                    class="
+                <select id="informasi_sifat" name="sifat" class="
                         h-11
                         w-full
                         rounded-lg
@@ -197,8 +188,7 @@
             </div>
 
             <div>
-                <label for="informasi_tahun"
-                    class="
+                <label for="informasi_tahun" class="
                         mb-1.5
                         block
                         text-sm
@@ -210,8 +200,7 @@
                 </label>
 
                 <input id="informasi_tahun" type="number" name="tahun" value="{{ request('tahun') }}" min="2000"
-                    max="2100" placeholder="Contoh: {{ now()->year }}"
-                    class="
+                    max="2100" placeholder="Contoh: {{ now()->year }}" class="
                         h-11
                         w-full
                         rounded-lg
@@ -230,34 +219,32 @@
 
             @if ($isAdminUtama && $ppidList->isNotEmpty())
                 <div>
-                    <label for="informasi_ppid"
-                        class="
-                            mb-1.5
-                            block
-                            text-sm
-                            font-medium
-                            text-gray-700
-                            dark:text-gray-300
-                        ">
+                    <label for="informasi_ppid" class="
+                                        mb-1.5
+                                        block
+                                        text-sm
+                                        font-medium
+                                        text-gray-700
+                                        dark:text-gray-300
+                                    ">
                         PPID Pembantu
                     </label>
 
-                    <select id="informasi_ppid" name="ppid_pembantuid"
-                        class="
-                            h-11
-                            w-full
-                            rounded-lg
-                            border
-                            border-gray-300
-                            bg-transparent
-                            px-4
-                            text-sm
-                            text-gray-800
-                            outline-none
-                            dark:border-gray-700
-                            dark:bg-gray-900
-                            dark:text-white/90
-                        ">
+                    <select id="informasi_ppid" name="ppid_pembantuid" class="
+                                        h-11
+                                        w-full
+                                        rounded-lg
+                                        border
+                                        border-gray-300
+                                        bg-transparent
+                                        px-4
+                                        text-sm
+                                        text-gray-800
+                                        outline-none
+                                        dark:border-gray-700
+                                        dark:bg-gray-900
+                                        dark:text-white/90
+                                    ">
                         <option value="">
                             Semua PPID Pembantu
                         </option>
@@ -272,8 +259,7 @@
             @endif
 
             <div>
-                <label for="informasi_per_page"
-                    class="
+                <label for="informasi_per_page" class="
                         mb-1.5
                         block
                         text-sm
@@ -284,8 +270,7 @@
                     Data per Halaman
                 </label>
 
-                <select id="informasi_per_page" name="per_page"
-                    class="
+                <select id="informasi_per_page" name="per_page" class="
                         h-11
                         w-full
                         rounded-lg
@@ -308,8 +293,7 @@
                 </select>
             </div>
 
-            <div
-                class="
+            <div class="
                     flex
                     items-center
                     justify-end
@@ -320,8 +304,7 @@
                     dark:border-gray-800
                     md:col-span-2
                 ">
-                <a href="{{ route('admin.informasi-publik.index') }}"
-                    class="
+                <a href="{{ route('admin.informasi-publik.index') }}" class="
                         inline-flex
                         h-10
                         items-center
@@ -344,8 +327,7 @@
                     Reset
                 </a>
 
-                <button type="submit"
-                    class="
+                <button type="submit" class="
                         inline-flex
                         h-10
                         items-center
@@ -367,25 +349,23 @@
 
     <x-slot:headerActions>
         @if ($activeFilterCount > 0)
-            <span
-                class="
-                    inline-flex
-                    rounded-full
-                    bg-blue-50
-                    px-3
-                    py-2
-                    text-xs
-                    font-semibold
-                    text-blue-700
-                    dark:bg-blue-500/15
-                    dark:text-blue-400
-                ">
+            <span class="
+                                inline-flex
+                                rounded-full
+                                bg-blue-50
+                                px-3
+                                py-2
+                                text-xs
+                                font-semibold
+                                text-blue-700
+                                dark:bg-blue-500/15
+                                dark:text-blue-400
+                            ">
                 {{ $activeFilterCount }} Filter Aktif
             </span>
         @endif
 
-        <a href="{{ route('admin.informasi-publik.create') }}"
-            class="
+        <a href="{{ route('admin.informasi-publik.create') }}" class="
                 inline-flex
                 h-11
                 items-center
@@ -410,8 +390,7 @@
     </x-slot:headerActions>
 
     <x-slot:head>
-        <th scope="col"
-            class="
+        <th scope="col" class="
                 w-20
                 px-4
                 py-3.5
@@ -425,8 +404,7 @@
             No
         </th>
 
-        <th scope="col"
-            class="
+        <th scope="col" class="
                 min-w-[360px]
                 px-4
                 py-3.5
@@ -440,8 +418,7 @@
             Nama Informasi
         </th>
 
-        <th scope="col"
-            class="
+        <th scope="col" class="
                 min-w-[130px]
                 px-4
                 py-3.5
@@ -455,8 +432,21 @@
             Tahun
         </th>
 
-        <th scope="col"
-            class="
+        <th scope="col" class="
+        min-w-[250px]
+        px-4
+        py-3.5
+        text-left
+        text-xs
+        font-medium
+        text-gray-500
+        dark:text-gray-400
+        sm:px-6
+    ">
+            Kategori
+        </th>
+
+        <th scope="col" class="
                 min-w-[180px]
                 px-4
                 py-3.5
@@ -470,8 +460,7 @@
             Sifat
         </th>
 
-        <th scope="col"
-            class="
+        <th scope="col" class="
                 min-w-[280px]
                 px-4
                 py-3.5
@@ -485,8 +474,7 @@
             PPID Pembantu
         </th>
 
-        <th scope="col"
-            class="
+        <th scope="col" class="
                 min-w-[420px]
                 px-4
                 py-3.5
@@ -500,8 +488,7 @@
             Ringkasan
         </th>
 
-        <th scope="col"
-            class="
+        <th scope="col" class="
                 min-w-[180px]
                 px-4
                 py-3.5
@@ -515,8 +502,7 @@
             Status
         </th>
 
-        <th scope="col"
-            class="
+        <th scope="col" class="
                 w-[230px]
                 min-w-[230px]
                 px-4
@@ -598,7 +584,7 @@
              */
             $verifyUrl = $isAdminUtama && !$isVerified ? route('admin.informasi-publik.verifikasi', $item->id) : null;
 
-            $sifatKey = strtolower(trim((string) ($item->sifat ?? '')));
+            $sifatKey = strtolower(trim((string) data_get($item, 'kategori.sifat', '')));
 
             $sifatClass = match ($sifatKey) {
                 'berkala' => 'bg-blue-50 text-blue-700 dark:bg-blue-500/15 dark:text-blue-400',
@@ -613,81 +599,74 @@
             };
         @endphp
 
-        <tr
-            class="
-                transition-colors
-                hover:bg-gray-50
-                dark:hover:bg-white/[0.03]
-            ">
+        <tr class="
+                            transition-colors
+                            hover:bg-gray-50
+                            dark:hover:bg-white/[0.03]
+                        ">
             <td class="px-4 py-4 sm:px-6">
                 <x-tables.row-checkbox :row-id="$item->id" :label="'Pilih informasi ' . ($item->nama ?? $item->id)" />
             </td>
 
-            <td
-                class="
-                    whitespace-nowrap
-                    px-4
-                    py-4
-                    text-sm
-                    font-medium
-                    text-gray-500
-                    dark:text-gray-400
-                    sm:px-6
-                ">
+            <td class="
+                                whitespace-nowrap
+                                px-4
+                                py-4
+                                text-sm
+                                font-medium
+                                text-gray-500
+                                dark:text-gray-400
+                                sm:px-6
+                            ">
                 {{ $rowNumber }}
             </td>
 
             <td class="px-4 py-4 sm:px-6">
                 <div class="flex items-start gap-3">
                     <div class="min-w-0">
-                        <a href="{{ $showUrl }}"
-                            class="
-                                group
-                                inline-flex
-                                max-w-full
-                                items-start
-                                gap-2
-                                rounded-md
-                                text-sm
-                                font-semibold
-                                leading-6
-                                text-gray-800
-                                transition
-                                hover:text-brand-600
-                                focus:outline-none
-                                focus:ring-2
-                                focus:ring-brand-500/20
-                                dark:text-white/90
-                                dark:hover:text-brand-400
-                            "
-                            title="Lihat detail {{ $item->nama ?? 'informasi' }}">
+                        <a href="{{ $showUrl }}" class="
+                                            group
+                                            inline-flex
+                                            max-w-full
+                                            items-start
+                                            gap-2
+                                            rounded-md
+                                            text-sm
+                                            font-semibold
+                                            leading-6
+                                            text-gray-800
+                                            transition
+                                            hover:text-brand-600
+                                            focus:outline-none
+                                            focus:ring-2
+                                            focus:ring-brand-500/20
+                                            dark:text-white/90
+                                            dark:hover:text-brand-400
+                                        " title="Lihat detail {{ $item->nama ?? 'informasi' }}">
                             <span class="line-clamp-3">
                                 {{ $item->nama ?? '-' }}
                             </span>
 
                             <svg class="
-                                    mt-1
-                                    h-4
-                                    w-4
-                                    shrink-0
-                                    text-gray-400
-                                    transition
-                                    group-hover:translate-x-0.5
-                                    group-hover:text-brand-500
-                                "
-                                fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 5l7 7-7 7" />
+                                                mt-1
+                                                h-4
+                                                w-4
+                                                shrink-0
+                                                text-gray-400
+                                                transition
+                                                group-hover:translate-x-0.5
+                                                group-hover:text-brand-500
+                                            " fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                             </svg>
                         </a>
 
-                        <p
-                            class="
-                                mt-1
-                                text-xs
-                                text-gray-400
-                                dark:text-gray-500
-                            ">
+                        <p class="
+                                            mt-1
+                                            text-xs
+                                            text-gray-400
+                                            dark:text-gray-500
+                                        ">
                             ID Informasi: {{ $item->id }}
                         </p>
                     </div>
@@ -695,23 +674,22 @@
             </td>
 
             <td class="px-4 py-4 text-sm sm:px-6">
-                <span
-                    class="
-                        inline-flex
-                        items-center
-                        gap-2
-                        rounded-lg
-                        border
-                        border-gray-200
-                        bg-white
-                        px-3
-                        py-2
-                        font-medium
-                        text-gray-600
-                        dark:border-gray-700
-                        dark:bg-gray-900
-                        dark:text-gray-400
-                    ">
+                <span class="
+                                    inline-flex
+                                    items-center
+                                    gap-2
+                                    rounded-lg
+                                    border
+                                    border-gray-200
+                                    bg-white
+                                    px-3
+                                    py-2
+                                    font-medium
+                                    text-gray-600
+                                    dark:border-gray-700
+                                    dark:bg-gray-900
+                                    dark:text-gray-400
+                                ">
                     <svg class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"
                         aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -723,39 +701,56 @@
             </td>
 
             <td class="px-4 py-4 sm:px-6">
-                <span
-                    class="
-                        inline-flex
-                        rounded-full
-                        px-3
-                        py-1.5
-                        text-xs
-                        font-semibold
-                        {{ $sifatClass }}
-                    ">
-                    {{ !empty($item->sifat) ? \Illuminate\Support\Str::title($item->sifat) : '-' }}
+                <span class="
+                inline-flex
+                items-center
+                rounded-lg
+                bg-indigo-50
+                px-3
+                py-1.5
+                text-sm
+                font-medium
+                text-indigo-700
+                dark:bg-indigo-500/15
+                dark:text-indigo-400
+            ">
+                    {{ $item->kategori->nama ?? '-' }}
+                </span>
+            </td>
+
+            <td class="px-4 py-4 sm:px-6">
+                <span class="
+                                    inline-flex
+                                    rounded-full
+                                    px-3
+                                    py-1.5
+                                    text-xs
+                                    font-semibold
+                                    {{ $sifatClass }}
+                                ">
+                    {{ !empty(data_get($item, 'kategori.sifat'))
+            ? \Illuminate\Support\Str::title(data_get($item, 'kategori.sifat'))
+            : '-' }}
                 </span>
             </td>
 
             <td class="px-4 py-4 sm:px-6">
                 @if ($ppidName !== '-')
-                    <div
-                        class="
-                            inline-flex
-                            items-center
-                            gap-2
-                            rounded-xl
-                            bg-purple-50
-                            px-3
-                            py-2
-                            text-sm
-                            font-medium
-                            text-purple-700
-                            dark:bg-purple-500/15
-                            dark:text-purple-400
-                        ">
-                        <svg class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                            aria-hidden="true">
+                    <div class="
+                                                    inline-flex
+                                                    items-center
+                                                    gap-2
+                                                    rounded-xl
+                                                    bg-purple-50
+                                                    px-3
+                                                    py-2
+                                                    text-sm
+                                                    font-medium
+                                                    text-purple-700
+                                                    dark:bg-purple-500/15
+                                                    dark:text-purple-400
+                                                ">
+                        <svg class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M8 21h8m-4-4v4M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                         </svg>
@@ -763,140 +758,132 @@
                         {{ $ppidName }}
                     </div>
                 @else
-                    <span
-                        class="
-                            inline-flex
-                            rounded-full
-                            bg-gray-100
-                            px-3
-                            py-1.5
-                            text-xs
-                            font-medium
-                            text-gray-500
-                            dark:bg-gray-800
-                            dark:text-gray-400
-                        ">
+                    <span class="
+                                                    inline-flex
+                                                    rounded-full
+                                                    bg-gray-100
+                                                    px-3
+                                                    py-1.5
+                                                    text-xs
+                                                    font-medium
+                                                    text-gray-500
+                                                    dark:bg-gray-800
+                                                    dark:text-gray-400
+                                                ">
                         PPID Utama
                     </span>
                 @endif
             </td>
 
-            <td
-                class="
-                    px-4
-                    py-4
-                    text-sm
-                    leading-7
-                    text-gray-600
-                    dark:text-gray-400
-                    sm:px-6
-                ">
-                <div
-                    class="
-                        rounded-xl
-                        border
-                        border-gray-100
-                        bg-gray-50/70
-                        px-4
-                        py-3
-                        dark:border-gray-800
-                        dark:bg-gray-900/50
-                    ">
+            <td class="
+                                px-4
+                                py-4
+                                text-sm
+                                leading-7
+                                text-gray-600
+                                dark:text-gray-400
+                                sm:px-6
+                            ">
+                <div class="
+                                    rounded-xl
+                                    border
+                                    border-gray-100
+                                    bg-gray-50/70
+                                    px-4
+                                    py-3
+                                    dark:border-gray-800
+                                    dark:bg-gray-900/50
+                                ">
                     {{ \Illuminate\Support\Str::limit(strip_tags((string) ($item->ringkasan ?? '')), 210) ?: '-' }}
                 </div>
             </td>
 
             <td class="px-4 py-4 sm:px-6">
-                <span
-                    class="
-                        inline-flex
-                        items-center
-                        gap-1.5
-                        rounded-full
-                        px-3
-                        py-1.5
-                        text-xs
-                        font-semibold
-                        {{ $isVerified
-                            ? 'bg-green-50 text-green-700 dark:bg-green-500/15 dark:text-green-400'
-                            : 'bg-yellow-50 text-yellow-700 dark:bg-yellow-500/15 dark:text-yellow-400' }}
-                    ">
-                    <span
-                        class="
-                            h-1.5
-                            w-1.5
-                            shrink-0
-                            rounded-full
-                            {{ $isVerified ? 'bg-green-500' : 'bg-yellow-500' }}
-                        "></span>
+                <span class="
+                                    inline-flex
+                                    items-center
+                                    gap-1.5
+                                    rounded-full
+                                    px-3
+                                    py-1.5
+                                    text-xs
+                                    font-semibold
+                                    {{ $isVerified
+            ? 'bg-green-50 text-green-700 dark:bg-green-500/15 dark:text-green-400'
+            : 'bg-yellow-50 text-yellow-700 dark:bg-yellow-500/15 dark:text-yellow-400' }}
+                                ">
+                    <span class="
+                                        h-1.5
+                                        w-1.5
+                                        shrink-0
+                                        rounded-full
+                                        {{ $isVerified ? 'bg-green-500' : 'bg-yellow-500' }}
+                                    "></span>
 
                     {{ $statusLabel }}
                 </span>
             </td>
 
-            <td
-                class="
-                    w-[230px]
-                    min-w-[230px]
-                    px-4
-                    py-4
-                    text-center
-                    align-middle
-                    sm:px-6
-                ">
-                <x-tables.row-actions :download-url="$downloadUrl" :edit-url="$editUrl" :verify-url="$verifyUrl" :delete-url="$deleteUrl"
-                    :download-label="'Unduh informasi ' . ($item->nama ?? '')" :edit-label="'Edit informasi ' . ($item->nama ?? '')" :verify-label="'Verifikasi informasi ' . ($item->nama ?? '')" :delete-label="'Hapus informasi ' . ($item->nama ?? '')"
+            <td class="
+                                w-[230px]
+                                min-w-[230px]
+                                px-4
+                                py-4
+                                text-center
+                                align-middle
+                                sm:px-6
+                            ">
+                <x-tables.row-actions :download-url="$downloadUrl" :edit-url="$editUrl" :verify-url="$verifyUrl"
+                    :delete-url="$deleteUrl" :download-label="'Unduh informasi ' . ($item->nama ?? '')"
+                    :edit-label="'Edit informasi ' . ($item->nama ?? '')"
+                    :verify-label="'Verifikasi informasi ' . ($item->nama ?? '')"
+                    :delete-label="'Hapus informasi ' . ($item->nama ?? '')"
                     verify-confirmation="Apakah Anda yakin ingin memverifikasi informasi ini?"
                     delete-confirmation="Apakah Anda yakin ingin menghapus informasi publik ini?" />
             </td>
         </tr>
     @empty
         <tr>
-            <td colspan="9"
-                class="
-                    px-6
-                    py-10
-                    text-center
-                ">
-                <div
-                    class="
-                        mx-auto
-                        flex
-                        h-14
-                        w-14
-                        items-center
-                        justify-center
-                        rounded-full
-                        bg-cyan-50
-                        text-cyan-500
-                        dark:bg-cyan-500/15
-                        dark:text-cyan-400
-                    ">
-                    <svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                        aria-hidden="true">
+            <td colspan="9" class="
+                                px-6
+                                py-10
+                                text-center
+                            ">
+                <div class="
+                                    mx-auto
+                                    flex
+                                    h-14
+                                    w-14
+                                    items-center
+                                    justify-center
+                                    rounded-full
+                                    bg-cyan-50
+                                    text-cyan-500
+                                    dark:bg-cyan-500/15
+                                    dark:text-cyan-400
+                                ">
+                    <svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5l5 5v11a2 2 0 01-2 2z" />
                     </svg>
                 </div>
 
-                <h3
-                    class="
-                        mt-3
-                        text-base
-                        font-semibold
-                        text-gray-800
-                        dark:text-white/90
-                    ">
+                <h3 class="
+                                    mt-3
+                                    text-base
+                                    font-semibold
+                                    text-gray-800
+                                    dark:text-white/90
+                                ">
                     Belum ada data informasi publik
                 </h3>
 
-                <p
-                    class="
-                        mt-1
-                        text-sm
-                        text-gray-500
-                        dark:text-gray-400
-                    ">
+                <p class="
+                                    mt-1
+                                    text-sm
+                                    text-gray-500
+                                    dark:text-gray-400
+                                ">
                     Tambahkan dokumen baru atau ubah filter pencarian.
                 </p>
             </td>

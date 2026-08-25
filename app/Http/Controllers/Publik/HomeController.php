@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Publik;
 
 use App\Http\Controllers\Controller;
 use App\Models\Berita;
+use App\Models\Faq;
 
 class HomeController extends Controller
 {
@@ -13,6 +14,10 @@ class HomeController extends Controller
             ->take(6)
             ->get();
 
-        return view('pages.public.beranda', compact('berita'));
+       $faq = Faq::where('status', 1)
+        ->latest('id')
+        ->get();
+
+        return view('pages.public.beranda', compact('berita', 'faq'));
     }
 }

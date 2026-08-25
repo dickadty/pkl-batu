@@ -10,10 +10,9 @@
 
     @include('components.public.sections.berita')
 
-    @include('components.public.sections.statistik')
-
-    @include('components.public.sections.laporan')
+    @include('components.public.sections.faq')
 
     @include('components.public.sections.link-terkait')
+<!--  -->
 
 @endsection

@@ -22,6 +22,7 @@ class InformasiService
         return $this->dokumentasi
             ->newQuery()
             ->with('ppidPembantu')
+            ->with('kategori')
             ->where('is_verifikasi', 1)
             ->orderByDesc('id')
             ->get();
@@ -32,6 +33,7 @@ class InformasiService
         return $this->dokumentasi
             ->newQuery()
             ->with('ppidPembantu')
+            ->with('kategori')
             ->where('slug', $slug)
             ->where('is_verifikasi', 1)
             ->firstOrFail();
@@ -68,4 +70,27 @@ class InformasiService
 
         return $disk->path($dokumen->file);
     }
+
+
+    public function getBySifat(string $sifat)
+{
+    return $this->dokumentasi
+        ->newQuery()
+        ->with([
+            'kategori',
+            'ppidPembantu'
+        ])
+        ->where('is_verifikasi', 1)
+
+        ->whereHas('kategori', function ($query) use ($sifat) {
+            $query->where('sifat', $sifat);
+        })
+
+        ->orderBy('kategori_id')
+        ->orderBy('nama')
+        ->get()
+        ->groupBy(function ($item) {
+            return $item->kategori->nama ?? 'Tanpa Kategori';
+        });
+}
 }

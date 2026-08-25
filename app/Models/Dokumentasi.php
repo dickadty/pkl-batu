@@ -17,6 +17,7 @@ class Dokumentasi extends Model
         'file',
         'tanggal',
         'sifat',
+        'kategori_id',
         'is_verifikasi',
         'slug',
         'ppid_pembantuid',
@@ -26,4 +27,12 @@ class Dokumentasi extends Model
     {
         return $this->belongsTo(PpidPembantu::class, 'ppid_pembantuid', 'id');
     }
+
+   public function kategori()
+{
+    return $this->belongsTo(
+        KategoriInformasi::class,
+        'kategori_id'
+    );
+}
 }

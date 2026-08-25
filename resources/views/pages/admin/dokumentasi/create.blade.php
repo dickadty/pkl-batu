@@ -26,7 +26,7 @@
 
         <x-ui.flash-messages />
 
-        <x-forms.informasi-publik-form :action="route('admin.informasi-publik.store')" method="POST" :admin="$admin" :ppid-pembantu="$ppidPembantu"
+        <x-forms.informasi-publik-form :action="route('admin.informasi-publik.store')" method="POST" :admin="$admin" :ppid-pembantu="$ppidPembantu" :kategori="$kategori"
             title="Form Informasi Publik"
             description="Field bertanda bintang wajib diisi. Unggah dokumen dengan format yang didukung dan ukuran maksimal 5 MB."
             submit-label="Simpan Informasi" :cancel-url="route('admin.informasi-publik.index')" />
