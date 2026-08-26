@@ -14,25 +14,25 @@ class InformasiController extends Controller
     ) {}
 
     public function berkala()
-{
-    $dokumentasi = $this->informasiService
-        ->getBySifat('berkala');
+    {
+        $dokumentasi = $this->informasiService
+            ->getBySifat('berkala');
 
-    $jumlahKategori = $dokumentasi->count();
+        $jumlahKategori = $dokumentasi->count();
 
-    $jumlahDokumen = $dokumentasi
-        ->flatten()
-        ->count();
+        $jumlahDokumen = $dokumentasi
+            ->flatten()
+            ->count();
 
-    return view(
-        'pages.public.informasi.berkala',
-        compact(
-            'dokumentasi',
-            'jumlahKategori',
-            'jumlahDokumen'
-        )
-    );
-}
+        return view(
+            'pages.public.informasi.berkala',
+            compact(
+                'dokumentasi',
+                'jumlahKategori',
+                'jumlahDokumen'
+            )
+        );
+    }
 
     public function setiapSaat()
     {
@@ -43,7 +43,7 @@ class InformasiController extends Controller
         $jumlahDokumen = $dokumentasi->flatten()->count();
 
         return view(
-            'pages.public.informasi.setiap-saat',
+            'admin.informasi-publik.file.show',
             compact('dokumentasi', 'jumlahKategori', 'jumlahDokumen')
         );
     }
@@ -66,7 +66,7 @@ class InformasiController extends Controller
     {
         $dokumentasi = $this->informasiService
             ->getBySifat('dikecualikan');
-        
+
         $jumlahKategori = $dokumentasi->count();
         $jumlahDokumen = $dokumentasi->flatten()->count();
 
@@ -82,7 +82,7 @@ class InformasiController extends Controller
             ->findVerifiedBySlug($slug);
 
         return view(
-            'pages.public.informasi.show',
+            'admin.informasi-publik.file.show',
             compact('dokumen')
         );
     }

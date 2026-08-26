@@ -880,27 +880,22 @@ Route::prefix('admin')
         Route::middleware(
             'admin.role:1,2'
         )->group(function (): void {
-            /*
-            |--------------------------------------------------------------------------
-            | INFORMASI PUBLIK
-            |--------------------------------------------------------------------------
-            */
 
-            Route::prefix(
-                'informasi-publik'
-            )
-                ->name(
-                    'informasi-publik.'
-                )
-                ->controller(
-                    AdminInformasiPublikController::class
-                )
+            /*
+|--------------------------------------------------------------------------
+| INFORMASI PUBLIK
+|--------------------------------------------------------------------------
+*/
+
+            Route::prefix('informasi-publik')
+                ->name('informasi-publik.')
+                ->controller(AdminInformasiPublikController::class)
                 ->group(function (): void {
+
                     Route::get(
                         '/',
                         'index'
                     )->name('index');
-
                     Route::get(
                         '/tambah',
                         'create'
@@ -912,11 +907,11 @@ Route::prefix('admin')
                     )->name('store');
 
                     Route::get(
-                        '/{id}',
-                        'show'
+                        '/{id}/file',
+                        'showFile'
                     )
                         ->whereNumber('id')
-                        ->name('show');
+                        ->name('file.show');
 
                     Route::get(
                         '/{id}/edit',
@@ -924,20 +919,24 @@ Route::prefix('admin')
                     )
                         ->whereNumber('id')
                         ->name('edit');
-
                     Route::put(
                         '/{id}',
                         'update'
                     )
                         ->whereNumber('id')
                         ->name('update');
-
                     Route::delete(
                         '/{id}',
                         'destroy'
                     )
                         ->whereNumber('id')
                         ->name('destroy');
+                    Route::get(
+                        '/{id}',
+                        'show'
+                    )
+                        ->whereNumber('id')
+                        ->name('show');
                 });
 
             /*

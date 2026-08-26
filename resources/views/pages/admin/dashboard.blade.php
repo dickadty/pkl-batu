@@ -16,6 +16,14 @@
 
         /*
         |--------------------------------------------------------------------------
+        | Daftar tahun untuk filter
+        |--------------------------------------------------------------------------
+        */
+
+        $tahunList = $latestDokumentasi->pluck('tahun')->filter()->unique()->sortDesc()->values();
+
+        /*
+        |--------------------------------------------------------------------------
         | Statistik dashboard
         |--------------------------------------------------------------------------
         */
@@ -91,6 +99,7 @@
     @endphp
 
     <div class="space-y-6">
+
         {{-- =============================================================
             HEADER DASHBOARD
         ============================================================== --}}
@@ -168,10 +177,13 @@
                     ">
                     <i class="ri-logout-box-r-line text-lg"></i>
 
-                    <span>Logout</span>
+                    <span>
+                        Logout
+                    </span>
                 </button>
             </form>
         </section>
+
 
         {{-- =============================================================
             STATISTIK
@@ -245,20 +257,25 @@
             @endforeach
         </section>
 
+
         {{-- =============================================================
             INFORMASI PUBLIK TERBARU
         ============================================================== --}}
 
         <x-tables.basic-tables.basic-tables-two title="Informasi Publik Terbaru"
             description="Daftar informasi publik yang baru ditambahkan." :see-all-url="route('admin.informasi-publik.index')" see-all-text="Lihat Semua"
-            :row-ids="$latestDokumentasiIds" :selectable="true" :show-actions="true" min-width="min-w-[1150px]">
+            :row-ids="$latestDokumentasiIds" :selectable="true" :show-actions="true" min-width="min-w-[1000px]">
+
             {{-- =========================================================
                 FILTER
             ========================================================== --}}
 
             <x-slot:filter>
+
                 <form action="{{ route('admin.dashboard') }}" method="GET" class="space-y-4">
+
                     {{-- Filter status --}}
+
                     <div>
                         <label for="status"
                             class="
@@ -306,9 +323,11 @@
                         </select>
                     </div>
 
-                    {{-- Filter sifat --}}
+
+                    {{-- Filter tahun --}}
+
                     <div>
-                        <label for="sifat"
+                        <label for="tahun"
                             class="
                                 mb-1.5
                                 block
@@ -317,10 +336,10 @@
                                 text-gray-700
                                 dark:text-gray-300
                             ">
-                            Sifat Informasi
+                            Tahun
                         </label>
 
-                        <select id="sifat" name="sifat"
+                        <select id="tahun" name="tahun"
                             class="
                                 w-full
                                 rounded-lg
@@ -341,29 +360,22 @@
                                 dark:text-gray-300
                             ">
                             <option value="">
-                                Semua Sifat
+                                Semua Tahun
                             </option>
 
-                            <option value="setiap saat" @selected(request('sifat') === 'setiap saat')>
-                                Setiap Saat
-                            </option>
-
-                            <option value="berkala" @selected(request('sifat') === 'berkala')>
-                                Berkala
-                            </option>
-
-                            <option value="serta merta" @selected(request('sifat') === 'serta merta')>
-                                Serta Merta
-                            </option>
-
-                            <option value="dikecualikan" @selected(request('sifat') === 'dikecualikan')>
-                                Dikecualikan
-                            </option>
+                            @foreach ($tahunList as $tahun)
+                                <option value="{{ $tahun }}" @selected((string) request('tahun') === (string) $tahun)>
+                                    {{ $tahun }}
+                                </option>
+                            @endforeach
                         </select>
                     </div>
 
+
                     {{-- Tombol filter --}}
+
                     <div class="flex items-center justify-end gap-2">
+
                         <a href="{{ route('admin.dashboard') }}"
                             class="
                                 inline-flex
@@ -407,15 +419,20 @@
                             ">
                             Terapkan
                         </button>
+
                     </div>
+
                 </form>
+
             </x-slot:filter>
+
 
             {{-- =========================================================
                 TABLE HEADER
             ========================================================== --}}
 
             <x-slot:head>
+
                 {{-- Jangan tambahkan tag tr di dalam slot ini --}}
 
                 <th scope="col"
@@ -450,7 +467,7 @@
 
                 <th scope="col"
                     class="
-                        min-w-[200px]
+                        min-w-[220px]
                         px-4
                         py-3.5
                         text-left
@@ -465,7 +482,7 @@
 
                 <th scope="col"
                     class="
-                        min-w-[140px]
+                        min-w-[120px]
                         px-4
                         py-3.5
                         text-left
@@ -475,27 +492,12 @@
                         dark:text-gray-400
                         sm:px-6
                     ">
-                    Sifat
+                    Tahun
                 </th>
 
                 <th scope="col"
                     class="
-                        min-w-[140px]
-                        px-4
-                        py-3.5
-                        text-left
-                        text-xs
-                        font-medium
-                        text-gray-500
-                        dark:text-gray-400
-                        sm:px-6
-                    ">
-                    Tanggal
-                </th>
-
-                <th scope="col"
-                    class="
-                        min-w-[160px]
+                        min-w-[180px]
                         px-4
                         py-3.5
                         text-left
@@ -507,7 +509,9 @@
                     ">
                     Status
                 </th>
+
             </x-slot:head>
+
 
             {{-- =========================================================
                 TABLE BODY
@@ -520,8 +524,11 @@
                         hover:bg-gray-50
                         dark:hover:bg-white/[0.03]
                     ">
+
                     {{-- Checkbox --}}
+
                     <td class="px-4 py-3.5 sm:px-6">
+
                         <button type="button" @click="toggleRow(@js((string) $item->id))"
                             class="
                                 flex
@@ -542,10 +549,14 @@
                                 <path d="M11.67 3.5L5.25 9.92L2.33 7" stroke="white" stroke-width="1.9"
                                     stroke-linecap="round" stroke-linejoin="round" />
                             </svg>
+
                         </button>
+
                     </td>
 
+
                     {{-- Nomor --}}
+
                     <td
                         class="
                             whitespace-nowrap
@@ -559,12 +570,15 @@
                         {{ $loop->iteration }}
                     </td>
 
+
                     {{-- Nama informasi --}}
+
                     <td class="px-4 py-3.5 sm:px-6">
+
                         <div class="flex items-center gap-3">
 
-
                             <div class="min-w-0">
+
                                 <p
                                     class="
                                         line-clamp-2
@@ -585,11 +599,16 @@
                                     ">
                                     ID: {{ $item->id }}
                                 </p>
+
                             </div>
+
                         </div>
+
                     </td>
 
+
                     {{-- PPID Pembantu --}}
+
                     <td
                         class="
                             px-4
@@ -602,37 +621,29 @@
                         {{ $item->ppidPembantu?->nama ?? '-' }}
                     </td>
 
-                    {{-- Sifat --}}
+
+                    {{-- Tahun --}}
+
                     <td
                         class="
                             whitespace-nowrap
                             px-4
                             py-3.5
                             text-sm
+                            font-medium
                             text-gray-700
                             dark:text-gray-400
                             sm:px-6
                         ">
-                        {{ ucfirst($item->sifat ?? '-') }}
+                        {{ $item->tahun ?? '-' }}
                     </td>
 
-                    {{-- Tanggal --}}
-                    <td
-                        class="
-                            whitespace-nowrap
-                            px-4
-                            py-3.5
-                            text-sm
-                            text-gray-700
-                            dark:text-gray-400
-                            sm:px-6
-                        ">
-                        {{ $item->created_at?->format('d-m-Y') ?? '-' }}
-                    </td>
 
                     {{-- Status --}}
+
                     <td class="whitespace-nowrap px-4 py-3.5 sm:px-6">
-                        @if ($item->is_verifikasi)
+
+                        @if ((int) $item->is_verifikasi === 1)
                             <span
                                 class="
                                     inline-flex
@@ -645,8 +656,12 @@
                                     text-xs
                                     font-medium
                                     text-green-700
+                                    ring-1
+                                    ring-inset
+                                    ring-green-600/20
                                     dark:bg-green-500/15
                                     dark:text-green-400
+                                    dark:ring-green-500/20
                                 ">
                                 <span
                                     class="
@@ -671,8 +686,12 @@
                                     text-xs
                                     font-medium
                                     text-yellow-700
+                                    ring-1
+                                    ring-inset
+                                    ring-yellow-600/20
                                     dark:bg-yellow-500/15
                                     dark:text-yellow-400
+                                    dark:ring-yellow-500/20
                                 ">
                                 <span
                                     class="
@@ -682,15 +701,44 @@
                                         bg-yellow-500
                                     "></span>
 
-                                Menunggu
+                                Menunggu Verifikasi
                             </span>
                         @endif
+
                     </td>
 
+
                     {{-- Action --}}
+
                     <td class="px-4 py-3.5 text-center sm:px-6">
+
                         <div class="flex items-center justify-center gap-1">
+
+                            {{-- Lihat --}}
+
+                            <a href="{{ route('admin.informasi-publik.show', $item->id) }}"
+                                class="
+                                    inline-flex
+                                    h-9
+                                    w-9
+                                    items-center
+                                    justify-center
+                                    rounded-lg
+                                    text-gray-500
+                                    transition
+                                    hover:bg-green-50
+                                    hover:text-green-600
+                                    dark:text-gray-400
+                                    dark:hover:bg-green-500/15
+                                    dark:hover:text-green-400
+                                "
+                                title="Lihat informasi" aria-label="Lihat informasi {{ $item->nama }}">
+                                <i class="ri-eye-line text-lg"></i>
+                            </a>
+
+
                             {{-- Edit --}}
+
                             <a href="{{ route('admin.informasi-publik.edit', $item->id) }}"
                                 class="
                                     inline-flex
@@ -711,7 +759,9 @@
                                 <i class="ri-edit-line text-lg"></i>
                             </a>
 
+
                             {{-- Hapus --}}
+
                             <form action="{{ route('admin.informasi-publik.destroy', $item->id) }}" method="POST"
                                 onsubmit="
                                     return confirm(
@@ -740,18 +790,26 @@
                                     title="Hapus informasi" aria-label="Hapus informasi {{ $item->nama }}">
                                     <i class="ri-delete-bin-line text-lg"></i>
                                 </button>
+
                             </form>
+
                         </div>
+
                     </td>
+
                 </tr>
+
             @empty
+
                 <tr>
-                    <td colspan="8"
+
+                    <td colspan="7"
                         class="
                             px-6
                             py-14
                             text-center
                         ">
+
                         <div
                             class="
                                 mx-auto
@@ -789,9 +847,13 @@
                             ">
                             Data informasi publik terbaru akan ditampilkan di sini.
                         </p>
+
                     </td>
+
                 </tr>
             @endforelse
+
         </x-tables.basic-tables.basic-tables-two>
+
     </div>
 @endsection
