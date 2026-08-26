@@ -4,48 +4,147 @@
 
 @section('content')
     @php
+        /*
+        |--------------------------------------------------------------------------
+        | ADMIN
+        |--------------------------------------------------------------------------
+        */
+
         $isAdminUtama = (int) data_get($admin, 'role', 0) === 1;
 
+        /*
+        |--------------------------------------------------------------------------
+        | PPID PEMBANTU
+        |--------------------------------------------------------------------------
+        */
+
         $ppidName =
-            data_get($dokumentasi, 'ppidPembantu.nama') ?? (data_get($dokumentasi, 'ppid_pembantu.nama') ?? '-');
+            data_get($dokumentasi, 'ppidPembantu.nama')
+            ?? data_get($dokumentasi, 'ppid_pembantu.nama')
+            ?? '-';
 
-        $rawStatus = data_get($dokumentasi, 'status_label', data_get($dokumentasi, 'status', 'Belum Diverifikasi'));
+        /*
+        |--------------------------------------------------------------------------
+        | STATUS VERIFIKASI
+        |--------------------------------------------------------------------------
+        |
+        | Database menggunakan kolom:
+        | is_verifikasi = 0 -> Belum Diverifikasi
+        | is_verifikasi = 1 -> Terverifikasi
+        |
+        */
 
-        $normalizedStatus = strtolower(trim((string) $rawStatus));
-
-        $isVerified = in_array($normalizedStatus, ['1', 'verified', 'terverifikasi', 'disetujui', 'aktif'], true);
+        $isVerified = (int) data_get(
+            $dokumentasi,
+            'is_verifikasi',
+            0
+        ) === 1;
 
         $statusLabel = $isVerified
-            ? (in_array($normalizedStatus, ['1', 'verified'], true)
-                ? 'Terverifikasi'
-                : (string) $rawStatus)
-            : (in_array($normalizedStatus, ['', '0'], true)
-                ? 'Belum Diverifikasi'
-                : (string) $rawStatus);
+            ? 'Terverifikasi'
+            : 'Belum Diverifikasi';
 
         $statusClass = $isVerified
             ? 'bg-green-50 text-green-700 ring-green-600/20 dark:bg-green-500/15 dark:text-green-400 dark:ring-green-500/20'
             : 'bg-yellow-50 text-yellow-700 ring-yellow-600/20 dark:bg-yellow-500/15 dark:text-yellow-400 dark:ring-yellow-500/20';
 
-        $sifatKey = strtolower(trim((string) ($dokumentasi->sifat ?? '')));
+        /*
+        |--------------------------------------------------------------------------
+        | SIFAT INFORMASI
+        |--------------------------------------------------------------------------
+        */
+
+        $sifatKey = strtolower(
+            trim((string) ($dokumentasi->sifat ?? ''))
+        );
 
         $sifatClass = match ($sifatKey) {
-            'berkala' => 'bg-blue-50 text-blue-700 dark:bg-blue-500/15 dark:text-blue-400',
+            'berkala'
+                => 'bg-blue-50 text-blue-700 dark:bg-blue-500/15 dark:text-blue-400',
 
-            'serta merta' => 'bg-orange-50 text-orange-700 dark:bg-orange-500/15 dark:text-orange-400',
+            'serta merta'
+                => 'bg-orange-50 text-orange-700 dark:bg-orange-500/15 dark:text-orange-400',
 
-            'setiap saat' => 'bg-green-50 text-green-700 dark:bg-green-500/15 dark:text-green-400',
+            'setiap saat'
+                => 'bg-green-50 text-green-700 dark:bg-green-500/15 dark:text-green-400',
 
-            'dikecualikan' => 'bg-red-50 text-red-700 dark:bg-red-500/15 dark:text-red-400',
+            'dikecualikan'
+                => 'bg-red-50 text-red-700 dark:bg-red-500/15 dark:text-red-400',
 
-            default => 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
+            default
+                => 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
         };
 
-        $filePath = trim((string) ($dokumentasi->file ?? ''));
+        /*
+        |--------------------------------------------------------------------------
+        | FILE
+        |--------------------------------------------------------------------------
+        */
 
-        $fileName = $filePath !== '' ? basename($filePath) : null;
+        $filePath = trim(
+            (string) ($dokumentasi->file ?? '')
+        );
 
-        $fileExtension = $fileName ? strtoupper(pathinfo($fileName, PATHINFO_EXTENSION)) : null;
+        $filePathNormalized = str_replace(
+            '\\',
+            '/',
+            $filePath
+        );
+
+        $fileName = $filePath !== ''
+            ? basename($filePathNormalized)
+            : null;
+
+        $fileExtension = $fileName
+            ? strtolower(
+                pathinfo(
+                    $fileName,
+                    PATHINFO_EXTENSION
+                )
+            )
+            : null;
+
+        $fileExtensionLabel = $fileExtension
+            ? strtoupper($fileExtension)
+            : null;
+
+        /*
+        |--------------------------------------------------------------------------
+        | JENIS PREVIEW
+        |--------------------------------------------------------------------------
+        */
+
+        $isPdf = $fileExtension === 'pdf';
+
+        $isImage = in_array(
+            $fileExtension,
+            [
+                'jpg',
+                'jpeg',
+                'png',
+                'gif',
+                'webp',
+                'bmp',
+            ],
+            true
+        );
+
+        $isOffice = in_array(
+            $fileExtension,
+            [
+                'doc',
+                'docx',
+                'xls',
+                'xlsx',
+            ],
+            true
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | FORMAT TANGGAL
+        |--------------------------------------------------------------------------
+        */
 
         $formatDateTime = static function ($value): string {
             if (empty($value)) {
@@ -53,19 +152,45 @@
             }
 
             try {
-                return \Illuminate\Support\Carbon::parse($value)->translatedFormat('d F Y, H:i');
+                return \Illuminate\Support\Carbon::parse(
+                    $value
+                )->translatedFormat(
+                    'd F Y'
+                );
             } catch (\Throwable $exception) {
                 return (string) $value;
             }
         };
 
-        $createdAt = $formatDateTime(data_get($dokumentasi, 'created_at'));
+        /*
+        |--------------------------------------------------------------------------
+        | TANGGAL INFORMASI
+        |--------------------------------------------------------------------------
+        |
+        | Karena model Dokumentasi menggunakan:
+        | public $timestamps = false;
+        |
+        | Maka tanggal mengambil kolom "tanggal" dari database.
+        |
+        */
 
-        $updatedAt = $formatDateTime(data_get($dokumentasi, 'updated_at'));
+        $tanggalInformasi = $formatDateTime(
+            data_get(
+                $dokumentasi,
+                'tanggal'
+            )
+        );
     @endphp
 
+
     <div class="space-y-6">
-        <x-admin.page-header title="Detail Informasi Publik"
+
+        {{-- ========================================================= --}}
+        {{-- PAGE HEADER --}}
+        {{-- ========================================================= --}}
+
+        <x-admin.page-header
+            title="Detail Informasi Publik"
             description="Lihat isi, klasifikasi, unit pengelola, status verifikasi, dan file informasi publik."
             :breadcrumbs="[
                 [
@@ -83,9 +208,15 @@
                 [
                     'label' => 'Detail Informasi',
                 ],
-            ]">
+            ]"
+        >
+
             <x-slot:actions>
-                <a href="{{ route('admin.informasi-publik.index') }}"
+
+                {{-- KEMBALI --}}
+
+                <a
+                    href="{{ route('admin.informasi-publik.index') }}"
                     class="
                         inline-flex
                         h-11
@@ -103,22 +234,38 @@
                         shadow-theme-xs
                         transition
                         hover:bg-gray-50
-                        focus:outline-none
-                        focus:ring-3
-                        focus:ring-gray-500/10
                         dark:border-gray-700
                         dark:bg-gray-900
                         dark:text-gray-300
                         dark:hover:bg-gray-800
-                    ">
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    "
+                >
+
+                    <svg
+                        class="h-5 w-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M15 19l-7-7 7-7"
+                        />
                     </svg>
 
-                    <span>Kembali</span>
+                    <span>
+                        Kembali
+                    </span>
+
                 </a>
 
-                <a href="{{ route('admin.informasi-publik.edit', $dokumentasi->id) }}"
+
+                {{-- EDIT --}}
+
+                <a
+                    href="{{ route('admin.informasi-publik.edit', $dokumentasi->id) }}"
                     class="
                         inline-flex
                         h-11
@@ -134,24 +281,47 @@
                         shadow-theme-xs
                         transition
                         hover:bg-brand-600
-                        focus:outline-none
-                        focus:ring-3
-                        focus:ring-brand-500/20
-                    ">
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5" />
+                    "
+                >
 
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+                    <svg
+                        class="h-5 w-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5"
+                        />
+
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"
+                        />
                     </svg>
 
-                    <span>Edit Informasi</span>
+                    <span>
+                        Edit Informasi
+                    </span>
+
                 </a>
+
             </x-slot:actions>
+
         </x-admin.page-header>
 
+
         <x-ui.flash-messages />
+
+
+        {{-- ========================================================= --}}
+        {{-- INFORMASI UTAMA --}}
+        {{-- ========================================================= --}}
 
         <section
             class="
@@ -166,32 +336,31 @@
                 dark:border-gray-800
                 dark:bg-white/[0.03]
                 sm:p-6
-            ">
-            <div class="
-                    pointer-events-none
-                    absolute
-                    -right-16
-                    -top-20
-                    h-52
-                    w-52
-                    rounded-full
-                    bg-cyan-500/[0.06]
-                    blur-3xl
-                    dark:bg-cyan-500/[0.08]
-                "
-                aria-hidden="true"></div>
+            "
+        >
 
             <div
                 class="
-                    relative
                     flex
                     flex-col
                     gap-5
                     lg:flex-row
                     lg:items-start
                     lg:justify-between
-                ">
-                <div class="flex min-w-0 items-start gap-4">
+                "
+            >
+
+                <div
+                    class="
+                        flex
+                        min-w-0
+                        items-start
+                        gap-4
+                    "
+                >
+
+                    {{-- ICON --}}
+
                     <div
                         class="
                             flex
@@ -208,15 +377,41 @@
                             dark:bg-cyan-500/15
                             dark:text-cyan-400
                             dark:ring-cyan-500/20
-                        ">
-                        <svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5l5 5v11a2 2 0 01-2 2z" />
+                        "
+                    >
+
+                        <svg
+                            class="h-7 w-7"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5l5 5v11a2 2 0 01-2 2z"
+                            />
                         </svg>
+
                     </div>
 
+
                     <div class="min-w-0">
-                        <div class="flex flex-wrap items-center gap-2">
+
+                        {{-- BADGE --}}
+
+                        <div
+                            class="
+                                flex
+                                flex-wrap
+                                items-center
+                                gap-2
+                            "
+                        >
+
+                            {{-- SIFAT --}}
+
                             <span
                                 class="
                                     inline-flex
@@ -226,9 +421,19 @@
                                     text-xs
                                     font-semibold
                                     {{ $sifatClass }}
-                                ">
-                                {{ $dokumentasi->sifat ? \Illuminate\Support\Str::title($dokumentasi->sifat) : 'Sifat belum ditentukan' }}
+                                "
+                            >
+                                {{
+                                    $dokumentasi->sifat
+                                        ? \Illuminate\Support\Str::title(
+                                            $dokumentasi->sifat
+                                        )
+                                        : 'Sifat belum ditentukan'
+                                }}
                             </span>
+
+
+                            {{-- STATUS --}}
 
                             <span
                                 class="
@@ -243,18 +448,30 @@
                                     ring-1
                                     ring-inset
                                     {{ $statusClass }}
-                                ">
+                                "
+                            >
+
                                 <span
                                     class="
                                         h-1.5
                                         w-1.5
                                         rounded-full
-                                        {{ $isVerified ? 'bg-green-500' : 'bg-yellow-500' }}
-                                    "></span>
+                                        {{
+                                            $isVerified
+                                                ? 'bg-green-500'
+                                                : 'bg-yellow-500'
+                                        }}
+                                    "
+                                ></span>
 
                                 {{ $statusLabel }}
+
                             </span>
+
                         </div>
+
+
+                        {{-- NAMA INFORMASI --}}
 
                         <h2
                             class="
@@ -266,9 +483,13 @@
                                 text-gray-900
                                 dark:text-white
                                 sm:text-2xl
-                            ">
+                            "
+                        >
                             {{ $dokumentasi->nama ?? '-' }}
                         </h2>
+
+
+                        {{-- META --}}
 
                         <div
                             class="
@@ -281,36 +502,40 @@
                                 text-sm
                                 text-gray-500
                                 dark:text-gray-400
-                            ">
-                            <span class="inline-flex items-center gap-2">
-                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                    aria-hidden="true">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M8 7V3m8 4V3M5 11h14M5 5h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2z" />
-                                </svg>
+                            "
+                        >
 
-                                Tahun {{ $dokumentasi->tahun ?? '-' }}
+                            <span>
+                                Tahun
+                                {{ $dokumentasi->tahun ?? '-' }}
                             </span>
 
-                            <span class="inline-flex items-center gap-2">
-                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                    aria-hidden="true">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M8 21h8m-4-4v4M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                </svg>
-
+                            <span>
                                 {{ $ppidName }}
                             </span>
 
                             <span>
-                                ID Informasi: {{ $dokumentasi->id }}
+                                ID Informasi:
+                                {{ $dokumentasi->id }}
                             </span>
+
                         </div>
+
                     </div>
+
                 </div>
 
+
+                {{-- ================================================= --}}
+                {{-- TOMBOL LIHAT FILE --}}
+                {{-- ================================================= --}}
+
                 @if ($fileName)
-                    <a href="{{ route('public.informasi.download', $dokumentasi->id) }}"
+
+                    <a
+                        href="{{ route('admin.informasi-publik.file.show', $dokumentasi->id) }}"
+                        target="_blank"
+                        rel="noopener noreferrer"
                         class="
                             inline-flex
                             h-11
@@ -319,31 +544,84 @@
                             justify-center
                             gap-2
                             rounded-lg
-                            bg-green-600
+                            bg-blue-600
                             px-4
                             text-sm
                             font-semibold
                             text-white
                             shadow-theme-xs
                             transition
-                            hover:bg-green-700
+                            hover:bg-blue-700
                             focus:outline-none
                             focus:ring-3
-                            focus:ring-green-500/20
-                        ">
-                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 3v12m0 0l-4-4m4 4 4-4M5 21h14a2 2 0 002-2v-3M3 16v3a2 2 0 002 2" />
+                            focus:ring-blue-500/20
+                        "
+                    >
+
+                        <svg
+                            class="h-5 w-5"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                            />
+
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                            />
+
                         </svg>
 
-                        <span>Unduh File</span>
+                        <span>
+                            Lihat File
+                        </span>
+
                     </a>
+
                 @endif
+
             </div>
+
         </section>
 
-        <div class="grid grid-cols-1 gap-6 xl:grid-cols-3">
-            <div class="space-y-6 xl:col-span-2">
+
+        {{-- ========================================================= --}}
+        {{-- GRID CONTENT --}}
+        {{-- ========================================================= --}}
+
+        <div
+            class="
+                grid
+                grid-cols-1
+                gap-6
+                xl:grid-cols-3
+            "
+        >
+
+            {{-- ===================================================== --}}
+            {{-- BAGIAN KIRI --}}
+            {{-- ===================================================== --}}
+
+            <div
+                class="
+                    space-y-6
+                    xl:col-span-2
+                "
+            >
+
+                {{-- ================================================= --}}
+                {{-- RINGKASAN --}}
+                {{-- ================================================= --}}
+
                 <section
                     class="
                         overflow-hidden
@@ -354,64 +632,55 @@
                         shadow-theme-xs
                         dark:border-gray-800
                         dark:bg-white/[0.03]
-                    ">
+                    "
+                >
+
                     <div
                         class="
-                            flex
-                            items-center
-                            gap-3
                             border-b
                             border-gray-100
                             px-5
                             py-4
                             dark:border-gray-800
                             sm:px-6
-                        ">
-                        <div
+                        "
+                    >
+
+                        <h3
                             class="
-                                flex
-                                h-10
-                                w-10
-                                items-center
-                                justify-center
-                                rounded-xl
-                                bg-blue-50
-                                text-blue-600
-                                dark:bg-blue-500/15
-                                dark:text-blue-400
-                            ">
-                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M4 6h16M4 10h16M4 14h10M4 18h7" />
-                            </svg>
-                        </div>
+                                text-base
+                                font-semibold
+                                text-gray-800
+                                dark:text-white/90
+                            "
+                        >
+                            Ringkasan Informasi
+                        </h3>
 
-                        <div>
-                            <h3
-                                class="
-                                    text-base
-                                    font-semibold
-                                    text-gray-800
-                                    dark:text-white/90
-                                ">
-                                Ringkasan Informasi
-                            </h3>
+                        <p
+                            class="
+                                mt-1
+                                text-xs
+                                text-gray-500
+                                dark:text-gray-400
+                            "
+                        >
+                            Uraian singkat mengenai informasi yang tersedia.
+                        </p>
 
-                            <p
-                                class="
-                                    mt-0.5
-                                    text-xs
-                                    text-gray-500
-                                    dark:text-gray-400
-                                ">
-                                Uraian singkat mengenai informasi yang tersedia.
-                            </p>
-                        </div>
                     </div>
 
-                    <div class="px-5 py-5 sm:px-6 sm:py-6">
+
+                    <div
+                        class="
+                            px-5
+                            py-5
+                            sm:px-6
+                        "
+                    >
+
                         @if (!empty($dokumentasi->ringkasan))
+
                             <div
                                 class="
                                     whitespace-pre-line
@@ -419,10 +688,13 @@
                                     leading-7
                                     text-gray-700
                                     dark:text-gray-300
-                                ">
+                                "
+                            >
                                 {{ $dokumentasi->ringkasan }}
                             </div>
+
                         @else
+
                             <div
                                 class="
                                     rounded-xl
@@ -435,20 +707,32 @@
                                     text-center
                                     dark:border-gray-700
                                     dark:bg-gray-900/50
-                                ">
+                                "
+                            >
+
                                 <p
                                     class="
                                         text-sm
                                         font-medium
                                         text-gray-500
                                         dark:text-gray-400
-                                    ">
+                                    "
+                                >
                                     Ringkasan informasi belum tersedia.
                                 </p>
+
                             </div>
+
                         @endif
+
                     </div>
+
                 </section>
+
+
+                {{-- ================================================= --}}
+                {{-- FILE INFORMASI --}}
+                {{-- ================================================= --}}
 
                 <section
                     class="
@@ -460,64 +744,58 @@
                         shadow-theme-xs
                         dark:border-gray-800
                         dark:bg-white/[0.03]
-                    ">
+                    "
+                >
+
                     <div
                         class="
-                            flex
-                            items-center
-                            gap-3
                             border-b
                             border-gray-100
                             px-5
                             py-4
                             dark:border-gray-800
                             sm:px-6
-                        ">
-                        <div
+                        "
+                    >
+
+                        <h3
                             class="
-                                flex
-                                h-10
-                                w-10
-                                items-center
-                                justify-center
-                                rounded-xl
-                                bg-green-50
-                                text-green-600
-                                dark:bg-green-500/15
-                                dark:text-green-400
-                            ">
-                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5l5 5v11a2 2 0 01-2 2z" />
-                            </svg>
-                        </div>
+                                text-base
+                                font-semibold
+                                text-gray-800
+                                dark:text-white/90
+                            "
+                        >
+                            File Informasi
+                        </h3>
 
-                        <div>
-                            <h3
-                                class="
-                                    text-base
-                                    font-semibold
-                                    text-gray-800
-                                    dark:text-white/90
-                                ">
-                                File Informasi
-                            </h3>
+                        <p
+                            class="
+                                mt-1
+                                text-xs
+                                text-gray-500
+                                dark:text-gray-400
+                            "
+                        >
+                            Dokumen yang tersimpan pada informasi publik ini.
+                        </p>
 
-                            <p
-                                class="
-                                    mt-0.5
-                                    text-xs
-                                    text-gray-500
-                                    dark:text-gray-400
-                                ">
-                                Dokumen yang tersimpan pada informasi publik ini.
-                            </p>
-                        </div>
                     </div>
 
-                    <div class="px-5 py-5 sm:px-6">
+
+                    <div
+                        class="
+                            px-5
+                            py-5
+                            sm:px-6
+                            sm:py-6
+                        "
+                    >
+
                         @if ($fileName)
+
+                            {{-- INFORMASI FILE --}}
+
                             <div
                                 class="
                                     flex
@@ -533,8 +811,18 @@
                                     sm:flex-row
                                     sm:items-center
                                     sm:justify-between
-                                ">
-                                <div class="flex min-w-0 items-center gap-4">
+                                "
+                            >
+
+                                <div
+                                    class="
+                                        flex
+                                        min-w-0
+                                        items-center
+                                        gap-4
+                                    "
+                                >
+
                                     <div
                                         class="
                                             flex
@@ -545,29 +833,45 @@
                                             justify-center
                                             rounded-xl
                                             bg-white
-                                            text-green-600
+                                            text-blue-600
                                             shadow-theme-xs
                                             dark:bg-gray-800
-                                            dark:text-green-400
-                                        ">
-                                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                            aria-hidden="true">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5l5 5v11a2 2 0 01-2 2z" />
+                                            dark:text-blue-400
+                                        "
+                                    >
+
+                                        <svg
+                                            class="h-6 w-6"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5l5 5v11a2 2 0 01-2 2z"
+                                            />
                                         </svg>
+
                                     </div>
 
+
                                     <div class="min-w-0">
-                                        <p class="
+
+                                        <p
+                                            class="
                                                 truncate
                                                 text-sm
                                                 font-semibold
                                                 text-gray-800
                                                 dark:text-white/90
                                             "
-                                            title="{{ $fileName }}">
+                                            title="{{ $fileName }}"
+                                        >
                                             {{ $fileName }}
                                         </p>
+
 
                                         <div
                                             class="
@@ -576,34 +880,51 @@
                                                 flex-wrap
                                                 items-center
                                                 gap-2
-                                                text-xs
-                                                text-gray-500
-                                                dark:text-gray-400
-                                            ">
-                                            @if ($fileExtension)
+                                            "
+                                        >
+
+                                            @if ($fileExtensionLabel)
+
                                                 <span
                                                     class="
                                                         rounded-md
                                                         bg-gray-200
                                                         px-2
                                                         py-1
+                                                        text-xs
                                                         font-semibold
                                                         text-gray-600
                                                         dark:bg-gray-700
                                                         dark:text-gray-300
-                                                    ">
-                                                    {{ $fileExtension }}
+                                                    "
+                                                >
+                                                    {{ $fileExtensionLabel }}
                                                 </span>
+
                                             @endif
 
-                                            <span>
+
+                                            <span
+                                                class="
+                                                    text-xs
+                                                    text-gray-500
+                                                    dark:text-gray-400
+                                                "
+                                            >
                                                 File informasi publik
                                             </span>
+
                                         </div>
+
                                     </div>
+
                                 </div>
 
-                                <a href="{{ route('public.informasi.download', $dokumentasi->id) }}"
+
+                                <a
+                                    href="{{ route('admin.informasi-publik.file.show', $dokumentasi->id) }}"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
                                     class="
                                         inline-flex
                                         h-10
@@ -613,29 +934,343 @@
                                         gap-2
                                         rounded-lg
                                         border
-                                        border-green-200
-                                        bg-green-50
+                                        border-blue-200
+                                        bg-blue-50
                                         px-4
                                         text-sm
                                         font-semibold
-                                        text-green-700
+                                        text-blue-700
                                         transition
-                                        hover:bg-green-100
-                                        dark:border-green-500/20
-                                        dark:bg-green-500/10
-                                        dark:text-green-400
-                                        dark:hover:bg-green-500/20
-                                    ">
-                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                        aria-hidden="true">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 3v12m0 0l-4-4m4 4 4-4M5 21h14a2 2 0 002-2v-3M3 16v3a2 2 0 002 2" />
+                                        hover:bg-blue-100
+                                        dark:border-blue-500/20
+                                        dark:bg-blue-500/10
+                                        dark:text-blue-400
+                                    "
+                                >
+
+                                    <svg
+                                        class="h-4 w-4"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                    >
+
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                        />
+
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                                        />
+
                                     </svg>
 
-                                    <span>Unduh</span>
+                                    <span>
+                                        Lihat File
+                                    </span>
+
                                 </a>
+
                             </div>
+
+
+                            {{-- PREVIEW --}}
+
+                            <div class="mt-6">
+
+                                <div
+                                    class="
+                                        mb-4
+                                        flex
+                                        flex-col
+                                        gap-3
+                                        sm:flex-row
+                                        sm:items-center
+                                        sm:justify-between
+                                    "
+                                >
+
+                                    <div>
+
+                                        <h4
+                                            class="
+                                                text-sm
+                                                font-semibold
+                                                text-gray-800
+                                                dark:text-white/90
+                                            "
+                                        >
+                                            Preview File
+                                        </h4>
+
+                                        <p
+                                            class="
+                                                mt-1
+                                                text-xs
+                                                text-gray-500
+                                                dark:text-gray-400
+                                            "
+                                        >
+                                            Pratinjau dokumen informasi publik.
+                                        </p>
+
+                                    </div>
+
+
+                                    <a
+                                        href="{{ route('admin.informasi-publik.file.show', $dokumentasi->id) }}"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="
+                                            inline-flex
+                                            items-center
+                                            gap-1.5
+                                            text-sm
+                                            font-semibold
+                                            text-blue-600
+                                            transition
+                                            hover:text-blue-700
+                                            dark:text-blue-400
+                                        "
+                                    >
+                                        Buka layar penuh
+
+                                        <svg
+                                            class="h-4 w-4"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M14 3h7m0 0v7m0-7L10 14M5 5h5M5 5v14h14v-5"
+                                            />
+                                        </svg>
+
+                                    </a>
+
+                                </div>
+
+
+                                {{-- PDF --}}
+
+                                @if ($isPdf)
+
+                                    <div
+                                        class="
+                                            overflow-hidden
+                                            rounded-xl
+                                            border
+                                            border-gray-200
+                                            bg-gray-100
+                                            dark:border-gray-700
+                                            dark:bg-gray-900
+                                        "
+                                    >
+
+                                        <iframe
+                                            src="{{ route('admin.informasi-publik.file.show', $dokumentasi->id) }}"
+                                            class="
+                                                h-[750px]
+                                                w-full
+                                                border-0
+                                            "
+                                            title="Preview {{ $fileName }}"
+                                        ></iframe>
+
+                                    </div>
+
+
+                                {{-- GAMBAR --}}
+
+                                @elseif ($isImage)
+
+                                    <div
+                                        class="
+                                            flex
+                                            min-h-[300px]
+                                            items-center
+                                            justify-center
+                                            overflow-hidden
+                                            rounded-xl
+                                            border
+                                            border-gray-200
+                                            bg-gray-50
+                                            p-4
+                                            dark:border-gray-700
+                                            dark:bg-gray-900/50
+                                        "
+                                    >
+
+                                        <img
+                                            src="{{ route('admin.informasi-publik.file.show', $dokumentasi->id) }}"
+                                            alt="{{ $fileName }}"
+                                            class="
+                                                max-h-[750px]
+                                                max-w-full
+                                                rounded-lg
+                                                object-contain
+                                            "
+                                        >
+
+                                    </div>
+
+
+                                {{-- OFFICE --}}
+
+                                @elseif ($isOffice)
+
+                                    <div
+                                        class="
+                                            rounded-xl
+                                            border
+                                            border-dashed
+                                            border-gray-300
+                                            bg-gray-50
+                                            px-6
+                                            py-10
+                                            text-center
+                                            dark:border-gray-700
+                                            dark:bg-gray-900/50
+                                        "
+                                    >
+
+                                        <div
+                                            class="
+                                                mx-auto
+                                                flex
+                                                h-14
+                                                w-14
+                                                items-center
+                                                justify-center
+                                                rounded-xl
+                                                bg-white
+                                                text-blue-600
+                                                shadow-theme-xs
+                                                dark:bg-gray-800
+                                                dark:text-blue-400
+                                            "
+                                        >
+
+                                            <svg
+                                                class="h-7 w-7"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke="currentColor"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5l5 5v11a2 2 0 01-2 2z"
+                                                />
+                                            </svg>
+
+                                        </div>
+
+
+                                        <p
+                                            class="
+                                                mt-4
+                                                text-sm
+                                                font-semibold
+                                                text-gray-700
+                                                dark:text-gray-300
+                                            "
+                                        >
+                                            Preview
+                                            {{ $fileExtensionLabel }}
+                                            tidak didukung langsung oleh browser.
+                                        </p>
+
+                                        <p
+                                            class="
+                                                mt-1
+                                                text-xs
+                                                leading-5
+                                                text-gray-500
+                                                dark:text-gray-400
+                                            "
+                                        >
+                                            Preview langsung saat ini tersedia
+                                            untuk PDF dan gambar.
+                                        </p>
+
+
+                                        <a
+                                            href="{{ route('admin.informasi-publik.file.show', $dokumentasi->id) }}"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            class="
+                                                mt-5
+                                                inline-flex
+                                                h-10
+                                                items-center
+                                                justify-center
+                                                gap-2
+                                                rounded-lg
+                                                bg-blue-600
+                                                px-4
+                                                text-sm
+                                                font-semibold
+                                                text-white
+                                                transition
+                                                hover:bg-blue-700
+                                            "
+                                        >
+                                            Buka File
+                                        </a>
+
+                                    </div>
+
+
+                                {{-- FORMAT LAIN --}}
+
+                                @else
+
+                                    <div
+                                        class="
+                                            rounded-xl
+                                            border
+                                            border-dashed
+                                            border-gray-300
+                                            bg-gray-50
+                                            px-6
+                                            py-10
+                                            text-center
+                                            dark:border-gray-700
+                                            dark:bg-gray-900/50
+                                        "
+                                    >
+
+                                        <p
+                                            class="
+                                                text-sm
+                                                font-semibold
+                                                text-gray-700
+                                                dark:text-gray-300
+                                            "
+                                        >
+                                            Preview belum tersedia untuk format
+                                            {{ $fileExtensionLabel ?? '-' }}.
+                                        </p>
+
+                                    </div>
+
+                                @endif
+
+                            </div>
+
                         @else
+
                             <div
                                 class="
                                     rounded-xl
@@ -648,23 +1283,41 @@
                                     text-center
                                     dark:border-gray-700
                                     dark:bg-gray-900/50
-                                ">
+                                "
+                            >
+
                                 <p
                                     class="
                                         text-sm
                                         font-medium
                                         text-gray-500
                                         dark:text-gray-400
-                                    ">
+                                    "
+                                >
                                     File informasi belum tersedia.
                                 </p>
+
                             </div>
+
                         @endif
+
                     </div>
+
                 </section>
+
             </div>
 
+
+            {{-- ===================================================== --}}
+            {{-- SIDEBAR --}}
+            {{-- ===================================================== --}}
+
             <aside class="space-y-6">
+
+                {{-- ================================================= --}}
+                {{-- DETAIL INFORMASI --}}
+                {{-- ================================================= --}}
+
                 <section
                     class="
                         overflow-hidden
@@ -675,7 +1328,9 @@
                         shadow-theme-xs
                         dark:border-gray-800
                         dark:bg-white/[0.03]
-                    ">
+                    "
+                >
+
                     <div
                         class="
                             border-b
@@ -683,20 +1338,35 @@
                             px-5
                             py-4
                             dark:border-gray-800
-                        ">
+                        "
+                    >
+
                         <h3
                             class="
                                 text-base
                                 font-semibold
                                 text-gray-800
                                 dark:text-white/90
-                            ">
+                            "
+                        >
                             Detail Informasi
                         </h3>
+
                     </div>
 
-                    <dl class="divide-y divide-gray-100 dark:divide-gray-800">
+
+                    <dl
+                        class="
+                            divide-y
+                            divide-gray-100
+                            dark:divide-gray-800
+                        "
+                    >
+
+                        {{-- ID --}}
+
                         <div class="px-5 py-4">
+
                             <dt
                                 class="
                                     text-xs
@@ -704,7 +1374,8 @@
                                     uppercase
                                     tracking-wide
                                     text-gray-400
-                                ">
+                                "
+                            >
                                 ID Informasi
                             </dt>
 
@@ -715,12 +1386,18 @@
                                     font-semibold
                                     text-gray-800
                                     dark:text-gray-200
-                                ">
+                                "
+                            >
                                 {{ $dokumentasi->id }}
                             </dd>
+
                         </div>
 
+
+                        {{-- TAHUN --}}
+
                         <div class="px-5 py-4">
+
                             <dt
                                 class="
                                     text-xs
@@ -728,7 +1405,8 @@
                                     uppercase
                                     tracking-wide
                                     text-gray-400
-                                ">
+                                "
+                            >
                                 Tahun
                             </dt>
 
@@ -739,12 +1417,18 @@
                                     font-semibold
                                     text-gray-800
                                     dark:text-gray-200
-                                ">
+                                "
+                            >
                                 {{ $dokumentasi->tahun ?? '-' }}
                             </dd>
+
                         </div>
 
+
+                        {{-- SIFAT --}}
+
                         <div class="px-5 py-4">
+
                             <dt
                                 class="
                                     text-xs
@@ -752,11 +1436,13 @@
                                     uppercase
                                     tracking-wide
                                     text-gray-400
-                                ">
+                                "
+                            >
                                 Sifat Informasi
                             </dt>
 
                             <dd class="mt-2">
+
                                 <span
                                     class="
                                         inline-flex
@@ -766,13 +1452,26 @@
                                         text-xs
                                         font-semibold
                                         {{ $sifatClass }}
-                                    ">
-                                    {{ $dokumentasi->sifat ? \Illuminate\Support\Str::title($dokumentasi->sifat) : '-' }}
+                                    "
+                                >
+                                    {{
+                                        $dokumentasi->sifat
+                                            ? \Illuminate\Support\Str::title(
+                                                $dokumentasi->sifat
+                                            )
+                                            : '-'
+                                    }}
                                 </span>
+
                             </dd>
+
                         </div>
 
+
+                        {{-- PPID --}}
+
                         <div class="px-5 py-4">
+
                             <dt
                                 class="
                                     text-xs
@@ -780,7 +1479,8 @@
                                     uppercase
                                     tracking-wide
                                     text-gray-400
-                                ">
+                                "
+                            >
                                 PPID Pembantu
                             </dt>
 
@@ -792,12 +1492,18 @@
                                     leading-6
                                     text-gray-800
                                     dark:text-gray-200
-                                ">
+                                "
+                            >
                                 {{ $ppidName }}
                             </dd>
+
                         </div>
 
+
+                        {{-- STATUS --}}
+
                         <div class="px-5 py-4">
+
                             <dt
                                 class="
                                     text-xs
@@ -805,11 +1511,13 @@
                                     uppercase
                                     tracking-wide
                                     text-gray-400
-                                ">
+                                "
+                            >
                                 Status
                             </dt>
 
                             <dd class="mt-2">
+
                                 <span
                                     class="
                                         inline-flex
@@ -823,21 +1531,35 @@
                                         ring-1
                                         ring-inset
                                         {{ $statusClass }}
-                                    ">
+                                    "
+                                >
+
                                     <span
                                         class="
                                             h-1.5
                                             w-1.5
                                             rounded-full
-                                            {{ $isVerified ? 'bg-green-500' : 'bg-yellow-500' }}
-                                        "></span>
+                                            {{
+                                                $isVerified
+                                                    ? 'bg-green-500'
+                                                    : 'bg-yellow-500'
+                                            }}
+                                        "
+                                    ></span>
 
                                     {{ $statusLabel }}
+
                                 </span>
+
                             </dd>
+
                         </div>
 
+
+                        {{-- TANGGAL --}}
+
                         <div class="px-5 py-4">
+
                             <dt
                                 class="
                                     text-xs
@@ -845,8 +1567,9 @@
                                     uppercase
                                     tracking-wide
                                     text-gray-400
-                                ">
-                                Dibuat
+                                "
+                            >
+                                Tanggal Informasi
                             </dt>
 
                             <dd
@@ -855,63 +1578,24 @@
                                     text-sm
                                     text-gray-700
                                     dark:text-gray-300
-                                ">
-                                {{ $createdAt }}
+                                "
+                            >
+                                {{ $tanggalInformasi }}
                             </dd>
+
                         </div>
 
-                        <div class="px-5 py-4">
-                            <dt
-                                class="
-                                    text-xs
-                                    font-medium
-                                    uppercase
-                                    tracking-wide
-                                    text-gray-400
-                                ">
-                                Terakhir Diperbarui
-                            </dt>
-
-                            <dd
-                                class="
-                                    mt-1.5
-                                    text-sm
-                                    text-gray-700
-                                    dark:text-gray-300
-                                ">
-                                {{ $updatedAt }}
-                            </dd>
-                        </div>
-
-                        @if (!empty($dokumentasi->slug))
-                            <div class="px-5 py-4">
-                                <dt
-                                    class="
-                                        text-xs
-                                        font-medium
-                                        uppercase
-                                        tracking-wide
-                                        text-gray-400
-                                    ">
-                                    Slug Publik
-                                </dt>
-
-                                <dd
-                                    class="
-                                        mt-1.5
-                                        break-all
-                                        text-sm
-                                        text-gray-700
-                                        dark:text-gray-300
-                                    ">
-                                    {{ $dokumentasi->slug }}
-                                </dd>
-                            </div>
-                        @endif
                     </dl>
+
                 </section>
 
+
+                {{-- ================================================= --}}
+                {{-- VERIFIKASI --}}
+                {{-- ================================================= --}}
+
                 @if ($isAdminUtama && !$isVerified)
+
                     <section
                         class="
                             rounded-2xl
@@ -921,62 +1605,51 @@
                             p-5
                             dark:border-emerald-500/20
                             dark:bg-emerald-500/10
-                        ">
-                        <div class="flex items-start gap-3">
-                            <div
-                                class="
-                                    flex
-                                    h-10
-                                    w-10
-                                    shrink-0
-                                    items-center
-                                    justify-center
-                                    rounded-xl
-                                    bg-white
-                                    text-emerald-600
-                                    shadow-theme-xs
-                                    dark:bg-gray-900
-                                    dark:text-emerald-400
-                                ">
-                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                    aria-hidden="true">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                            </div>
+                        "
+                    >
 
-                            <div>
-                                <h3
-                                    class="
-                                        text-sm
-                                        font-semibold
-                                        text-emerald-800
-                                        dark:text-emerald-300
-                                    ">
-                                    Verifikasi Informasi
-                                </h3>
+                        <h3
+                            class="
+                                text-sm
+                                font-semibold
+                                text-emerald-800
+                                dark:text-emerald-300
+                            "
+                        >
+                            Verifikasi Informasi
+                        </h3>
 
-                                <p
-                                    class="
-                                        mt-1
-                                        text-sm
-                                        leading-6
-                                        text-emerald-700
-                                        dark:text-emerald-400
-                                    ">
-                                    Dokumen ini belum diverifikasi oleh Admin Utama.
-                                </p>
-                            </div>
-                        </div>
+
+                        <p
+                            class="
+                                mt-1
+                                text-sm
+                                leading-6
+                                text-emerald-700
+                                dark:text-emerald-400
+                            "
+                        >
+                            Dokumen ini belum diverifikasi oleh Admin Utama.
+                        </p>
+
 
                         <form
                             action="{{ route('admin.informasi-publik.verifikasi', $dokumentasi->id) }}"
-                            method="POST" class="mt-4"
-                            onsubmit="return confirm('Apakah Anda yakin ingin memverifikasi informasi ini?')">
+                            method="POST"
+                            class="mt-4"
+                            onsubmit="
+                                return confirm(
+                                    'Apakah Anda yakin ingin memverifikasi informasi ini?'
+                                )
+                            "
+                        >
+
                             @csrf
                             @method('PATCH')
 
-                            <button type="submit"
+
+                            <button
+                                type="submit"
                                 class="
                                     inline-flex
                                     h-10
@@ -992,21 +1665,100 @@
                                     text-white
                                     transition
                                     hover:bg-emerald-700
-                                    focus:outline-none
-                                    focus:ring-3
-                                    focus:ring-emerald-500/20
-                                ">
-                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                    aria-hidden="true">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M5 13l4 4L19 7" />
-                                </svg>
-
-                                <span>Verifikasi Sekarang</span>
+                                "
+                            >
+                                Verifikasi Sekarang
                             </button>
+
                         </form>
+
                     </section>
+
                 @endif
+
+
+                {{-- ================================================= --}}
+                {{-- SUDAH DIVERIFIKASI --}}
+                {{-- ================================================= --}}
+
+                @if ($isAdminUtama && $isVerified)
+
+                    <section
+                        class="
+                            rounded-2xl
+                            border
+                            border-green-200
+                            bg-green-50/70
+                            p-5
+                            dark:border-green-500/20
+                            dark:bg-green-500/10
+                        "
+                    >
+
+                        <div
+                            class="
+                                flex
+                                items-start
+                                gap-3
+                            "
+                        >
+
+                            <div
+                                class="
+                                    flex
+                                    h-10
+                                    w-10
+                                    shrink-0
+                                    items-center
+                                    justify-center
+                                    rounded-full
+                                    bg-green-100
+                                    text-green-600
+                                    dark:bg-green-500/20
+                                    dark:text-green-400
+                                "
+                            >
+                                <i class="ri-checkbox-circle-line text-xl"></i>
+                            </div>
+
+
+                            <div>
+
+                                <h3
+                                    class="
+                                        text-sm
+                                        font-semibold
+                                        text-green-800
+                                        dark:text-green-300
+                                    "
+                                >
+                                    Informasi Terverifikasi
+                                </h3>
+
+                                <p
+                                    class="
+                                        mt-1
+                                        text-sm
+                                        leading-6
+                                        text-green-700
+                                        dark:text-green-400
+                                    "
+                                >
+                                    Dokumen informasi ini sudah diverifikasi oleh Admin Utama.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                @endif
+
+
+                {{-- ================================================= --}}
+                {{-- HAPUS --}}
+                {{-- ================================================= --}}
 
                 <section
                     class="
@@ -1017,16 +1769,20 @@
                         p-5
                         dark:border-red-500/20
                         dark:bg-red-500/10
-                    ">
+                    "
+                >
+
                     <h3
                         class="
                             text-sm
                             font-semibold
                             text-red-800
                             dark:text-red-300
-                        ">
+                        "
+                    >
                         Hapus Informasi
                     </h3>
+
 
                     <p
                         class="
@@ -1035,18 +1791,29 @@
                             leading-6
                             text-red-700
                             dark:text-red-400
-                        ">
+                        "
+                    >
                         Data dan file yang dihapus tidak dapat dikembalikan.
                     </p>
 
+
                     <form
                         action="{{ route('admin.informasi-publik.destroy', $dokumentasi->id) }}"
-                        method="POST" class="mt-4"
-                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus informasi publik ini?')">
+                        method="POST"
+                        class="mt-4"
+                        onsubmit="
+                            return confirm(
+                                'Apakah Anda yakin ingin menghapus informasi publik ini?'
+                            )
+                        "
+                    >
+
                         @csrf
                         @method('DELETE')
 
-                        <button type="submit"
+
+                        <button
+                            type="submit"
                             class="
                                 inline-flex
                                 h-10
@@ -1065,26 +1832,22 @@
                                 transition
                                 hover:bg-red-600
                                 hover:text-white
-                                focus:outline-none
-                                focus:ring-3
-                                focus:ring-red-500/20
                                 dark:border-red-500/30
                                 dark:bg-gray-900
                                 dark:text-red-400
-                                dark:hover:bg-red-600
-                                dark:hover:text-white
-                            ">
-                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
-
-                            <span>Hapus Informasi</span>
+                            "
+                        >
+                            Hapus Informasi
                         </button>
+
                     </form>
+
                 </section>
+
             </aside>
+
         </div>
+
     </div>
+
 @endsection
