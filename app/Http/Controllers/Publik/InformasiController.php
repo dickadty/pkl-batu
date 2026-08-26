@@ -4,14 +4,20 @@ namespace App\Http\Controllers\Publik;
 
 use App\Http\Controllers\Controller;
 use App\Services\Publik\InformasiService;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class InformasiController extends Controller
 {
     public function __construct(
         protected InformasiService $informasiService
     ) {}
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | INFORMASI BERKALA
+    |--------------------------------------------------------------------------
+    */
 
     public function berkala()
     {
@@ -21,7 +27,7 @@ class InformasiController extends Controller
         $jumlahKategori = $dokumentasi->count();
 
         $jumlahDokumen = $dokumentasi
-            ->flatten()
+            ->flatten(1)
             ->count();
 
         return view(
@@ -34,19 +40,40 @@ class InformasiController extends Controller
         );
     }
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | INFORMASI SETIAP SAAT
+    |--------------------------------------------------------------------------
+    */
+
     public function setiapSaat()
     {
         $dokumentasi = $this->informasiService
             ->getBySifat('setiap saat');
 
         $jumlahKategori = $dokumentasi->count();
-        $jumlahDokumen = $dokumentasi->flatten()->count();
+
+        $jumlahDokumen = $dokumentasi
+            ->flatten(1)
+            ->count();
 
         return view(
-            'admin.informasi-publik.file.show',
-            compact('dokumentasi', 'jumlahKategori', 'jumlahDokumen')
+            'pages.public.informasi.setiap-saat',
+            compact(
+                'dokumentasi',
+                'jumlahKategori',
+                'jumlahDokumen'
+            )
         );
     }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | INFORMASI SERTA MERTA
+    |--------------------------------------------------------------------------
+    */
 
     public function sertaMerta()
     {
@@ -54,13 +81,27 @@ class InformasiController extends Controller
             ->getBySifat('serta merta');
 
         $jumlahKategori = $dokumentasi->count();
-        $jumlahDokumen = $dokumentasi->flatten()->count();
+
+        $jumlahDokumen = $dokumentasi
+            ->flatten(1)
+            ->count();
 
         return view(
             'pages.public.informasi.serta-merta',
-            compact('dokumentasi', 'jumlahKategori', 'jumlahDokumen')
+            compact(
+                'dokumentasi',
+                'jumlahKategori',
+                'jumlahDokumen'
+            )
         );
     }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | INFORMASI DIKECUALIKAN
+    |--------------------------------------------------------------------------
+    */
 
     public function dikecualikan()
     {
@@ -68,22 +109,73 @@ class InformasiController extends Controller
             ->getBySifat('dikecualikan');
 
         $jumlahKategori = $dokumentasi->count();
-        $jumlahDokumen = $dokumentasi->flatten()->count();
+
+        $jumlahDokumen = $dokumentasi
+            ->flatten(1)
+            ->count();
 
         return view(
             'pages.public.informasi.dikecualikan',
-            compact('dokumentasi', 'jumlahKategori', 'jumlahDokumen')
+            compact(
+                'dokumentasi',
+                'jumlahKategori',
+                'jumlahDokumen'
+            )
         );
     }
 
-    public function show($slug)
+
+    /*
+    |--------------------------------------------------------------------------
+    | DETAIL INFORMASI
+    |--------------------------------------------------------------------------
+    */
+
+    public function show(string $slug)
     {
         $dokumen = $this->informasiService
             ->findVerifiedBySlug($slug);
 
         return view(
-            'admin.informasi-publik.file.show',
+            'pages.public.informasi.show',
             compact('dokumen')
         );
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | PREVIEW FILE
+    |--------------------------------------------------------------------------
+    |
+    | response()->file() membuat browser menampilkan file secara inline.
+    | Cocok untuk PDF dan gambar.
+    |
+    */
+
+    public function file(int $id): BinaryFileResponse
+    {
+        $path = $this->informasiService
+            ->getVerifiedDownloadPath($id);
+
+        return response()->file($path);
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | DOWNLOAD FILE
+    |--------------------------------------------------------------------------
+    |
+    | response()->download() membuat browser mengunduh file.
+    |
+    */
+
+    public function download(int $id): BinaryFileResponse
+    {
+        $path = $this->informasiService
+            ->getVerifiedDownloadPath($id);
+
+        return response()->download($path);
     }
 }
