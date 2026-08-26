@@ -3,56 +3,12 @@
 @section('title', 'Ajukan Keberatan | PPID Kota Batu')
 
 @section('content')
-    <section class="
-            border-b
-            border-slate-200
-            bg-white
-        ">
-        <div
-            class="
-                mx-auto
-                max-w-4xl
-                px-4
-                py-10
-                sm:px-6
-                lg:px-8
-            ">
-            <span
-                class="
-                    inline-flex
-                    rounded-full
-                    bg-red-50
-                    px-3
-                    py-1
-                    text-xs
-                    font-semibold
-                    text-red-700
-                ">
-                Pengajuan Keberatan
-            </span>
-
-            <h1
-                class="
-                    mt-4
-                    text-3xl
-                    font-bold
-                    tracking-tight
-                    text-slate-900
-                ">
-                Ajukan Keberatan
-            </h1>
-
-            <p
-                class="
-                    mt-3
-                    max-w-3xl
-                    text-slate-600
-                ">
-                Pilih permohonan yang telah selesai atau ditolak,
-                kemudian jelaskan alasan keberatan secara lengkap.
-            </p>
-        </div>
-    </section>
+    <x-public.sections.page-hero
+        eyebrow="Pengajuan Keberatan"
+        title="Ajukan Keberatan"
+        highlight="Layanan PPID Kota Batu"
+        description="Pilih permohonan yang telah selesai atau ditolak, kemudian jelaskan alasan keberatan secara lengkap."
+    />
 
     <section
         class="

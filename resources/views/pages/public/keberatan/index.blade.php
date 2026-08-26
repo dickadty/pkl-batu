@@ -93,105 +93,15 @@
         $activeStatusLabel = $activeStatus !== '' ? $activeStatus : 'Semua Keberatan';
     @endphp
 
-    {{-- ================================================================
-        HEADER HALAMAN
-    ================================================================= --}}
-
-    <section class="
-            border-b
-            border-slate-200
-            bg-white
-        ">
-        <div
-            class="
-                mx-auto
-                max-w-7xl
-                px-4
-                py-10
-                sm:px-6
-                lg:px-8
-            ">
-            <div
-                class="
-                    flex
-                    flex-col
-                    gap-5
-                    sm:flex-row
-                    sm:items-center
-                    sm:justify-between
-                ">
-                <div>
-                    <span
-                        class="
-                            inline-flex
-                            rounded-full
-                            bg-red-50
-                            px-3
-                            py-1
-                            text-xs
-                            font-semibold
-                            text-red-700
-                        ">
-                        Layanan Keberatan
-                    </span>
-
-                    <h1
-                        class="
-                            mt-4
-                            text-3xl
-                            font-bold
-                            tracking-tight
-                            text-slate-900
-                        ">
-                        Daftar Keberatan
-                    </h1>
-
-                    <p
-                        class="
-                            mt-3
-                            max-w-3xl
-                            text-slate-600
-                        ">
-                        Pantau status keberatan yang telah Anda
-                        ajukan atas hasil pelayanan permohonan
-                        informasi publik.
-                    </p>
-                </div>
-
-                @if (\Illuminate\Support\Facades\Route::has('public.keberatan.create'))
-                    <a href="{{ route('public.keberatan.create') }}"
-                        class="
-                            inline-flex
-                            h-11
-                            shrink-0
-                            items-center
-                            justify-center
-                            gap-2
-                            rounded-lg
-                            bg-red-700
-                            px-5
-                            text-sm
-                            font-semibold
-                            text-white
-                            shadow-sm
-                            transition
-                            hover:bg-red-800
-                            focus:outline-none
-                            focus:ring-4
-                            focus:ring-red-500/20
-                        ">
-                        <i
-                            class="
-                                ri-file-warning-line
-                                text-lg
-                            "></i>
-
-                        Ajukan Keberatan
-                    </a>
-                @endif
-            </div>
-        </div>
-    </section>
+    <x-public.sections.page-hero
+        eyebrow="Layanan Keberatan"
+        title="Daftar Keberatan"
+        highlight="PPID Kota Batu"
+        description="Pantau status keberatan yang telah Anda ajukan atas hasil pelayanan permohonan informasi publik."
+        :action-url="Route::has('public.keberatan.create') ? route('public.keberatan.create') : null"
+        action-label="Ajukan Keberatan"
+        action-icon="ri-file-warning-line"
+    />
 
     {{-- ================================================================
         KONTEN HALAMAN

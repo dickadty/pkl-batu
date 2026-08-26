@@ -4,100 +4,12 @@
 
 @section('content')
     <main class="min-h-screen bg-slate-50">
-        <section
-            class="
-                relative
-                overflow-hidden
-                border-b
-                border-slate-200
-                bg-white
-            "
-        >
-            <div
-                class="
-                    pointer-events-none
-                    absolute
-                    -left-28
-                    -top-36
-                    h-96
-                    w-96
-                    rounded-full
-                    bg-blue-100
-                    blur-3xl
-                "
-            ></div>
-
-            <div
-                class="
-                    relative
-                    mx-auto
-                    max-w-4xl
-                    px-4
-                    py-12
-                    sm:px-6
-                    lg:px-8
-                "
-            >
-                <div
-                    class="
-                        inline-flex
-                        items-center
-                        gap-2
-                        rounded-full
-                        border
-                        border-blue-200
-                        bg-blue-50
-                        px-3
-                        py-1.5
-                        text-xs
-                        font-semibold
-                        text-blue-700
-                    "
-                >
-                    <svg
-                        class="h-4 w-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M8 10h.01M12 10h.01M16 10h.01M9 16H5l-2 2V5a2 2 0 012-2h14a2 2 0 012 2v9a2 2 0 01-2 2H9z"
-                        />
-                    </svg>
-
-                    Layanan Pesan Masyarakat
-                </div>
-
-                <h1
-                    class="
-                        mt-4
-                        text-3xl
-                        font-bold
-                        tracking-tight
-                        text-slate-900
-                        sm:text-4xl
-                    "
-                >
-                    Kirim Pesan
-                </h1>
-
-                <p
-                    class="
-                        mt-3
-                        max-w-2xl
-                        text-base
-                        leading-7
-                        text-slate-600
-                    "
-                >
-                    Sampaikan pertanyaan, saran, masukan, atau kendala kepada PPID Kota Batu.
-                    Setelah pesan terkirim, sistem akan memberikan link khusus untuk memantau balasan.
-                </p>
-            </div>
-        </section>
+        <x-public.sections.page-hero
+            eyebrow="Layanan Pesan Masyarakat"
+            title="Kirim Pesan"
+            highlight="PPID Kota Batu"
+            description="Sampaikan pertanyaan, saran, masukan, atau kendala kepada PPID Kota Batu. Setelah pesan terkirim, sistem akan memberikan link khusus untuk memantau balasan."
+        />
 
         <section
             class="
@@ -158,7 +70,7 @@
                     grid
                     grid-cols-1
                     gap-6
-                    lg:grid-cols-[minmax(0,1fr)_280px]
+                    lg:grid-cols-[minmax(0,1fr)_300px]
                 "
             >
                 <section
@@ -272,9 +184,9 @@
                                             outline-none
                                             transition
                                             placeholder:text-slate-400
-                                            focus:border-blue-500
+                                            focus:border-emerald-600
                                             focus:ring-4
-                                            focus:ring-blue-100
+                                            focus:ring-emerald-100
                                             @error('nama')
                                                 border-red-500
                                                 focus:border-red-500
@@ -358,9 +270,9 @@
                                             outline-none
                                             transition
                                             placeholder:text-slate-400
-                                            focus:border-blue-500
+                                            focus:border-emerald-600
                                             focus:ring-4
-                                            focus:ring-blue-100
+                                            focus:ring-emerald-100
                                             @error('email')
                                                 border-red-500
                                                 focus:border-red-500
@@ -444,9 +356,9 @@
                                         outline-none
                                         transition
                                         placeholder:text-slate-400
-                                        focus:border-blue-500
+                                        focus:border-emerald-600
                                         focus:ring-4
-                                        focus:ring-blue-100
+                                        focus:ring-emerald-100
                                         @error('subjek')
                                             border-red-500
                                             focus:border-red-500
@@ -500,9 +412,9 @@
                                     outline-none
                                     transition
                                     placeholder:text-slate-400
-                                    focus:border-blue-500
+                                    focus:border-emerald-600
                                     focus:ring-4
-                                    focus:ring-blue-100
+                                    focus:ring-emerald-100
                                     @error('pesan')
                                         border-red-500
                                         focus:border-red-500
@@ -538,17 +450,17 @@
                                     justify-center
                                     gap-2
                                     rounded-xl
-                                    bg-blue-700
+                                    bg-emerald-800
                                     px-6
                                     text-sm
                                     font-semibold
                                     text-white
                                     shadow-sm
                                     transition
-                                    hover:bg-blue-800
+                                    hover:bg-emerald-900
                                     focus:outline-none
                                     focus:ring-4
-                                    focus:ring-blue-200
+                                    focus:ring-emerald-200
                                     disabled:cursor-not-allowed
                                     disabled:opacity-60
                                 "
@@ -581,8 +493,8 @@
                         class="
                             rounded-2xl
                             border
-                            border-blue-200
-                            bg-blue-50
+                            border-emerald-200
+                            bg-emerald-50
                             p-5
                         "
                     >
@@ -594,8 +506,8 @@
                                 items-center
                                 justify-center
                                 rounded-xl
-                                bg-blue-100
-                                text-blue-700
+                                bg-emerald-100
+                                text-emerald-800
                             "
                         >
                             <svg
@@ -613,11 +525,11 @@
                             </svg>
                         </div>
 
-                        <h3 class="mt-4 text-sm font-bold text-blue-900">
+                        <h3 class="mt-4 text-sm font-bold text-emerald-950">
                             Setelah pesan terkirim
                         </h3>
 
-                        <p class="mt-2 text-sm leading-6 text-blue-700">
+                        <p class="mt-2 text-sm leading-6 text-emerald-800">
                             Anda akan diarahkan ke halaman percakapan dengan link khusus untuk melihat balasan Admin PPID.
                         </p>
                     </div>

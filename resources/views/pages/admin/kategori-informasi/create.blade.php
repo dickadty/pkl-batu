@@ -85,13 +85,13 @@
                         Berkala
                     </option>
 
-                    <option value="setiap saat"
-                        @selected(old('sifat') == 'setiap saat')>
+                    <option value="setiap_saat"
+                        @selected(old('sifat') == 'setiap_saat')>
                         Setiap Saat
                     </option>
 
-                    <option value="serta merta"
-                        @selected(old('sifat') == 'serta merta')>
+                    <option value="serta_merta"
+                        @selected(old('sifat') == 'serta_merta')>
                         Serta Merta
                     </option>
 

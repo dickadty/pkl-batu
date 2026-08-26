@@ -60,9 +60,9 @@
             </a>
 
             {{-- Ajukan Keberatan --}}
-            <a href="#"
+            <a href="{{ route('public.pesan.create') }}"
                 class="rounded-full border border-white/40 bg-white/10 px-6 py-3 text-xs font-semibold text-white backdrop-blur-sm transition hover:bg-white hover:text-green-950">
-                Ajukan Keberatan
+                Layanan Pesan
             </a>
 
         </div>

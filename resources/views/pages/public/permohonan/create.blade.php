@@ -7,30 +7,18 @@
         $isLoggedIn = $user !== null;
     @endphp
 
-    <section class="border-b border-slate-200 bg-white">
-        <div class="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
-            <span class="inline-flex rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
-                {{ $isLoggedIn ? 'Permohonan melalui Akun Warga' : 'Pengajuan Pertama Tanpa Login' }}
-            </span>
+    <x-public.sections.page-hero
+        :eyebrow="$isLoggedIn ? 'Permohonan melalui Akun Warga' : 'Pengajuan Pertama Tanpa Login'"
+        title="Ajukan Permohonan Informasi"
+        highlight="Publik Kota Batu"
+        :description="$isLoggedIn
+            ? 'Identitas diambil dari akun Anda. Setelah dikirim, permohonan akan langsung masuk ke riwayat akun.'
+            : 'Pada pengajuan pertama, sistem membuat akun warga otomatis. Unggah foto KTP untuk membantu mengisi identitas, lalu periksa kembali hasil pembacaannya.'"
+    />
 
-            <h1 class="mt-4 text-3xl font-bold tracking-tight text-slate-900">
-                Ajukan Permohonan Informasi Publik
-            </h1>
-
-            <p class="mt-3 max-w-3xl text-slate-600">
-                @if ($isLoggedIn)
-                    Identitas diambil dari akun Anda. Setelah dikirim, permohonan akan langsung masuk ke riwayat akun.
-                @else
-                    Pada pengajuan pertama, sistem membuat akun warga otomatis. Unggah foto KTP untuk membantu mengisi
-                    identitas, lalu periksa kembali hasil pembacaannya.
-                @endif
-            </p>
-        </div>
-    </section>
-
-    <section class="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
+    <section class="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
         @if (session('account_required'))
-            <div class="mb-6 rounded-2xl border border-blue-200 bg-blue-50 p-5 text-blue-800">
+            <div class="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-5 text-emerald-800">
                 <h2 class="font-bold">Akun warga sudah terdaftar</h2>
 
                 <p class="mt-2 text-sm leading-6">
@@ -39,12 +27,12 @@
 
                 <div class="mt-4 flex flex-col gap-3 sm:flex-row">
                     <a href="{{ route('login') }}"
-                        class="inline-flex h-11 items-center justify-center rounded-lg bg-blue-700 px-5 text-sm font-semibold text-white hover:bg-blue-800">
+                        class="inline-flex h-11 items-center justify-center rounded-lg bg-emerald-800 px-5 text-sm font-semibold text-white hover:bg-emerald-900">
                         Masuk ke Akun Warga
                     </a>
 
                     <a href="{{ route('public.aktivasi.resend.form') }}"
-                        class="inline-flex h-11 items-center justify-center rounded-lg border border-blue-300 bg-white px-5 text-sm font-semibold text-blue-700 hover:bg-blue-100">
+                        class="inline-flex h-11 items-center justify-center rounded-lg border border-emerald-300 bg-white px-5 text-sm font-semibold text-emerald-800 hover:bg-emerald-100">
                         Kirim Ulang Aktivasi
                     </a>
                 </div>
@@ -64,7 +52,7 @@
         @endif
 
         @unless ($isLoggedIn)
-            <div class="mb-6 rounded-2xl border border-amber-200 bg-amber-50 p-5 text-amber-900">
+            <div class="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-5 text-emerald-900">
                 <h2 class="font-bold">Sudah pernah mengajukan permohonan?</h2>
 
                 <p class="mt-2 text-sm leading-6">
@@ -73,12 +61,12 @@
 
                 <div class="mt-4 flex flex-col gap-3 sm:flex-row">
                     <a href="{{ route('login') }}"
-                        class="inline-flex h-10 items-center justify-center rounded-lg bg-amber-600 px-4 text-sm font-semibold text-white hover:bg-amber-700">
+                        class="inline-flex h-10 items-center justify-center rounded-lg bg-emerald-800 px-4 text-sm font-semibold text-white hover:bg-emerald-900">
                         Masuk ke Akun
                     </a>
 
                     <a href="{{ route('public.aktivasi.resend.form') }}"
-                        class="inline-flex h-10 items-center justify-center rounded-lg border border-amber-300 bg-white px-4 text-sm font-semibold text-amber-800 hover:bg-amber-100">
+                        class="inline-flex h-10 items-center justify-center rounded-lg border border-emerald-300 bg-white px-4 text-sm font-semibold text-emerald-800 hover:bg-emerald-100">
                         Belum Membuat Password
                     </a>
                 </div>
@@ -90,7 +78,7 @@
             @csrf
 
             <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-                <div class="border-b border-slate-200 px-6 py-5">
+                <div class="border-b border-emerald-100 bg-emerald-50/30 px-6 py-5">
                     <h2 class="text-lg font-bold text-slate-900">Identitas Pemohon</h2>
                     <p class="mt-1 text-sm text-slate-500">
                         {{ $isLoggedIn ? 'Data berikut berasal dari akun warga.' : 'Data digunakan untuk verifikasi dan pembuatan akun warga.' }}
@@ -104,7 +92,7 @@
                         </label>
 
                         <select id="kategori_pemohon" name="kategori_pemohon" required
-                            class="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                            class="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20">
                             <option value="">Pilih kategori</option>
                             @foreach (['Orang Perorangan', 'Badan Hukum', 'Kelompok Orang'] as $kategori)
                                 <option value="{{ $kategori }}" @selected(old('kategori_pemohon', 'Orang Perorangan') === $kategori)>
@@ -176,29 +164,29 @@
                             </p>
                         </div>
                     @else
-                        <div class="md:col-span-2 rounded-2xl border border-blue-200 bg-blue-50/70 p-5">
+                        <div class="md:col-span-2 rounded-2xl border border-emerald-200 bg-emerald-50/70 p-5">
                             <div class="flex flex-col gap-5 lg:flex-row lg:items-start">
                                 <div class="min-w-0 flex-1">
-                                    <h3 class="text-base font-bold text-blue-950">
+                                    <h3 class="text-base font-bold text-emerald-950">
                                         Isi otomatis dari foto KTP
                                     </h3>
 
-                                    <p class="mt-2 text-sm leading-6 text-blue-800">
+                                    <p class="mt-2 text-sm leading-6 text-emerald-800">
                                         Pilih foto JPG, JPEG, atau PNG yang jelas. Sistem akan mencoba membaca NIK, nama,
                                         tempat dan tanggal lahir, jenis kelamin, alamat, wilayah, serta pekerjaan.
                                     </p>
 
                                     <div class="mt-4">
                                         <label for="file_identitas"
-                                            class="mb-1.5 block text-sm font-semibold text-blue-950">
+                                            class="mb-1.5 block text-sm font-semibold text-emerald-950">
                                             Foto atau Salinan Identitas (KTP) <span class="text-red-500">*</span>
                                         </label>
 
                                         <input id="file_identitas" name="file_identitas" type="file" required
                                             accept=".pdf,.jpg,.jpeg,.png"
-                                            class="block w-full rounded-lg border border-blue-300 bg-white text-sm text-slate-600 file:mr-4 file:border-0 file:border-r file:border-blue-200 file:bg-blue-100 file:px-4 file:py-2.5 file:font-semibold file:text-blue-900">
+                                            class="block w-full rounded-lg border border-emerald-300 bg-white text-sm text-slate-600 file:mr-4 file:border-0 file:border-r file:border-emerald-200 file:bg-emerald-100 file:px-4 file:py-2.5 file:font-semibold file:text-emerald-900">
 
-                                        <p class="mt-1.5 text-xs text-blue-700">
+                                        <p class="mt-1.5 text-xs text-emerald-700">
                                             KTP wajib diunggah. OCR hanya berjalan untuk JPG, JPEG, dan PNG. PDF tetap dapat
                                             diunggah, tetapi datanya harus diisi manual. Maksimal 5 MB.
                                         </p>
@@ -206,7 +194,7 @@
 
                                     <div class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
                                         <button id="ktp-ocr-button" type="button" disabled
-                                            class="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-blue-700 px-5 text-sm font-semibold text-white transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-50">
+                                            class="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-emerald-800 px-5 text-sm font-semibold text-white transition hover:bg-emerald-900 disabled:cursor-not-allowed disabled:opacity-50">
                                             <svg id="ktp-ocr-icon" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                                                 stroke="currentColor" aria-hidden="true">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -224,7 +212,7 @@
                                             <span id="ktp-ocr-button-text">Baca Data KTP Otomatis</span>
                                         </button>
 
-                                        <span class="text-xs leading-5 text-blue-700">
+                                        <span class="text-xs leading-5 text-emerald-700">
                                             Hasil OCR wajib diperiksa dan dapat diedit.
                                         </span>
                                     </div>
@@ -234,11 +222,11 @@
                                 </div>
 
                                 <div id="ktp-preview-wrapper" class="hidden w-full shrink-0 lg:w-64">
-                                    <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-blue-800">
+                                        <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-emerald-800">
                                         Pratinjau KTP
                                     </p>
                                     <img id="ktp-preview" src="" alt="Pratinjau foto KTP"
-                                        class="max-h-52 w-full rounded-xl border border-blue-200 bg-white object-contain shadow-sm">
+                                        class="max-h-52 w-full rounded-xl border border-emerald-200 bg-white object-contain shadow-sm">
                                 </div>
                             </div>
                         </div>
@@ -250,7 +238,7 @@
 
                             <input id="nama_pemohon" name="nama_pemohon" type="text"
                                 value="{{ old('nama_pemohon') }}" required maxlength="100" autocomplete="name"
-                                class="h-11 w-full rounded-lg border border-slate-300 px-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                                class="h-11 w-full rounded-lg border border-slate-300 px-3 text-sm focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20">
                         </div>
 
                         <div>
@@ -261,7 +249,7 @@
                             <input id="nomor_identitas" name="nomor_identitas" type="text" inputmode="numeric"
                                 value="{{ old('nomor_identitas') }}" required minlength="16" maxlength="16"
                                 pattern="[0-9]{16}" autocomplete="off"
-                                class="h-11 w-full rounded-lg border border-slate-300 px-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                                class="h-11 w-full rounded-lg border border-slate-300 px-3 text-sm focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20">
 
                             <p class="mt-1.5 text-xs text-slate-500">NIK harus terdiri dari 16 angka.</p>
                         </div>
@@ -273,7 +261,7 @@
 
                             <input id="tmp_lahir" name="tmp_lahir" type="text" value="{{ old('tmp_lahir') }}"
                                 required maxlength="50"
-                                class="h-11 w-full rounded-lg border border-slate-300 px-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                                class="h-11 w-full rounded-lg border border-slate-300 px-3 text-sm focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20">
                         </div>
 
                         <div>
@@ -283,7 +271,7 @@
 
                             <input id="tgl_lahir" name="tgl_lahir" type="date" value="{{ old('tgl_lahir') }}"
                                 required max="{{ now()->subDay()->format('Y-m-d') }}"
-                                class="h-11 w-full rounded-lg border border-slate-300 px-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                                class="h-11 w-full rounded-lg border border-slate-300 px-3 text-sm focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20">
                         </div>
 
                         <div>
@@ -292,7 +280,7 @@
                             </label>
 
                             <select id="l_kelamin" name="l_kelamin" required
-                                class="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                                class="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20">
                                 <option value="">Pilih jenis kelamin</option>
                                 <option value="Laki-laki" @selected(old('l_kelamin') === 'Laki-laki')>Laki-laki</option>
                                 <option value="Perempuan" @selected(old('l_kelamin') === 'Perempuan')>Perempuan</option>
@@ -306,7 +294,7 @@
 
                             <input id="pekerjaan_pemohon" name="pekerjaan_pemohon" type="text"
                                 value="{{ old('pekerjaan_pemohon') }}" maxlength="50"
-                                class="h-11 w-full rounded-lg border border-slate-300 px-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                                class="h-11 w-full rounded-lg border border-slate-300 px-3 text-sm focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20">
                         </div>
 
                         <div>
@@ -316,7 +304,7 @@
 
                             <input id="email_pemohon" name="email_pemohon" type="email"
                                 value="{{ old('email_pemohon') }}" required maxlength="100" autocomplete="email"
-                                class="h-11 w-full rounded-lg border border-slate-300 px-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                                class="h-11 w-full rounded-lg border border-slate-300 px-3 text-sm focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20">
 
                             <p class="mt-1.5 text-xs text-slate-500">
                                 Email ini menjadi username akun dan menerima tautan pembuatan password.
@@ -330,7 +318,7 @@
 
                             <input id="telp_pemohon" name="telp_pemohon" type="text"
                                 value="{{ old('telp_pemohon') }}" required maxlength="20" autocomplete="tel"
-                                class="h-11 w-full rounded-lg border border-slate-300 px-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                                class="h-11 w-full rounded-lg border border-slate-300 px-3 text-sm focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20">
                         </div>
 
                         <div class="md:col-span-2">
@@ -339,7 +327,7 @@
                             </label>
 
                             <textarea id="alamat_pemohon" name="alamat_pemohon" rows="3" required maxlength="500"
-                                class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">{{ old('alamat_pemohon') }}</textarea>
+                                class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20">{{ old('alamat_pemohon') }}</textarea>
                         </div>
 
                         <div>
@@ -349,7 +337,7 @@
 
                             <input id="desa_kel" name="desa_kel" type="text" value="{{ old('desa_kel') }}"
                                 maxlength="50"
-                                class="h-11 w-full rounded-lg border border-slate-300 px-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                                class="h-11 w-full rounded-lg border border-slate-300 px-3 text-sm focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20">
                         </div>
 
                         <div>
@@ -359,7 +347,7 @@
 
                             <input id="kecamatan" name="kecamatan" type="text" value="{{ old('kecamatan') }}"
                                 maxlength="50"
-                                class="h-11 w-full rounded-lg border border-slate-300 px-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                                class="h-11 w-full rounded-lg border border-slate-300 px-3 text-sm focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20">
                         </div>
 
                         <div>
@@ -369,7 +357,7 @@
 
                             <input id="kota_kab" name="kota_kab" type="text" value="{{ old('kota_kab') }}"
                                 maxlength="50"
-                                class="h-11 w-full rounded-lg border border-slate-300 px-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                                class="h-11 w-full rounded-lg border border-slate-300 px-3 text-sm focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20">
                         </div>
 
                         <div>
@@ -379,7 +367,7 @@
 
                             <input id="provinsi" name="provinsi" type="text" value="{{ old('provinsi') }}"
                                 maxlength="50"
-                                class="h-11 w-full rounded-lg border border-slate-300 px-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                                class="h-11 w-full rounded-lg border border-slate-300 px-3 text-sm focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20">
                         </div>
                     @endif
 
@@ -401,7 +389,7 @@
             </section>
 
             <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-                <div class="border-b border-slate-200 px-6 py-5">
+                <div class="border-b border-emerald-100 bg-emerald-50/30 px-6 py-5">
                     <h2 class="text-lg font-bold text-slate-900">Rincian Permohonan</h2>
                 </div>
 
@@ -412,7 +400,7 @@
                         </label>
 
                         <textarea id="rincian" name="rincian" rows="5" required maxlength="500"
-                            class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                            class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
                             placeholder="Jelaskan informasi yang ingin diperoleh.">{{ old('rincian') }}</textarea>
                     </div>
 
@@ -422,7 +410,7 @@
                         </label>
 
                         <textarea id="tujuan" name="tujuan" rows="4" required maxlength="500"
-                            class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                            class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
                             placeholder="Jelaskan tujuan penggunaan informasi.">{{ old('tujuan') }}</textarea>
                     </div>
 
@@ -433,7 +421,7 @@
                             </label>
 
                             <select id="cara_memperoleh" name="cara_memperoleh" required
-                                class="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                                class="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20">
                                 <option value="">Pilih cara memperoleh</option>
                                 @foreach (['Mendapatkan salinan informasi (softcopy)', 'Melihat, membaca, mendengarkan, atau mencatat'] as $cara)
                                     <option value="{{ $cara }}" @selected(old('cara_memperoleh') === $cara)>
@@ -449,7 +437,7 @@
                             </label>
 
                             <select id="cara_pengiriman" name="cara_pengiriman" required
-                                class="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                                class="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20">
                                 <option value="">Pilih cara pengiriman</option>
                                 @foreach (['E-mail', 'Mengambil langsung', 'Pos atau jasa pengiriman'] as $cara)
                                     <option value="{{ $cara }}" @selected(old('cara_pengiriman') === $cara)>
@@ -463,12 +451,12 @@
             </section>
 
             @unless ($isLoggedIn)
-                <section class="rounded-2xl border border-blue-200 bg-blue-50 p-5">
+                <section class="rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
                     <label class="flex items-start gap-3">
                         <input type="checkbox" name="persetujuan_akun" value="1" @checked(old('persetujuan_akun')) required
-                            class="mt-1 h-4 w-4 rounded border-blue-300 text-blue-700 focus:ring-blue-500">
+                            class="mt-1 h-4 w-4 rounded border-emerald-300 text-emerald-800 focus:ring-emerald-500">
 
-                        <span class="text-sm leading-6 text-blue-900">
+                        <span class="text-sm leading-6 text-emerald-950">
                             Saya menyetujui pembuatan akun layanan PPID berdasarkan identitas dan email yang saya berikan. Email
                             digunakan sebagai username, sedangkan password dibuat sendiri melalui tautan aktivasi yang dikirim
                             setelah permohonan berhasil.
@@ -484,7 +472,7 @@
                 </a>
 
                 <button type="submit"
-                    class="inline-flex h-11 items-center justify-center rounded-lg bg-blue-700 px-6 text-sm font-semibold text-white hover:bg-blue-800">
+                    class="inline-flex h-11 items-center justify-center rounded-lg bg-emerald-800 px-6 text-sm font-semibold text-white hover:bg-emerald-900">
                     Ajukan Permohonan
                 </button>
             </div>
@@ -517,7 +505,7 @@
                         success: 'border-green-200 bg-green-50 text-green-800',
                         warning: 'border-amber-200 bg-amber-50 text-amber-900',
                         error: 'border-red-200 bg-red-50 text-red-800',
-                        info: 'border-blue-200 bg-white text-blue-900'
+                        info: 'border-emerald-200 bg-white text-emerald-950'
                     };
 
                     statusBox.className =

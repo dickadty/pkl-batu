@@ -3,49 +3,17 @@
 @section('title', 'Login | PPID Kota Batu')
 
 @section('content')
-    <section class="border-b border-slate-200 bg-white">
-        <div class="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
-            <span
-                class="
-                    inline-flex
-                    rounded-full
-                    bg-blue-50
-                    px-3
-                    py-1
-                    text-xs
-                    font-semibold
-                    text-blue-700
-                ">
-                Sistem Login Terpadu
-            </span>
-
-            <h1
-                class="
-                    mt-4
-                    text-3xl
-                    font-bold
-                    tracking-tight
-                    text-slate-900
-                ">
-                Login PPID Kota Batu
-            </h1>
-
-            <p
-                class="
-                    mt-3
-                    max-w-3xl
-                    text-slate-600
-                ">
-                Gunakan email untuk login sebagai warga atau username untuk login sebagai administrator.
-                Sistem akan menentukan jenis akun secara otomatis.
-            </p>
-        </div>
-    </section>
+    <x-public.sections.page-hero
+        eyebrow="Sistem Login Terpadu"
+        title="Login"
+        highlight="PPID Kota Batu"
+        description="Gunakan email untuk login sebagai warga atau username untuk login sebagai administrator. Sistem akan menentukan jenis akun secara otomatis."
+    />
 
     <section
         class="
             mx-auto
-            max-w-5xl
+            max-w-6xl
             px-4
             py-12
             sm:px-6
@@ -56,7 +24,7 @@
                 grid
                 grid-cols-1
                 gap-8
-                lg:grid-cols-[minmax(0,1fr)_360px]
+                lg:grid-cols-[minmax(0,1fr)_320px]
             ">
             <div
                 class="
@@ -209,9 +177,9 @@
                                     outline-none
                                     transition
                                     placeholder:text-slate-400
-                                    focus:border-blue-500
+                                    focus:border-emerald-600
                                     focus:ring-2
-                                    focus:ring-blue-500/20
+                                    focus:ring-emerald-500/20
                                     @error('identifier')
                                         border-red-500
                                         focus:border-red-500
@@ -261,17 +229,9 @@
                                         outline-none
                                         transition
                                         placeholder:text-slate-400
-                                        focus:border-blue-500
+                                        focus:border-emerald-600
                                         focus:ring-2
-                                                                               w-full
-                                        rounded-lg
-                                        border
-                                        border-slate-300
-                                        bg-white
-                                        px-3
-                                        pr-12
-                                        text-sm
-                                        text-slate focus:ring-blue-500/20
+                                        focus:ring-emerald-500/20
                                         @error('password')
                                             border-red-500
                                             focus:border-red-500
@@ -290,7 +250,7 @@
                                         justify-center
                                         text-slate-500
                                         transition
-                                        hover:text-blue-700
+                                        hover:text-emerald-700
                                     "
                                     :aria-label="visible ? 'Sembunyikan password' : 'Tampilkan password'">
                                     <svg x-show="!visible" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
@@ -317,17 +277,17 @@
                                 justify-center
                                 gap-2
                                 rounded-lg
-                                bg-blue-700
+                                bg-emerald-800
                                 px-5
                                 text-sm
                                 font-semibold
                                 text-white
                                 shadow-sm
                                 transition
-                                hover:bg-blue-800
+                                hover:bg-emerald-900
                                 focus:outline-none
                                 focus:ring-3
-                                focus:ring-blue-500/30
+                                focus:ring-emerald-500/30
                             ">
                             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
                                 aria-hidden="true">
@@ -346,15 +306,15 @@
                     class="
                         rounded-2xl
                         border
-                        border-blue-200
-                        bg-blue-50
+                        border-emerald-200
+                        bg-emerald-50
                         p-5
                     ">
                     <h2
                         class="
                             text-base
                             font-bold
-                            text-blue-900
+                            text-emerald-950
                         ">
                         Login Warga
                     </h2>
@@ -364,7 +324,7 @@
                             mt-2
                             text-sm
                             leading-6
-                            text-blue-800
+                            text-emerald-800
                         ">
                         Gunakan alamat email yang didaftarkan ketika mengajukan permohonan informasi pertama.
                     </p>
@@ -379,14 +339,14 @@
                             justify-center
                             rounded-lg
                             border
-                            border-blue-300
+                            border-emerald-300
                             bg-white
                             px-4
                             text-sm
                             font-semibold
-                            text-blue-700
+                            text-emerald-800
                             transition
-                            hover:bg-blue-100
+                            hover:bg-emerald-100
                         ">
                         Kirim Ulang Aktivasi
                     </a>
@@ -428,13 +388,13 @@
                             items-center
                             justify-center
                             rounded-lg
-                            bg-slate-900
+                            bg-emerald-950
                             px-4
                             text-sm
                             font-semibold
                             text-white
                             transition
-                            hover:bg-slate-800
+                            hover:bg-emerald-900
                         ">
                         Ajukan Permohonan Pertama
                     </a>
