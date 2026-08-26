@@ -89,33 +89,29 @@ Route::post(
 |--------------------------------------------------------------------------
 */
 
-   Route::prefix('admin')
+Route::prefix('admin')
     ->name('admin.')
     ->group(function () {
 
         Route::resource('pages', PageController::class);
-
     });
 
-    Route::get('/page/{slug}', [PageController::class, 'show'])
+Route::get('/page/{slug}', [PageController::class, 'show'])
     ->name('public.pages.show');
-    
-    Route::prefix('admin')
+
+Route::prefix('admin')
     ->name('admin.')
     ->group(function () {
 
         Route::resource('menu', MenuController::class);
-
     });
 
 
-    Route::prefix('admin')
+Route::prefix('admin')
     ->name('admin.')
     ->group(function () {
 
-    Route::resource('module', ModuleController::class);
-
-        
+        Route::resource('module', ModuleController::class);
     });
 /*
 |--------------------------------------------------------------------------
@@ -158,7 +154,7 @@ Route::prefix('informasi')
             'show'
         )->name('show');
     });
-    /*
+/*
 
 |--------------------------------------------------------------------------
 | FAQ PUBLIK
@@ -1000,7 +996,7 @@ Route::prefix('admin')
                 });
 
 
-/*
+            /*
 
             /*
             |--------------------------------------------------------------------------
@@ -1149,49 +1145,64 @@ Route::prefix('admin')
                         ->whereNumber('id')
                         ->name('show');
                 });
-
             /*
-            |--------------------------------------------------------------------------
-            | KEBERATAN
-            |--------------------------------------------------------------------------
-            */
+|--------------------------------------------------------------------------
+| KEBERATAN
+|--------------------------------------------------------------------------
+*/
 
             Route::prefix('keberatan')
                 ->name('keberatan.')
-                ->controller(
-                    AdminKeberatanController::class
-                )
+                ->controller(AdminKeberatanController::class)
                 ->group(function (): void {
-                    Route::get(
-                        '/',
-                        'index'
-                    )->name('index');
 
-                    Route::get(
-                        '/{id}',
-                        'show'
-                    )
-                        ->whereNumber('id')
-                        ->name('show');
-                });
-        });
-
-        /*
+                    /*
         |--------------------------------------------------------------------------
-        | AKSI KEBERATAN ADMIN UTAMA
+        | ADMIN UTAMA DAN ADMIN PEMBANTU
         |--------------------------------------------------------------------------
         */
 
-        Route::middleware('admin.role:1')
-            ->put(
-                '/keberatan/{id}',
-                [
-                    AdminKeberatanController::class,
-                    'update',
-                ]
-            )
-            ->whereNumber('id')
-            ->name('keberatan.update');
+                    Route::middleware('admin.role:1,2')
+                        ->group(function (): void {
+
+                            Route::get(
+                                '/',
+                                'index'
+                            )->name('index');
+
+                            Route::get(
+                                '/{id}',
+                                'show'
+                            )
+                                ->whereNumber('id')
+                                ->name('show');
+                        });
+
+                    /*
+        |--------------------------------------------------------------------------
+        | AKSI ADMIN UTAMA
+        |--------------------------------------------------------------------------
+        */
+
+                    Route::middleware('admin.role:1')
+                        ->group(function (): void {
+
+                            Route::post(
+                                '/{id}/proses',
+                                'proses'
+                            )
+                                ->whereNumber('id')
+                                ->name('proses');
+
+                            Route::post(
+                                '/{id}/selesaikan',
+                                'selesaikan'
+                            )
+                                ->whereNumber('id')
+                                ->name('selesaikan');
+                        });
+                });
+        });
 
         /*
         |--------------------------------------------------------------------------
