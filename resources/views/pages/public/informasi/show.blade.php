@@ -57,7 +57,7 @@
     <section
         class="
             relative
-            mt-15
+            -mt-8
             overflow-hidden
             bg-linear-to-r
             from-green-950

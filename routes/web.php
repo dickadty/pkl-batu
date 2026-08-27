@@ -30,7 +30,9 @@ use App\Http\Controllers\Publik\HomeController;
 use App\Http\Controllers\Publik\InformasiController;
 use App\Http\Controllers\Publik\KeberatanController as PublikKeberatanController;
 use App\Http\Controllers\Publik\KtpOcrController;
+use App\Http\Controllers\Publik\PengadaanController as PublikPengadaanController;
 use App\Http\Controllers\Publik\PermohonanController as PublikPermohonanController;
+use App\Http\Controllers\Publik\ProkerController as PublikProkerController;
 use App\Http\Controllers\Publik\PesanController as PublikPesanController;
 
 use Illuminate\Support\Facades\Route;
@@ -120,6 +122,36 @@ Route::get(
     '/page/{slug}',
     [PageController::class, 'show']
 )->name('public.pages.show');
+
+
+/*
+|--------------------------------------------------------------------------
+| PENGADAAN PUBLIK
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('pengadaan')
+    ->name('public.pengadaan.')
+    ->controller(PublikPengadaanController::class)
+    ->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/{id}', 'show')->name('show');
+    });
+
+
+/*
+|--------------------------------------------------------------------------
+| PROGRAM KERJA PUBLIK
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('program-kerja')
+    ->name('public.program-kerja.')
+    ->controller(PublikProkerController::class)
+    ->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/{id}', 'show')->whereNumber('id')->name('show');
+    });
 
 
 /*
