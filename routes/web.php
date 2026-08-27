@@ -34,6 +34,7 @@ use App\Http\Controllers\Publik\PengadaanController as PublikPengadaanController
 use App\Http\Controllers\Publik\PermohonanController as PublikPermohonanController;
 use App\Http\Controllers\Publik\ProkerController as PublikProkerController;
 use App\Http\Controllers\Publik\PesanController as PublikPesanController;
+use App\Http\Controllers\Publik\PageController as PublikPageController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -120,8 +121,13 @@ Route::prefix('admin')
 
 Route::get(
     '/page/{slug}',
-    [PageController::class, 'show']
+    [PublikPageController::class, 'show']
 )->name('public.pages.show');
+
+Route::get(
+    '/page/{slug}/file',
+    [PublikPageController::class, 'file']
+)->name('public.pages.file');
 
 
 /*

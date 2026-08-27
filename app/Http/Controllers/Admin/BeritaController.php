@@ -13,7 +13,8 @@ class BeritaController extends Controller
 {
     public function __construct(
         protected BeritaService $beritaService
-    ) {}
+    ) {
+    }
 
     /**
      * Menampilkan daftar berita admin.
@@ -134,6 +135,68 @@ class BeritaController extends Controller
             ->with(
                 'success',
                 'Berita berhasil ditambahkan.'
+            );
+    }
+
+    /**
+     * Menampilkan halaman edit berita.
+     */
+    public function edit(int $id): View
+    {
+        $berita = $this->beritaService
+            ->getAllForAdmin()
+            ->firstWhere('id', $id);
+
+        abort_if(
+            $berita === null,
+            404,
+            'Data berita tidak ditemukan.'
+        );
+
+        return view(
+            'pages.admin.berita.edit',
+            compact('berita')
+        );
+    }
+
+    /**
+     * Memperbarui data berita.
+     */
+    public function update(
+        Request $request,
+        int $id
+    ): RedirectResponse {
+        $validated = $request->validate([
+            'judul' => [
+                'required',
+                'string',
+                'max:500',
+            ],
+
+            'caption' => [
+                'nullable',
+                'string',
+            ],
+
+            'gambar' => [
+                'nullable',
+                'image',
+                'mimes:jpg,jpeg,png,webp',
+                'max:2048',
+            ],
+        ]);
+
+        $this->beritaService->update(
+            $id,
+            $validated,
+            $request->file('gambar')
+        );
+
+        return redirect()
+            ->route('admin.berita.index')
+            ->with(
+                'success',
+                'Berita berhasil diperbarui.'
             );
     }
 

@@ -16,41 +16,38 @@
                     class="w-full max-h-[500px] object-cover rounded-2xl shadow-lg mb-10">
             @endif
 
-           @if($page->file)
+            @if($page->file)
+                @php
+                    $fileUrl = route('public.pages.file', $page->slug);
+                    $isPdf = strtolower(pathinfo($page->file, PATHINFO_EXTENSION)) === 'pdf';
+                @endphp
 
-<div class="mt-8">
+                @if($isPdf)
+                    <div class="mt-8 overflow-hidden rounded-lg border border-slate-200 bg-slate-100">
+                        <iframe
+                            src="{{ $fileUrl }}"
+                            title="{{ $page->judul }}"
+                            class="h-[900px] w-full"
+                            loading="lazy">
+                            <p class="p-6 text-slate-600">
+                                Browser tidak dapat menampilkan PDF.
+                                <a href="{{ $fileUrl }}" target="_blank" rel="noopener"
+                                    class="font-medium text-emerald-700 underline">
+                                    Buka PDF
+                                </a>
+                            </p>
+                        </iframe>
+                    </div>
+                @endif
 
-    <iframe
-        src="{{ asset('storage/' . $page->file) }}"
-        class="w-full h-[900px] rounded-lg border">
-    </iframe>
-
-</div>
-
-@endif
-
-@if($page->file)
-
-<div class="mb-4">
-
-    <a
-        href="{{ asset('storage/' . $page->file) }}"
-        download
-        class="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-white">
-
-        <i class="ri-download-line"></i>
-        Download Dokumen
-
-    </a>
-
-</div>
-
-@endif
-
-<div class="bg-red-100 p-4 rounded mb-4">
-    File: {{ $page->file }} <br>
-    URL: {{ asset('storage/' . $page->file) }}
-</div>
+                <div class="mt-4">
+                    <a href="{{ $fileUrl }}" target="_blank" rel="noopener"
+                        class="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-white hover:bg-emerald-700">
+                        <i class="ri-file-pdf-line"></i>
+                        {{ $isPdf ? 'Buka PDF' : 'Buka Dokumen' }}
+                    </a>
+                </div>
+            @endif
 
             <div class="prose prose-lg max-w-none">
                 {!! $page->content !!}

@@ -218,6 +218,11 @@ function updateRoute()
     viewInput.value = `pages.public.${slugInput.value}.index`;
 }
 
+routeInput.addEventListener('input', function () {
+    viewInput.value = this.value
+        .replace(/^public\./, 'pages.public.');
+});
+
 namaInput.addEventListener('input', function () {
 
     if (!manualSlug) {

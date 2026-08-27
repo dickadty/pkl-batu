@@ -50,7 +50,7 @@ class InformasiController extends Controller
     public function setiapSaat()
     {
         $dokumentasi = $this->informasiService
-            ->getBySifat('setiap saat');
+            ->getBySifat('setiap_saat');
 
         $jumlahKategori = $dokumentasi->count();
 
@@ -78,7 +78,7 @@ class InformasiController extends Controller
     public function sertaMerta()
     {
         $dokumentasi = $this->informasiService
-            ->getBySifat('serta merta');
+            ->getBySifat('serta_merta');
 
         $jumlahKategori = $dokumentasi->count();
 

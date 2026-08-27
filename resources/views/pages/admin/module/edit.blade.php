@@ -79,6 +79,19 @@
 
                     </div>
 
+                    {{-- View --}}
+                    <div>
+
+                        <label class="mb-2 block text-sm font-medium text-slate-700">
+                            View Name
+                        </label>
+
+                        <input type="text" id="view_name" name="view_name"
+                            value="{{ old('view_name', $module->view_name) }}" required
+                            class="w-full rounded-lg border border-slate-300 px-4 py-2.5 focus:border-emerald-500 focus:ring-emerald-500">
+
+                    </div>
+
                     {{-- Status --}}
                     <div>
 
@@ -146,6 +159,12 @@
         const namaInput = document.getElementById('nama');
         const slugInput = document.getElementById('slug');
         const routeInput = document.getElementById('route_name');
+        const viewInput = document.getElementById('view_name');
+
+        function updateViewFromRoute() {
+            viewInput.value = routeInput.value
+                .replace(/^public\./, 'pages.public.');
+        }
 
         function generateSlug(text) {
             return text
@@ -157,7 +176,14 @@
 
         function updateField() {
             routeInput.value = `public.${slugInput.value}.index`;
+            updateViewFromRoute();
         }
+
+        routeInput.addEventListener('input', function () {
+            updateViewFromRoute();
+        });
+
+        updateViewFromRoute();
 
         namaInput.addEventListener('input', function () {
             slugInput.value = generateSlug(this.value);
