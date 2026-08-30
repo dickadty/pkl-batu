@@ -22,10 +22,21 @@ class BeritaService
             ->get();
     }
 
-    public function create(array $data, ?UploadedFile $gambar = null): Berita
+    public function findById(int $id): Berita
     {
-        if ($gambar) {
-            $data['gambar'] = $this->storeGambar($gambar);
+        return $this->berita
+            ->newQuery()
+            ->findOrFail($id);
+    }
+
+    public function create(
+        array $data,
+        ?UploadedFile $gambar = null
+    ): Berita {
+        if ($gambar instanceof UploadedFile) {
+            $data['gambar'] = $this->storeGambar(
+                $gambar
+            );
         }
 
         $data['tanggal'] = time();
@@ -35,36 +46,102 @@ class BeritaService
             ->create($data);
     }
 
+    public function update(
+        int $id,
+        array $data,
+        ?UploadedFile $gambar = null
+    ): Berita {
+        $berita = $this->findById($id);
+
+        $gambarLama = $berita->gambar;
+
+        if ($gambar instanceof UploadedFile) {
+            $data['gambar'] = $this->storeGambar(
+                $gambar
+            );
+        } else {
+            unset($data['gambar']);
+        }
+
+        $data['tanggal'] = time();
+
+        $berita->fill($data);
+        $berita->save();
+
+        if (
+            $gambar instanceof UploadedFile &&
+            !empty($gambarLama) &&
+            $gambarLama !== $berita->gambar
+        ) {
+            $this->deleteFile(
+                $gambarLama
+            );
+        }
+
+        return $berita->fresh() ?? $berita;
+    }
+
     public function delete(int $id): void
     {
-        $berita = $this->berita
-            ->newQuery()
-            ->findOrFail($id);
+        $berita = $this->findById($id);
 
-        $this->deleteFile($berita->gambar);
+        $gambar = $berita->gambar;
 
         $berita->delete();
+
+        $this->deleteFile(
+            $gambar
+        );
     }
 
-    private function storeGambar(UploadedFile $file): string
-    {
-        $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+    private function storeGambar(
+        UploadedFile $file
+    ): string {
+        $originalName = pathinfo(
+            $file->getClientOriginalName(),
+            PATHINFO_FILENAME
+        );
 
-        $filename = time() . '_' .
-            str($originalName)->slug()->toString() .
+        $slug = str($originalName)
+            ->slug()
+            ->toString();
+
+        if ($slug === '') {
+            $slug = 'berita';
+        }
+
+        $extension = strtolower(
+            $file->getClientOriginalExtension()
+        );
+
+        $filename =
+            now()->format('YmdHis') .
+            '_' .
+            uniqid() .
+            '_' .
+            $slug .
             '.' .
-            $file->getClientOriginalExtension();
+            $extension;
 
-        return $file->storeAs('berita', $filename, 'public');
+        return $file->storeAs(
+            'berita',
+            $filename,
+            'public'
+        );
     }
 
-    private function deleteFile(?string $path): void
-    {
-        if (! $path) {
+    private function deleteFile(
+        ?string $path
+    ): void {
+        if (
+            $path === null ||
+            trim($path) === ''
+        ) {
             return;
         }
 
-        $disk = $this->storage->disk('public');
+        $disk = $this->storage
+            ->disk('public');
 
         if ($disk->exists($path)) {
             $disk->delete($path);
