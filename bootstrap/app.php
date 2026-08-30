@@ -1,13 +1,16 @@
 <?php
 
+use App\Http\Middleware\AdminAuthMiddleware;
+use App\Http\Middleware\AdminRoleMiddleware;
+use App\Http\Middleware\TrackVisitor;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
-use App\Http\Middleware\AdminAuthMiddleware;
-use App\Http\Middleware\AdminRoleMiddleware;
 
-return Application::configure(basePath: dirname(__DIR__))
+return Application::configure(
+    basePath: dirname(__DIR__)
+)
     ->withRouting(
         web: __DIR__ . '/../routes/web.php',
         api: __DIR__ . '/../routes/api.php',
@@ -19,12 +22,17 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin.auth' => AdminAuthMiddleware::class,
             'admin.role' => AdminRoleMiddleware::class,
         ]);
+
+        $middleware->web(
+            append: [
+                TrackVisitor::class,
+            ]
+        );
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
-            fn(Request $request) => $request->is('api/*'),
+            fn(Request $request): bool =>
+            $request->is('api/*')
         );
-    })->create();
-
-
-    
+    })
+    ->create();

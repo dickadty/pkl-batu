@@ -5,10 +5,13 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\BeritaController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DokumentasiController as AdminInformasiPublikController;
-use App\Http\Controllers\Admin\kategoriInformasiController;
 use App\Http\Controllers\Admin\FaqController as AdminFaqController;
+use App\Http\Controllers\Admin\KategoriInformasiController;
 use App\Http\Controllers\Admin\KeberatanController as AdminKeberatanController;
+use App\Http\Controllers\Admin\MenuController;
+use App\Http\Controllers\Admin\ModuleController;
 use App\Http\Controllers\Admin\NotifikasiController;
+use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\PejabatController;
 use App\Http\Controllers\Admin\PengadaanController;
 use App\Http\Controllers\Admin\PermohonanController as AdminPermohonanController;
@@ -16,12 +19,7 @@ use App\Http\Controllers\Admin\PesanMasukController;
 use App\Http\Controllers\Admin\PpidPembantuController;
 use App\Http\Controllers\Admin\ProkerController;
 use App\Http\Controllers\Admin\SliderController;
-use App\Http\Controllers\Admin\MenuController;
-use App\Http\Controllers\Admin\PageController;
-use App\Http\Controllers\Admin\ModuleController;
-
 use App\Http\Controllers\Auth\UnifiedLoginController;
-
 use App\Http\Controllers\Publik\AccountActivationController;
 use App\Http\Controllers\Publik\AuthController as PublikAuthController;
 use App\Http\Controllers\Publik\BeritaController as PublikBeritaController;
@@ -32,9 +30,16 @@ use App\Http\Controllers\Publik\KeberatanController as PublikKeberatanController
 use App\Http\Controllers\Publik\KtpOcrController;
 use App\Http\Controllers\Publik\PengadaanController as PublikPengadaanController;
 use App\Http\Controllers\Publik\PermohonanController as PublikPermohonanController;
-use App\Http\Controllers\Publik\ProkerController as PublikProkerController;
 use App\Http\Controllers\Publik\PesanController as PublikPesanController;
-use App\Http\Controllers\Publik\PageController as PublikPageController;
+use App\Http\Controllers\Publik\ProkerController as PublikProkerController;
+use App\Http\Controllers\Publik\SurveyController;
+
+
+/*
+|--------------------------------------------------------------------------
+| LARAVEL
+|--------------------------------------------------------------------------
+*/
 
 use Illuminate\Support\Facades\Route;
 
@@ -53,7 +58,7 @@ Route::view(
 
 /*
 |--------------------------------------------------------------------------
-| HALAMAN UTAMA DAN PUBLIK
+| BERANDA
 |--------------------------------------------------------------------------
 */
 
@@ -61,6 +66,26 @@ Route::get(
     '/',
     [HomeController::class, 'index']
 )->name('beranda');
+
+
+/*
+|--------------------------------------------------------------------------
+| SURVEY KEPUASAN PUBLIK
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('survey')
+    ->name('public.survey.')
+    ->controller(\App\Http\Controllers\Publik\SurveyController::class)
+    ->group(function (): void {
+
+        Route::post(
+            '/',
+            'store'
+        )
+            ->middleware('throttle:5,1')
+            ->name('store');
+    });
 
 
 /*
@@ -104,20 +129,13 @@ Route::post(
 
 /*
 |--------------------------------------------------------------------------
-| MANAJEMEN HALAMAN
+| HALAMAN PUBLIK DINAMIS
 |--------------------------------------------------------------------------
+|
+| Untuk sementara masih menggunakan PageController admin karena struktur
+| project saat ini memang menggunakan controller tersebut.
+|
 */
-
-Route::prefix('admin')
-    ->name('admin.')
-    ->group(function () {
-
-        Route::resource(
-            'pages',
-            PageController::class
-        );
-    });
-
 
 Route::get(
     '/page/{slug}',
@@ -139,9 +157,20 @@ Route::get(
 Route::prefix('pengadaan')
     ->name('public.pengadaan.')
     ->controller(PublikPengadaanController::class)
-    ->group(function () {
-        Route::get('/', 'index')->name('index');
-        Route::get('/{id}', 'show')->name('show');
+    ->group(function (): void {
+
+        Route::get(
+            '/',
+            'index'
+        )->name('index');
+
+
+        Route::get(
+            '/{id}',
+            'show'
+        )
+            ->whereNumber('id')
+            ->name('show');
     });
 
 
@@ -154,43 +183,20 @@ Route::prefix('pengadaan')
 Route::prefix('program-kerja')
     ->name('public.program-kerja.')
     ->controller(PublikProkerController::class)
-    ->group(function () {
-        Route::get('/', 'index')->name('index');
-        Route::get('/{id}', 'show')->whereNumber('id')->name('show');
-    });
+    ->group(function (): void {
+
+        Route::get(
+            '/',
+            'index'
+        )->name('index');
 
 
-/*
-|--------------------------------------------------------------------------
-| MANAJEMEN MENU
-|--------------------------------------------------------------------------
-*/
-
-Route::prefix('admin')
-    ->name('admin.')
-    ->group(function () {
-
-        Route::resource(
-            'menu',
-            MenuController::class
-        );
-    });
-
-
-/*
-|--------------------------------------------------------------------------
-| MANAJEMEN MODULE
-|--------------------------------------------------------------------------
-*/
-
-Route::prefix('admin')
-    ->name('admin.')
-    ->group(function () {
-
-        Route::resource(
-            'module',
-            ModuleController::class
-        );
+        Route::get(
+            '/{id}',
+            'show'
+        )
+            ->whereNumber('id')
+            ->name('show');
     });
 
 
@@ -203,11 +209,12 @@ Route::prefix('admin')
 Route::prefix('informasi')
     ->name('public.informasi.')
     ->controller(InformasiController::class)
-    ->group(function () {
+    ->group(function (): void {
+
 
         /*
         |--------------------------------------------------------------------------
-        | BERKALA
+        | INFORMASI BERKALA
         |--------------------------------------------------------------------------
         */
 
@@ -219,7 +226,7 @@ Route::prefix('informasi')
 
         /*
         |--------------------------------------------------------------------------
-        | SETIAP SAAT
+        | INFORMASI SETIAP SAAT
         |--------------------------------------------------------------------------
         */
 
@@ -231,7 +238,7 @@ Route::prefix('informasi')
 
         /*
         |--------------------------------------------------------------------------
-        | SERTA MERTA
+        | INFORMASI SERTA MERTA
         |--------------------------------------------------------------------------
         */
 
@@ -243,7 +250,7 @@ Route::prefix('informasi')
 
         /*
         |--------------------------------------------------------------------------
-        | DIKECUALIKAN
+        | INFORMASI DIKECUALIKAN
         |--------------------------------------------------------------------------
         */
 
@@ -257,10 +264,6 @@ Route::prefix('informasi')
         |--------------------------------------------------------------------------
         | PREVIEW FILE
         |--------------------------------------------------------------------------
-        |
-        | Dipakai oleh iframe dan img pada show.blade.php.
-        | Harus berada sebelum /{slug}.
-        |
         */
 
         Route::get(
@@ -290,7 +293,7 @@ Route::prefix('informasi')
         | DETAIL INFORMASI
         |--------------------------------------------------------------------------
         |
-        | Route dinamis harus paling bawah.
+        | Route dinamis harus tetap paling bawah.
         |
         */
 
@@ -317,6 +320,7 @@ Route::prefix('faq')
             'index'
         )->name('index');
 
+
         Route::get(
             '/{id}',
             'show'
@@ -341,6 +345,7 @@ Route::prefix('berita')
             '/',
             'index'
         )->name('index');
+
 
         Route::get(
             '/{id}',
@@ -406,9 +411,7 @@ Route::prefix('pesan')
                 'token',
                 '[A-Za-z0-9]+'
             )
-            ->middleware(
-                'throttle:10,1'
-            )
+            ->middleware('throttle:10,1')
             ->name('reply');
     });
 
@@ -433,12 +436,8 @@ Route::prefix('warga')
             '/register',
             'register'
         )
-            ->middleware(
-                'throttle:5,1'
-            )
-            ->name(
-                'public.register.store'
-            );
+            ->middleware('throttle:5,1')
+            ->name('public.register.store');
     });
 
 
@@ -464,9 +463,7 @@ Route::prefix('warga/aktivasi')
             '/kirim-ulang',
             'resend'
         )
-            ->middleware(
-                'throttle:3,60'
-            )
+            ->middleware('throttle:3,60')
             ->name('resend');
 
 
@@ -489,9 +486,7 @@ Route::prefix('warga/aktivasi')
                 'token',
                 '[A-Za-z0-9]{64}'
             )
-            ->middleware(
-                'throttle:5,1'
-            )
+            ->middleware('throttle:5,1')
             ->name('store');
     });
 
@@ -506,6 +501,13 @@ Route::prefix('permohonan')
     ->name('public.permohonan.')
     ->group(function (): void {
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | OCR KTP
+        |--------------------------------------------------------------------------
+        */
+
         Route::post(
             '/baca-ktp',
             [KtpOcrController::class, 'scan']
@@ -516,6 +518,12 @@ Route::prefix('permohonan')
             ])
             ->name('ocr');
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | PERMOHONAN INFORMASI
+        |--------------------------------------------------------------------------
+        */
 
         Route::controller(
             PublikPermohonanController::class
@@ -531,11 +539,32 @@ Route::prefix('permohonan')
                 '/',
                 'store'
             )
-                ->middleware(
-                    'throttle:5,1'
-                )
+                ->middleware('throttle:5,1')
                 ->name('store');
 
+
+            /*
+            |--------------------------------------------------------------------------
+            | RIWAYAT
+            |--------------------------------------------------------------------------
+            |
+            | Diletakkan sebelum route dinamis /cek/{token}.
+            |
+            */
+
+            Route::get(
+                '/riwayat',
+                'index'
+            )
+                ->middleware('auth:public')
+                ->name('index');
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | CEK PERMOHONAN
+            |--------------------------------------------------------------------------
+            */
 
             Route::get(
                 '/cek/{token}',
@@ -546,16 +575,6 @@ Route::prefix('permohonan')
                     '[A-Za-z0-9]{64}'
                 )
                 ->name('show');
-
-
-            Route::get(
-                '/riwayat',
-                'index'
-            )
-                ->middleware(
-                    'auth:public'
-                )
-                ->name('index');
         });
     });
 
@@ -624,9 +643,7 @@ Route::prefix('admin')
             function () {
 
                 return redirect()
-                    ->route(
-                        'admin.dashboard'
-                    );
+                    ->route('admin.dashboard');
             }
         )->name('home');
 
@@ -667,15 +684,9 @@ Route::prefix('admin')
         |--------------------------------------------------------------------------
         */
 
-        Route::prefix(
-            'account-settings'
-        )
-            ->name(
-                'account-settings.'
-            )
-            ->controller(
-                AccountSettingController::class
-            )
+        Route::prefix('account-settings')
+            ->name('account-settings.')
+            ->controller(AccountSettingController::class)
             ->group(function (): void {
 
                 Route::get(
@@ -699,7 +710,7 @@ Route::prefix('admin')
 
         /*
         |--------------------------------------------------------------------------
-        | MODUL SUPER ADMIN
+        | MODUL KHUSUS ADMIN UTAMA
         |--------------------------------------------------------------------------
         */
 
@@ -710,19 +721,49 @@ Route::prefix('admin')
 
             /*
             |--------------------------------------------------------------------------
+            | MANAJEMEN HALAMAN
+            |--------------------------------------------------------------------------
+            */
+
+            Route::resource(
+                'pages',
+                PageController::class
+            );
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | MANAJEMEN MENU
+            |--------------------------------------------------------------------------
+            */
+
+            Route::resource(
+                'menu',
+                MenuController::class
+            );
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | MANAJEMEN MODULE
+            |--------------------------------------------------------------------------
+            */
+
+            Route::resource(
+                'module',
+                ModuleController::class
+            );
+
+
+            /*
+            |--------------------------------------------------------------------------
             | PPID PEMBANTU
             |--------------------------------------------------------------------------
             */
 
-            Route::prefix(
-                'ppid-pembantu'
-            )
-                ->name(
-                    'ppid-pembantu.'
-                )
-                ->controller(
-                    PpidPembantuController::class
-                )
+            Route::prefix('ppid-pembantu')
+                ->name('ppid-pembantu.')
+                ->controller(PpidPembantuController::class)
                 ->group(function (): void {
 
                     Route::get(
@@ -927,9 +968,7 @@ Route::prefix('admin')
 
             Route::prefix('pejabat')
                 ->name('pejabat.')
-                ->controller(
-                    PejabatController::class
-                )
+                ->controller(PejabatController::class)
                 ->group(function (): void {
 
                     Route::get(
@@ -991,9 +1030,7 @@ Route::prefix('admin')
 
             Route::prefix('slider')
                 ->name('slider.')
-                ->controller(
-                    SliderController::class
-                )
+                ->controller(SliderController::class)
                 ->group(function (): void {
 
                     Route::get(
@@ -1055,9 +1092,7 @@ Route::prefix('admin')
 
             Route::prefix('pesan-masuk')
                 ->name('pesan-masuk.')
-                ->controller(
-                    PesanMasukController::class
-                )
+                ->controller(PesanMasukController::class)
                 ->group(function (): void {
 
                     Route::get(
@@ -1115,9 +1150,7 @@ Route::prefix('admin')
 
             Route::prefix('faq')
                 ->name('faq.')
-                ->controller(
-                    AdminFaqController::class
-                )
+                ->controller(AdminFaqController::class)
                 ->group(function (): void {
 
                     Route::get(
@@ -1174,7 +1207,7 @@ Route::prefix('admin')
 
         /*
         |--------------------------------------------------------------------------
-        | MODUL BERSAMA ADMIN UTAMA DAN ADMIN PEMBANTU
+        | MODUL ADMIN UTAMA DAN ADMIN PEMBANTU
         |--------------------------------------------------------------------------
         */
 
@@ -1244,6 +1277,15 @@ Route::prefix('admin')
                         ->name('destroy');
 
 
+                    /*
+                    |--------------------------------------------------------------------------
+                    | DETAIL
+                    |--------------------------------------------------------------------------
+                    |
+                    | Route /{id} harus di bagian bawah.
+                    |
+                    */
+
                     Route::get(
                         '/{id}',
                         'show'
@@ -1285,14 +1327,6 @@ Route::prefix('admin')
 
 
                     Route::get(
-                        '/{id}',
-                        'show'
-                    )
-                        ->whereNumber('id')
-                        ->name('show');
-
-
-                    Route::get(
                         '/{id}/edit',
                         'edit'
                     )
@@ -1314,6 +1348,14 @@ Route::prefix('admin')
                     )
                         ->whereNumber('id')
                         ->name('destroy');
+
+
+                    Route::get(
+                        '/{id}',
+                        'show'
+                    )
+                        ->whereNumber('id')
+                        ->name('show');
                 });
 
 
@@ -1325,9 +1367,7 @@ Route::prefix('admin')
 
             Route::prefix('berita')
                 ->name('berita.')
-                ->controller(
-                    BeritaController::class
-                )
+                ->controller(BeritaController::class)
                 ->group(function (): void {
 
                     Route::get(
@@ -1346,14 +1386,6 @@ Route::prefix('admin')
                         '/tambah',
                         'store'
                     )->name('store');
-
-
-                    Route::get(
-                        '/{id}',
-                        'show'
-                    )
-                        ->whereNumber('id')
-                        ->name('show');
 
 
                     Route::get(
@@ -1378,6 +1410,14 @@ Route::prefix('admin')
                     )
                         ->whereNumber('id')
                         ->name('destroy');
+
+
+                    Route::get(
+                        '/{id}',
+                        'show'
+                    )
+                        ->whereNumber('id')
+                        ->name('show');
                 });
 
 
@@ -1389,9 +1429,7 @@ Route::prefix('admin')
 
             Route::prefix('pengadaan')
                 ->name('pengadaan.')
-                ->controller(
-                    PengadaanController::class
-                )
+                ->controller(PengadaanController::class)
                 ->group(function (): void {
 
                     Route::get(
@@ -1410,14 +1448,6 @@ Route::prefix('admin')
                         '/tambah',
                         'store'
                     )->name('store');
-
-
-                    Route::get(
-                        '/{id}',
-                        'show'
-                    )
-                        ->whereNumber('id')
-                        ->name('show');
 
 
                     Route::get(
@@ -1442,6 +1472,14 @@ Route::prefix('admin')
                     )
                         ->whereNumber('id')
                         ->name('destroy');
+
+
+                    Route::get(
+                        '/{id}',
+                        'show'
+                    )
+                        ->whereNumber('id')
+                        ->name('show');
                 });
 
 
@@ -1498,31 +1536,18 @@ Route::prefix('admin')
                 )
                 ->group(function (): void {
 
+                    Route::get(
+                        '/',
+                        'index'
+                    )->name('index');
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | ADMIN UTAMA DAN ADMIN PEMBANTU
-                    |--------------------------------------------------------------------------
-                    */
 
-                    Route::middleware(
-                        'admin.role:1,2'
+                    Route::get(
+                        '/{id}',
+                        'show'
                     )
-                        ->group(function (): void {
-
-                            Route::get(
-                                '/',
-                                'index'
-                            )->name('index');
-
-
-                            Route::get(
-                                '/{id}',
-                                'show'
-                            )
-                                ->whereNumber('id')
-                                ->name('show');
-                        });
+                        ->whereNumber('id')
+                        ->name('show');
 
 
                     /*
@@ -1533,24 +1558,23 @@ Route::prefix('admin')
 
                     Route::middleware(
                         'admin.role:1'
-                    )
-                        ->group(function (): void {
+                    )->group(function (): void {
 
-                            Route::post(
-                                '/{id}/proses',
-                                'proses'
-                            )
-                                ->whereNumber('id')
-                                ->name('proses');
+                        Route::post(
+                            '/{id}/proses',
+                            'proses'
+                        )
+                            ->whereNumber('id')
+                            ->name('proses');
 
 
-                            Route::post(
-                                '/{id}/selesaikan',
-                                'selesaikan'
-                            )
-                                ->whereNumber('id')
-                                ->name('selesaikan');
-                        });
+                        Route::post(
+                            '/{id}/selesaikan',
+                            'selesaikan'
+                        )
+                            ->whereNumber('id')
+                            ->name('selesaikan');
+                    });
                 });
         });
 
@@ -1634,9 +1658,7 @@ Route::prefix('admin')
 
         Route::prefix('notifikasi')
             ->name('notifikasi.')
-            ->controller(
-                NotifikasiController::class
-            )
+            ->controller(NotifikasiController::class)
             ->group(function (): void {
 
                 Route::get(
