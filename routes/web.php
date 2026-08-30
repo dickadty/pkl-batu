@@ -28,11 +28,11 @@ use App\Http\Controllers\Publik\HomeController;
 use App\Http\Controllers\Publik\InformasiController;
 use App\Http\Controllers\Publik\KeberatanController as PublikKeberatanController;
 use App\Http\Controllers\Publik\KtpOcrController;
+use App\Http\Controllers\Publik\PageController as PublikPageController;
 use App\Http\Controllers\Publik\PengadaanController as PublikPengadaanController;
 use App\Http\Controllers\Publik\PermohonanController as PublikPermohonanController;
 use App\Http\Controllers\Publik\PesanController as PublikPesanController;
 use App\Http\Controllers\Publik\ProkerController as PublikProkerController;
-use App\Http\Controllers\Publik\SurveyController;
 
 
 /*
