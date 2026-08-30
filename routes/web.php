@@ -1,5 +1,11 @@
 <?php
 
+/*
+|--------------------------------------------------------------------------
+| ADMIN CONTROLLERS
+|--------------------------------------------------------------------------
+*/
+
 use App\Http\Controllers\Admin\AccountSettingController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\BeritaController;
@@ -19,7 +25,24 @@ use App\Http\Controllers\Admin\PesanMasukController;
 use App\Http\Controllers\Admin\PpidPembantuController;
 use App\Http\Controllers\Admin\ProkerController;
 use App\Http\Controllers\Admin\SliderController;
+use App\Http\Controllers\Admin\SurveyController as AdminSurveyController;
+
+
+/*
+|--------------------------------------------------------------------------
+| AUTH CONTROLLER
+|--------------------------------------------------------------------------
+*/
+
 use App\Http\Controllers\Auth\UnifiedLoginController;
+
+
+/*
+|--------------------------------------------------------------------------
+| PUBLIC CONTROLLERS
+|--------------------------------------------------------------------------
+*/
+
 use App\Http\Controllers\Publik\AccountActivationController;
 use App\Http\Controllers\Publik\AuthController as PublikAuthController;
 use App\Http\Controllers\Publik\BeritaController as PublikBeritaController;
@@ -28,11 +51,11 @@ use App\Http\Controllers\Publik\HomeController;
 use App\Http\Controllers\Publik\InformasiController;
 use App\Http\Controllers\Publik\KeberatanController as PublikKeberatanController;
 use App\Http\Controllers\Publik\KtpOcrController;
-use App\Http\Controllers\Publik\PageController as PublikPageController;
 use App\Http\Controllers\Publik\PengadaanController as PublikPengadaanController;
 use App\Http\Controllers\Publik\PermohonanController as PublikPermohonanController;
 use App\Http\Controllers\Publik\PesanController as PublikPesanController;
 use App\Http\Controllers\Publik\ProkerController as PublikProkerController;
+use App\Http\Controllers\Publik\SurveyController as PublikSurveyController;
 
 
 /*
@@ -76,7 +99,7 @@ Route::get(
 
 Route::prefix('survey')
     ->name('public.survey.')
-    ->controller(\App\Http\Controllers\Publik\SurveyController::class)
+    ->controller(PublikSurveyController::class)
     ->group(function (): void {
 
         Route::post(
@@ -139,13 +162,8 @@ Route::post(
 
 Route::get(
     '/page/{slug}',
-    [PublikPageController::class, 'show']
+    [PageController::class, 'show']
 )->name('public.pages.show');
-
-Route::get(
-    '/page/{slug}/file',
-    [PublikPageController::class, 'file']
-)->name('public.pages.file');
 
 
 /*
@@ -1200,6 +1218,26 @@ Route::prefix('admin')
                         'destroy'
                     )
                         ->whereNumber('id')
+                        ->name('destroy');
+                });
+
+
+            Route::prefix('survey')
+                ->name('survey.')
+                ->controller(AdminSurveyController::class)
+                ->group(function (): void {
+
+                    Route::get(
+                        '/',
+                        'index'
+                    )->name('index');
+
+
+                    Route::delete(
+                        '/{survey}',
+                        'destroy'
+                    )
+                        ->whereNumber('survey')
                         ->name('destroy');
                 });
         });

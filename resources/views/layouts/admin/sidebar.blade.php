@@ -35,7 +35,13 @@
 
     $masterActive = request()->routeIs('admin.ppid-pembantu.*', 'admin.akun-admin.*', 'admin.pejabat.*');
 
-    $contentActive = request()->routeIs('admin.slider.*', 'admin.faq.*', 'admin.informasi-publik.*', 'admin.berita.*');
+    $contentActive = request()->routeIs(
+        'admin.slider.*',
+        'admin.faq.*',
+        'admin.informasi-publik.*',
+        'admin.berita.*',
+        'admin.survey.*',
+    );
 
     $pengadaanActive = request()->routeIs('admin.pengadaan.*');
 
@@ -177,6 +183,13 @@
                 'route' => 'admin.faq.create',
                 'active' => ['admin.faq.create'],
                 'icon' => 'ri-questionnaire-line',
+                'roles' => [1],
+            ],
+            [
+                'label' => 'Survey Pelayanan',
+                'route' => 'admin.survey.index',
+                'active' => ['admin.survey.*'],
+                'icon' => 'ri-star-line',
                 'roles' => [1],
             ],
             [
