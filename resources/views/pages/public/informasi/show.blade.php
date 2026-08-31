@@ -16,7 +16,13 @@
 
         $namaKategori = data_get($dokumen, 'kategori.nama') ?? 'Tanpa Kategori';
 
-        $tahun = $dokumen->tahun ?? '-';
+        $tanggalUpload = $dokumen->tanggal
+            ? (
+                is_numeric($dokumen->tanggal)
+                    ? \Carbon\Carbon::createFromTimestamp((int) $dokumen->tanggal)->translatedFormat('d F Y')
+                    : \Carbon\Carbon::parse($dokumen->tanggal)->translatedFormat('d F Y')
+            )
+            : '-';
 
         $ringkasan = trim((string) ($dokumen->ringkasan ?? ''));
 
@@ -154,7 +160,7 @@
                         gap-2
                     ">
 
-                    {{-- Tahun --}}
+                    {{-- Tanggal Upload --}}
 
                     <span
                         class="
@@ -165,7 +171,7 @@
                             text-xs
                             text-green-50
                         ">
-                        Tahun {{ $tahun }}
+                        Tanggal Upload {{ $tanggalUpload }}
                     </span>
 
 
@@ -1128,7 +1134,7 @@
                             </div>
 
 
-                            {{-- Tahun --}}
+                            {{-- Tanggal Upload --}}
 
                             <div class="px-5 py-4">
 
@@ -1140,7 +1146,7 @@
                                         tracking-wide
                                         text-slate-400
                                     ">
-                                    Tahun
+                                    Tanggal Upload
                                 </dt>
 
                                 <dd
@@ -1150,7 +1156,7 @@
                                         font-semibold
                                         text-slate-700
                                     ">
-                                    {{ $tahun }}
+                                    {{ $tanggalUpload }}
                                 </dd>
 
                             </div>

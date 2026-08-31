@@ -1,10 +1,11 @@
 @php
     $linkTerkait = [
-        ['inisial' => 'KB', 'nama' => 'Pemerintah Kota Batu', 'url' => 'https://batukota.go.id', 'logo' => 'LogoKotaBatu.webp'],
-        ['inisial' => 'DK', 'nama' => 'Diskominfo Kota Batu', 'url' => 'https://diskominfo.batukota.go.id', 'logo' => null],
-        ['inisial' => 'JTM', 'nama' => 'Pemerintah Provinsi Jawa Timur', 'url' => 'https://jatimprov.go.id', 'logo' => null],
-        ['inisial' => 'KI', 'nama' => 'Komisi Informasi Jawa Timur', 'url' => 'https://komisiinformasi.jatimprov.go.id', 'logo' => null],
-        ['inisial' => 'ORI', 'nama' => 'Ombudsman Republik Indonesia', 'url' => 'https://ombudsman.go.id', 'logo' => null],
+        ['inisial' => 'KB', 'nama' => 'Jaringan Dokumentasi dan Informasi Hukum Kota Batu', 'url' => 'https://jdih.batukota.go.id', 'logo' =>'assets/img/logo/jdih.png'],
+        ['inisial' => 'DK', 'nama' => 'Layanan Pengadaan Secara Elektronik', 'url' => 'http://lpse.batukota.go.id', 'logo' => 'assets/img/logo/lpse.png'],
+        ['inisial' => 'JTM', 'nama' => 'Komisi Pemberantasan Korupsi', 'url' => 'https://elhkpn.kpk.go.id', 'logo' => 'assets/img/logo/lhkpn.jpeg'],
+        ['inisial' => 'KI', 'nama' => 'Komisi Informasi Jawa Timur', 'url' => 'http://kip.jatimprov.go.id/', 'logo' => 'assets/img/logo/komisiinfojatim.jpeg'],
+        ['inisial' => 'ORI', 'nama' => 'Ombudsman Republik Indonesia', 'url' => 'https://www.opengovindonesia.org', 'logo' => 'assets/img/logo/opengov.jpeg'],
+
     ];
 @endphp
 
@@ -27,16 +28,22 @@
                     target="_blank"
                     rel="noopener noreferrer"
                     class="group flex min-h-48 flex-col items-center justify-center rounded-xl border border-emerald-700/30 bg-linear-to-br from-green-950 via-green-900 to-emerald-700 px-3 py-6 text-center transition hover:-translate-y-1 hover:from-green-900 hover:to-emerald-600">
-                    @if ($link['logo'] && file_exists(public_path('assets/img/logo/' . $link['logo'])))
-                        <span class="flex h-20 w-20 items-center justify-center rounded-full bg-white p-2.5 ring-4 ring-white/15">
+                    @if ($link['logo'] && file_exists(public_path($link['logo'])))
+                        <span
+                            class="flex h-20 w-20 items-center justify-center rounded-full bg-white p-2.5 ring-4 ring-white/15">
+
                             <img
-                                src="{{ asset('assets/img/logo/' . $link['logo']) }}"
+                                src="{{ asset($link['logo']) }}"
                                 alt="Logo {{ $link['nama'] }}"
                                 class="h-full w-full object-contain">
+
                         </span>
                     @else
-                        <span class="flex h-20 w-20 items-center justify-center rounded-full border border-white/20 bg-white/10 text-base font-bold tracking-wide text-white">
+                        <span
+                            class="flex h-20 w-20 items-center justify-center rounded-full border border-white/20 bg-white/10 text-base font-bold tracking-wide text-white">
+
                             {{ $link['inisial'] }}
+
                         </span>
                     @endif
                     <span class="mt-5 w-full text-center text-xs font-semibold leading-5 text-white">

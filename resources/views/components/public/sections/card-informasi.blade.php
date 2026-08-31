@@ -1,7 +1,30 @@
 <section class="relative z-30 -mt-16 pb-16">
     <div class="mx-auto max-w-5xl px-4 lg:px-8">
 
-        <div class="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-5">
+        <div class="grid grid-cols-2 gap-3 lg:grid-cols-5 lg:gap-5">
+
+            {{-- Daftar Informasi Publik --}}
+            <a href="{{ route('public.informasi.index') }}"
+                data-aos="fade-up"
+                class="group flex min-h-[110px] flex-col items-center justify-center rounded-2xl bg-white px-3 py-4 text-center shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+
+                <div class="mb-3 flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-green-950 via-green-900 to-emerald-700 text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.8"
+                        stroke="currentColor"
+                        class="h-5 w-5">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M8.25 6.75h11.25M8.25 12h11.25M8.25 17.25h11.25M3.75 6.75h.01M3.75 12h.01M3.75 17.25h.01" />
+                    </svg>
+                </div>
+
+                <h3 class="text-xs font-semibold leading-relaxed text-green-950">
+                    Daftar<br>
+                    Informasi
+                </h3>
+            </a>
 
             {{-- Informasi Berkala --}}
             <a href="{{ route('public.informasi.berkala') }}"

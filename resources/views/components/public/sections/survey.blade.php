@@ -3,7 +3,7 @@
     $totalRating = (int) ($surveyStats['total'] ?? 0);
 @endphp
 
-<section id="survey" class="relative overflow-hidden bg-slate-50 py-16 lg:py-24">
+<section id="survey" class="relative overflow-hidden bg-white py-16 lg:py-24">
     <div class="pointer-events-none absolute -right-24 top-10 h-72 w-72 rounded-full bg-emerald-100/60 blur-3xl"></div>
 
     <div class="pointer-events-none absolute -left-24 bottom-0 h-64 w-64 rounded-full bg-green-100/70 blur-3xl"></div>
@@ -12,7 +12,7 @@
 
         <div class="mx-auto mb-10 max-w-2xl text-center">
             <span
-                class="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-emerald-800">
+                class="inline-flex items-center rounded-full border border-emerald-900 bg-emerald-900 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-white">
                 Survey Pelayanan
             </span>
 

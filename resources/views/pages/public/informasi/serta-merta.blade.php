@@ -384,7 +384,7 @@
                                 <span
                                     class="rounded-full bg-slate-200 px-3 py-1 text-xs text-slate-600">
 
-                                    {{ $item->tahun ?? '-' }}
+                                    {{ is_numeric($item->tanggal) ? \Carbon\Carbon::createFromTimestamp((int) $item->tanggal)->translatedFormat('d F Y') : (\Carbon\Carbon::parse($item->tanggal)->translatedFormat('d F Y') ?? '-') }}
 
                                 </span>
 

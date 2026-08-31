@@ -127,6 +127,45 @@ class InformasiController extends Controller
 
     /*
     |--------------------------------------------------------------------------
+    | DAFTAR INFORMASI PUBLIK
+    |--------------------------------------------------------------------------
+    */
+
+    public function index()
+    {
+        $dokumen = $this->informasiService
+            ->getVerifiedPublicDocuments();
+
+        $totalDokumen = $dokumen->count();
+
+        $tahunTersedia = $dokumen
+            ->pluck('tahun')
+            ->filter()
+            ->unique()
+            ->sortDesc()
+            ->values();
+
+        $kategoriTersedia = $dokumen
+            ->pluck('kategori.nama')
+            ->filter()
+            ->unique()
+            ->sort()
+            ->values();
+
+        return view(
+            'pages.public.informasi.index',
+            compact(
+                'dokumen',
+                'totalDokumen',
+                'tahunTersedia',
+                'kategoriTersedia'
+            )
+        );
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
     | DETAIL INFORMASI
     |--------------------------------------------------------------------------
     */

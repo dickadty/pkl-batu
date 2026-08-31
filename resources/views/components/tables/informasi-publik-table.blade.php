@@ -419,7 +419,7 @@
         </th>
 
         <th scope="col" class="
-                min-w-[130px]
+                min-w-[180px]
                 px-4
                 py-3.5
                 text-left
@@ -429,7 +429,7 @@
                 dark:text-gray-400
                 sm:px-6
             ">
-            Tahun
+            Tanggal Upload
         </th>
 
         <th scope="col" class="
@@ -674,29 +674,39 @@
             </td>
 
             <td class="px-4 py-4 text-sm sm:px-6">
+                @php
+                    $tanggalUploadAdmin = $item->tanggal
+                        ? (
+                            is_numeric($item->tanggal)
+                                ? \Carbon\Carbon::createFromTimestamp((int) $item->tanggal)->translatedFormat('d F Y')
+                                : \Carbon\Carbon::parse($item->tanggal)->translatedFormat('d F Y')
+                        )
+                        : '-';
+                @endphp
+
                 <span class="
                                     inline-flex
                                     items-center
                                     gap-2
                                     rounded-lg
                                     border
-                                    border-gray-200
-                                    bg-white
+                                    border-amber-200
+                                    bg-amber-50
                                     px-3
                                     py-2
                                     font-medium
-                                    text-gray-600
-                                    dark:border-gray-700
-                                    dark:bg-gray-900
-                                    dark:text-gray-400
+                                    text-amber-700
+                                    dark:border-amber-500/40
+                                    dark:bg-amber-500/10
+                                    dark:text-amber-300
                                 ">
-                    <svg class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                    <svg class="h-4 w-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"
                         aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M8 7V3m8 4V3M5 11h14M5 5h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2z" />
                     </svg>
 
-                    {{ $item->tahun ?? '-' }}
+                    {{ $tanggalUploadAdmin }}
                 </span>
             </td>
 

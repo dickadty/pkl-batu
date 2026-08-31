@@ -41,6 +41,34 @@ class InformasiService
 
     /*
     |--------------------------------------------------------------------------
+    | Daftar informasi publik yang boleh ditampilkan
+    |--------------------------------------------------------------------------
+    */
+
+    public function getVerifiedPublicDocuments(): Collection
+    {
+        return $this->dokumentasi
+            ->newQuery()
+            ->with([
+                'ppidPembantu',
+                'kategori',
+            ])
+            ->where('is_verifikasi', 1)
+            ->whereHas('kategori', function ($query) {
+                $query->whereIn('sifat', [
+                    'berkala',
+                    'setiap_saat',
+                    'serta_merta',
+                ]);
+            })
+            ->orderByDesc('tahun')
+            ->orderBy('nama')
+            ->get();
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
     | Detail berdasarkan slug
     |--------------------------------------------------------------------------
     */
