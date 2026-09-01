@@ -1,6 +1,6 @@
 @extends('layouts.admin.app')
 
-@section('title', 'Edit PPID Pembantu')
+@section('title', 'Edit PPID Pelaksana')
 
 @section('content')
     <div class="space-y-6">
@@ -8,9 +8,8 @@
             JUDUL HALAMAN
         ============================================================= --}}
 
-        <x-admin.page-header
-            title="Edit PPID Pembantu"
-            description="Perbarui profil unit PPID Pembantu beserta kategori, keterangan, website, kontak, alamat, dan pengaturan tampilannya."
+        <x-admin.page-header title="Edit PPID Pelaksana"
+            description="Perbarui profil unit PPID Pelaksana beserta kategori, keterangan, website, kontak, alamat, dan pengaturan tampilannya."
             :breadcrumbs="[
                 [
                     'label' => 'Dashboard',
@@ -21,21 +20,17 @@
                     'label' => 'Master Data',
                 ],
                 [
-                    'label' => 'PPID Pembantu',
+                    'label' => 'PPID Pelaksana',
                     'url' => route('admin.ppid-pembantu.index'),
                 ],
                 [
-                    'label' => 'Detail PPID Pembantu',
-                    'url' => route(
-                        'admin.ppid-pembantu.show',
-                        $ppidPembantu->id
-                    ),
+                    'label' => 'Detail PPID Pelaksana',
+                    'url' => route('admin.ppid-pembantu.show', $ppidPembantu->id),
                 ],
                 [
-                    'label' => 'Edit PPID Pembantu',
+                    'label' => 'Edit PPID Pelaksana',
                 ],
-            ]"
-        />
+            ]" />
 
         {{-- ============================================================
             FLASH MESSAGE DAN VALIDATION ERROR
@@ -47,21 +42,9 @@
             FORM EDIT PPID PEMBANTU
         ============================================================= --}}
 
-        <x-forms.ppid-pembantu-form
-            :action="route(
-                'admin.ppid-pembantu.update',
-                $ppidPembantu->id
-            )"
-            method="PUT"
-            :ppid-pembantu="$ppidPembantu"
-            :kategori="$kategori"
-            title="Edit Profil PPID Pembantu"
+        <x-forms.ppid-pembantu-form :action="route('admin.ppid-pembantu.update', $ppidPembantu->id)" method="PUT" :ppid-pembantu="$ppidPembantu" :kategori="$kategori"
+            title="Edit Profil PPID Pelaksana"
             description="Periksa kembali profil, kategori, website, kontak, alamat, dan ikon unit sebelum menyimpan perubahan."
-            submit-label="Simpan Perubahan"
-            :cancel-url="route(
-                'admin.ppid-pembantu.show',
-                $ppidPembantu->id
-            )"
-        />
+            submit-label="Simpan Perubahan" :cancel-url="route('admin.ppid-pembantu.show', $ppidPembantu->id)" />
     </div>
 @endsection

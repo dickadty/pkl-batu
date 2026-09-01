@@ -3,8 +3,8 @@
     'method' => 'POST',
     'ppid' => null,
     'kategori' => [],
-    'title' => 'Informasi Profil PPID Pembantu',
-    'description' => 'Lengkapi informasi dasar, kategori, kontak, alamat, dan ikon PPID Pembantu.',
+    'title' => 'Informasi Profil PPID Pelaksana',
+    'description' => 'Lengkapi informasi dasar, kategori, kontak, alamat, dan ikon PPID Pelaksana.',
     'submitLabel' => 'Simpan PPID',
     'cancelUrl' => null,
 ])
@@ -101,7 +101,7 @@
                             text-gray-800
                             dark:text-white/90
                         ">
-                        Data profil PPID Pembantu
+                        Data profil PPID Pelaksana
                     </p>
 
                     <p
@@ -181,7 +181,7 @@
                                 text-gray-500
                                 dark:text-gray-400
                             ">
-                            Identitas dan klasifikasi unit PPID Pembantu.
+                            Identitas dan klasifikasi unit PPID Pelaksana.
                         </p>
                     </div>
                 </div>
@@ -204,7 +204,7 @@
                                 text-gray-700
                                 dark:text-gray-400
                             ">
-                            Nama PPID Pembantu
+                            Nama PPID Pelaksana
 
                             <span class="text-red-500">*</span>
                         </label>
@@ -225,7 +225,8 @@
                             </span>
 
                             <input id="nama" type="text" name="nama" value="{{ $namaValue }}"
-                                placeholder="Masukkan nama PPID Pembantu" autocomplete="organization" required autofocus
+                                placeholder="Masukkan nama PPID Pelaksana" autocomplete="organization" required
+                                autofocus
                                 class="
                                     dark:bg-dark-900
                                     shadow-theme-xs

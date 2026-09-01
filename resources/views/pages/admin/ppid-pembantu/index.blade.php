@@ -1,6 +1,6 @@
 @extends('layouts.admin.app')
 
-@section('title', 'Daftar PPID Pembantu')
+@section('title', 'Daftar PPID Pelaksana')
 
 @section('content')
     <div class="space-y-6">
@@ -8,18 +8,18 @@
             JUDUL HALAMAN
         ============================================================= --}}
 
-        <x-admin.page-header title="Daftar PPID Pembantu"
-            description="Kelola data profil, kategori, kontak, website, dan alamat PPID Pembantu." :breadcrumbs="[
+        <x-admin.page-header title="Daftar PPID Pelaksana"
+            description="Kelola data profil, kategori, kontak, website, dan alamat PPID Pelaksana." :breadcrumbs="[
                 [
                     'label' => 'Dashboard',
                     'url' => route('admin.dashboard'),
                     'icon' => 'ri-dashboard-line',
                 ],
                 [
-                    'label' => 'PPID Pembantu',
+                    'label' => 'PPID Pelaksana',
                 ],
                 [
-                    'label' => 'Daftar PPID Pembantu',
+                    'label' => 'Daftar PPID Pelaksana',
                 ],
             ]" />
 

@@ -22,8 +22,8 @@
         ->count();
 @endphp
 
-<x-tables.basic-tables.basic-tables-two title="Data PPID Pembantu"
-    description="Kelola profil, kategori, keterangan, website, kontak, alamat, dan identitas unit PPID Pembantu."
+<x-tables.basic-tables.basic-tables-two title="Data PPID Pelaksana"
+    description="Kelola profil, kategori, keterangan, website, kontak, alamat, dan identitas unit PPID Pelaksana."
     :row-ids="$rowIds" :paginator="$isPaginated ? $ppidPembantu : null" :selectable="true" :show-actions="false" :show-pagination="true" :show-pagination-summary="true"
     :pagination-window="1" min-width="min-w-[1800px]">
     <x-slot:filter>
@@ -42,7 +42,7 @@
                         text-gray-800
                         dark:text-white/90
                     ">
-                    Filter PPID Pembantu
+                    Filter PPID Pelaksana
                 </h4>
 
                 <p

@@ -8,6 +8,8 @@ use App\Services\Publik\KeberatanService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\BinaryFileResponse;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class KeberatanController extends Controller
@@ -86,7 +88,7 @@ class KeberatanController extends Controller
             [
                 'user' => $user,
                 'permohonanList' =>
-                    $permohonanList,
+                $permohonanList,
             ]
         );
     }
@@ -128,25 +130,25 @@ class KeberatanController extends Controller
             ],
             [
                 'permohonanid.required' =>
-                    'Permohonan wajib dipilih.',
+                'Permohonan wajib dipilih.',
 
                 'permohonanid.integer' =>
-                    'Permohonan tidak valid.',
+                'Permohonan tidak valid.',
 
                 'permohonanid.exists' =>
-                    'Permohonan tidak ditemukan.',
+                'Permohonan tidak ditemukan.',
 
                 'alasan.required' =>
-                    'Alasan keberatan wajib diisi.',
+                'Alasan keberatan wajib diisi.',
 
                 'alasan.string' =>
-                    'Alasan keberatan harus berupa teks.',
+                'Alasan keberatan harus berupa teks.',
 
                 'alasan.min' =>
-                    'Alasan keberatan minimal 20 karakter.',
+                'Alasan keberatan minimal 20 karakter.',
 
                 'alasan.max' =>
-                    'Alasan keberatan maksimal 5.000 karakter.',
+                'Alasan keberatan maksimal 5.000 karakter.',
             ]
         );
 
@@ -198,6 +200,45 @@ class KeberatanController extends Controller
                 'user' => $user,
                 'keberatan' => $keberatan,
             ]
+        );
+    }
+
+    /**
+     * Mengunduh dokumen tanggapan keberatan milik warga.
+     */
+    public function file(
+        int $id
+    ): BinaryFileResponse {
+        $user = $this->authService->getLoggedUser();
+
+        abort_unless(
+            $user,
+            401,
+            'Sesi warga tidak ditemukan.'
+        );
+
+        $keberatan = $this->keberatanService->getDetailForUser(
+            $id,
+            $user
+        );
+
+        abort_unless(
+            $keberatan->isSelesai() && filled($keberatan->file_tanggapan),
+            404,
+            'Dokumen tanggapan tidak ditemukan.'
+        );
+
+        $disk = Storage::disk('local');
+
+        abort_unless(
+            $disk->exists($keberatan->file_tanggapan),
+            404,
+            'Dokumen tanggapan tidak ditemukan pada penyimpanan.'
+        );
+
+        return response()->download(
+            $disk->path($keberatan->file_tanggapan),
+            $keberatan->nama_file_tanggapan ?: basename($keberatan->file_tanggapan)
         );
     }
 }

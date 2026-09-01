@@ -11,7 +11,7 @@
 
     $roleLabel = match ((int) data_get($admin, 'role', 0)) {
         1 => 'Admin PPID Utama',
-        2 => 'Admin PPID Pembantu',
+        2 => 'Admin PPID Pelaksana',
         default => 'Administrator',
     };
 

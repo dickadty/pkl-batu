@@ -93,15 +93,9 @@
         $activeStatusLabel = $activeStatus !== '' ? $activeStatus : 'Semua Keberatan';
     @endphp
 
-    <x-public.sections.page-hero
-        eyebrow="Layanan Keberatan"
-        title="Daftar Keberatan"
-        highlight="PPID Kota Batu"
+    <x-public.sections.page-hero eyebrow="Layanan Keberatan" title="Daftar Keberatan" highlight="PPID Kota Batu"
         description="Pantau status keberatan yang telah Anda ajukan atas hasil pelayanan permohonan informasi publik."
-        :action-url="Route::has('public.keberatan.create') ? route('public.keberatan.create') : null"
-        action-label="Ajukan Keberatan"
-        action-icon="ri-file-warning-line"
-    />
+        :action-url="Route::has('public.keberatan.create') ? route('public.keberatan.create') : null" action-label="Ajukan Keberatan" action-icon="ri-file-warning-line" />
 
     {{-- ================================================================
         KONTEN HALAMAN
@@ -278,8 +272,7 @@
                 </div>
             </div>
 
-            <form action="{{ route('public.keberatan.index') }}"
-                method="GET"
+            <form action="{{ route('public.keberatan.index') }}" method="GET"
                 class="
                     grid
                     grid-cols-1
