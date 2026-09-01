@@ -102,7 +102,7 @@ class PermohonanController extends Controller
 
             'file_surat_kuasa' => [
                 'bail',
-                'required',
+                'nullable',
                 'file',
                 'mimes:pdf,jpg,jpeg,png',
                 'max:5120',

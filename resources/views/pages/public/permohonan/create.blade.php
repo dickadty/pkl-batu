@@ -546,182 +546,207 @@
                     {{-- SURAT KUASA --}}
                     {{-- ================================================= --}}
 
-                    <div>
+                    <div id="surat-kuasa-wrapper" class="transition">
 
-                        <label for="file_surat_kuasa" class="mb-1.5 block text-sm font-semibold text-slate-700">
+                        <label for="file_surat_kuasa" class="mb-1.5 block text-sm font-semibold text-slate-700
+        ">
                             Surat Kuasa
-                            <span class="text-red-500">*</span>
+
+                            <span id="surat-kuasa-required" class="hidden text-red-500">
+                                *
+                            </span>
                         </label>
 
-                        <input id="file_surat_kuasa" name="file_surat_kuasa" type="file" required
-                            accept=".pdf,.jpg,.jpeg,.png"
-                            class="block w-full rounded-lg border border-slate-300 bg-white text-sm text-slate-600 file:mr-4 file:border-0 file:border-r file:border-slate-200 file:bg-slate-50 file:px-4 file:py-2.5 file:font-semibold">
 
-                        <p class="mt-1.5 text-xs text-slate-500">
-                            Surat kuasa wajib diunggah pada setiap pengajuan.
+                        <input id="file_surat_kuasa" name="file_surat_kuasa" type="file"
+                            accept=".pdf,.jpg,.jpeg,.png"
+                            class="
+            block
+            w-full
+            rounded-lg
+            border
+            border-slate-300
+            bg-white
+            text-sm
+            text-slate-600
+            file:mr-4
+            file:border-0
+            file:border-r
+            file:border-slate-200
+            file:bg-slate-50
+            file:px-4
+            file:py-2.5
+            file:font-semibold
+        ">
+
+
+                        <p id="surat-kuasa-help"
+                            class="
+            mt-1.5
+            text-xs
+            text-slate-500
+        ">
+                            Surat kuasa wajib diunggah untuk kategori
+                            Badan Hukum dan Kelompok Orang.
                             Format PDF, JPG, JPEG, atau PNG.
                             Maksimal 5 MB.
                         </p>
 
                     </div>
 
-                </div>
 
-            </section>
+                    {{-- ========================================================= --}}
+                    {{-- RINCIAN PERMOHONAN --}}
+                    {{-- ========================================================= --}}
 
+                    <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
 
+                        <div class="border-b border-emerald-100 bg-emerald-50/30 px-6 py-5">
 
-            {{-- ========================================================= --}}
-            {{-- RINCIAN PERMOHONAN --}}
-            {{-- ========================================================= --}}
-
-            <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-
-                <div class="border-b border-emerald-100 bg-emerald-50/30 px-6 py-5">
-
-                    <h2 class="text-lg font-bold text-slate-900">
-                        Rincian Permohonan
-                    </h2>
-
-                </div>
-
-
-                <div class="space-y-5 p-6">
-
-                    {{-- RINCIAN INFORMASI --}}
-                    <div>
-
-                        <label for="rincian" class="mb-1.5 block text-sm font-semibold text-slate-700">
-                            Rincian Informasi yang Diminta
-                            <span class="text-red-500">*</span>
-                        </label>
-
-                        <textarea id="rincian" name="rincian" rows="5" required maxlength="500"
-                            class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-                            placeholder="Jelaskan informasi yang ingin diperoleh.">{{ old('rincian') }}</textarea>
-
-                    </div>
-
-
-                    {{-- TUJUAN --}}
-                    <div>
-
-                        <label for="tujuan" class="mb-1.5 block text-sm font-semibold text-slate-700">
-                            Tujuan Penggunaan Informasi
-                            <span class="text-red-500">*</span>
-                        </label>
-
-                        <textarea id="tujuan" name="tujuan" rows="4" required maxlength="500"
-                            class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-                            placeholder="Jelaskan tujuan penggunaan informasi.">{{ old('tujuan') }}</textarea>
-
-                    </div>
-
-
-
-                    {{-- ================================================= --}}
-                    {{-- CARA MEMPEROLEH & PENGIRIMAN --}}
-                    {{-- HANYA SOFT COPY DAN EMAIL --}}
-                    {{-- ================================================= --}}
-
-                    <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
-
-                        {{-- CARA MEMPEROLEH --}}
-                        <div>
-
-                            <label class="mb-1.5 block text-sm font-semibold text-slate-700">
-                                Cara Memperoleh Informasi
-                            </label>
-
-                            <div
-                                class="flex h-11 w-full items-center rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm font-medium text-slate-700">
-                                Soft Copy
-                            </div>
-
-                            <input type="hidden" id="cara_memperoleh" name="cara_memperoleh"
-                                value="Mendapatkan salinan informasi (softcopy)">
-
-                            <p class="mt-1.5 text-xs text-slate-500">
-                                Informasi diberikan dalam bentuk dokumen digital.
-                            </p>
+                            <h2 class="text-lg font-bold text-slate-900">
+                                Rincian Permohonan
+                            </h2>
 
                         </div>
 
 
-                        {{-- CARA PENGIRIMAN --}}
-                        <div>
+                        <div class="space-y-5 p-6">
 
-                            <label class="mb-1.5 block text-sm font-semibold text-slate-700">
-                                Cara Pengiriman Informasi
-                            </label>
+                            {{-- RINCIAN INFORMASI --}}
+                            <div>
 
-                            <div
-                                class="flex h-11 w-full items-center rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm font-medium text-slate-700">
-                                E-mail
+                                <label for="rincian" class="mb-1.5 block text-sm font-semibold text-slate-700">
+                                    Rincian Informasi yang Diminta
+                                    <span class="text-red-500">*</span>
+                                </label>
+
+                                <textarea id="rincian" name="rincian" rows="5" required maxlength="500"
+                                    class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                                    placeholder="Jelaskan informasi yang ingin diperoleh.">{{ old('rincian') }}</textarea>
+
                             </div>
 
-                            <input type="hidden" id="cara_pengiriman" name="cara_pengiriman" value="E-mail">
 
-                            <p class="mt-1.5 text-xs text-slate-500">
-                                Soft copy akan dikirim melalui alamat email pemohon.
-                            </p>
+                            {{-- TUJUAN --}}
+                            <div>
+
+                                <label for="tujuan" class="mb-1.5 block text-sm font-semibold text-slate-700">
+                                    Tujuan Penggunaan Informasi
+                                    <span class="text-red-500">*</span>
+                                </label>
+
+                                <textarea id="tujuan" name="tujuan" rows="4" required maxlength="500"
+                                    class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                                    placeholder="Jelaskan tujuan penggunaan informasi.">{{ old('tujuan') }}</textarea>
+
+                            </div>
+
+
+
+                            {{-- ================================================= --}}
+                            {{-- CARA MEMPEROLEH & PENGIRIMAN --}}
+                            {{-- HANYA SOFT COPY DAN EMAIL --}}
+                            {{-- ================================================= --}}
+
+                            <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+
+                                {{-- CARA MEMPEROLEH --}}
+                                <div>
+
+                                    <label class="mb-1.5 block text-sm font-semibold text-slate-700">
+                                        Cara Memperoleh Informasi
+                                    </label>
+
+                                    <div
+                                        class="flex h-11 w-full items-center rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm font-medium text-slate-700">
+                                        Soft Copy
+                                    </div>
+
+                                    <input type="hidden" id="cara_memperoleh" name="cara_memperoleh"
+                                        value="Mendapatkan salinan informasi (softcopy)">
+
+                                    <p class="mt-1.5 text-xs text-slate-500">
+                                        Informasi diberikan dalam bentuk dokumen digital.
+                                    </p>
+
+                                </div>
+
+
+                                {{-- CARA PENGIRIMAN --}}
+                                <div>
+
+                                    <label class="mb-1.5 block text-sm font-semibold text-slate-700">
+                                        Cara Pengiriman Informasi
+                                    </label>
+
+                                    <div
+                                        class="flex h-11 w-full items-center rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm font-medium text-slate-700">
+                                        E-mail
+                                    </div>
+
+                                    <input type="hidden" id="cara_pengiriman" name="cara_pengiriman" value="E-mail">
+
+                                    <p class="mt-1.5 text-xs text-slate-500">
+                                        Soft copy akan dikirim melalui alamat email pemohon.
+                                    </p>
+
+                                </div>
+
+                            </div>
 
                         </div>
 
+                    </section>
+
+
+
+                    {{-- ========================================================= --}}
+                    {{-- PERSETUJUAN PEMBUATAN AKUN --}}
+                    {{-- ========================================================= --}}
+
+                    @unless ($isLoggedIn)
+                        <section class="rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
+
+                            <label class="flex items-start gap-3">
+
+                                <input type="checkbox" name="persetujuan_akun" value="1" @checked(old('persetujuan_akun'))
+                                    required
+                                    class="mt-1 h-4 w-4 rounded border-emerald-300 text-emerald-800 focus:ring-emerald-500">
+
+                                <span class="text-sm leading-6 text-emerald-950">
+                                    Saya menyetujui pembuatan akun layanan PPID berdasarkan
+                                    identitas dan email yang saya berikan.
+
+                                    Email digunakan sebagai username, sedangkan password dibuat
+                                    sendiri melalui tautan aktivasi yang dikirim setelah
+                                    permohonan berhasil.
+                                </span>
+
+                            </label>
+
+                        </section>
+                    @endunless
+
+
+
+                    {{-- ========================================================= --}}
+                    {{-- TOMBOL --}}
+                    {{-- ========================================================= --}}
+
+                    <div class="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+
+                        <a href="{{ route('public.permohonan.index') }}"
+                            class="inline-flex h-11 items-center justify-center rounded-lg border border-slate-300 bg-white px-5 text-sm font-semibold text-slate-700 hover:bg-slate-50">
+                            Batal
+                        </a>
+
+
+                        <button type="submit"
+                            class="inline-flex h-11 items-center justify-center rounded-lg bg-emerald-800 px-6 text-sm font-semibold text-white hover:bg-emerald-900">
+                            Ajukan Permohonan
+                        </button>
+
                     </div>
-
-                </div>
-
-            </section>
-
-
-
-            {{-- ========================================================= --}}
-            {{-- PERSETUJUAN PEMBUATAN AKUN --}}
-            {{-- ========================================================= --}}
-
-            @unless ($isLoggedIn)
-                <section class="rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
-
-                    <label class="flex items-start gap-3">
-
-                        <input type="checkbox" name="persetujuan_akun" value="1" @checked(old('persetujuan_akun')) required
-                            class="mt-1 h-4 w-4 rounded border-emerald-300 text-emerald-800 focus:ring-emerald-500">
-
-                        <span class="text-sm leading-6 text-emerald-950">
-                            Saya menyetujui pembuatan akun layanan PPID berdasarkan
-                            identitas dan email yang saya berikan.
-
-                            Email digunakan sebagai username, sedangkan password dibuat
-                            sendiri melalui tautan aktivasi yang dikirim setelah
-                            permohonan berhasil.
-                        </span>
-
-                    </label>
-
-                </section>
-            @endunless
-
-
-
-            {{-- ========================================================= --}}
-            {{-- TOMBOL --}}
-            {{-- ========================================================= --}}
-
-            <div class="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-
-                <a href="{{ route('public.permohonan.index') }}"
-                    class="inline-flex h-11 items-center justify-center rounded-lg border border-slate-300 bg-white px-5 text-sm font-semibold text-slate-700 hover:bg-slate-50">
-                    Batal
-                </a>
-
-
-                <button type="submit"
-                    class="inline-flex h-11 items-center justify-center rounded-lg bg-emerald-800 px-6 text-sm font-semibold text-white hover:bg-emerald-900">
-                    Ajukan Permohonan
-                </button>
-
-            </div>
 
         </form>
 
@@ -1307,8 +1332,7 @@
                                 Array.isArray(
                                     payload.warnings
                                 ) ?
-                                payload.warnings :
-                                []
+                                payload.warnings : []
 
                             );
 
@@ -1374,5 +1398,67 @@
             });
         </script>
     @endunless
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            const kategori = document.getElementById('kategori_pemohon');
+            const suratKuasa = document.getElementById('file_surat_kuasa');
+            const wrapper = document.getElementById('surat-kuasa-wrapper');
+            const required = document.getElementById('surat-kuasa-required');
+            const help = document.getElementById('surat-kuasa-help');
+
+            if (!kategori || !suratKuasa) {
+                return;
+            }
+
+            function updateSuratKuasa() {
+
+                const wajib =
+                    kategori.value === 'Badan Hukum' ||
+                    kategori.value === 'Kelompok Orang';
+
+                suratKuasa.disabled = !wajib;
+                suratKuasa.required = wajib;
+
+                if (wajib) {
+                    wrapper.classList.remove(
+                        'opacity-50'
+                    );
+
+                    required.classList.remove(
+                        'hidden'
+                    );
+
+                    help.textContent =
+                        'Surat kuasa wajib diunggah untuk kategori Badan Hukum dan Kelompok Orang. Format PDF, JPG, JPEG, atau PNG. Maksimal 5 MB.';
+                } else {
+
+                    wrapper.classList.add(
+                        'opacity-50'
+                    );
+
+                    required.classList.add(
+                        'hidden'
+                    );
+
+                    suratKuasa.required = false;
+                    suratKuasa.value = '';
+
+                    help.textContent =
+                        'Surat kuasa tidak diperlukan untuk kategori Orang Perorangan.';
+                }
+            }
+
+            kategori.addEventListener(
+                'change',
+                updateSuratKuasa
+            );
+
+            updateSuratKuasa();
+
+        });
+    </script>
 
 @endsection
