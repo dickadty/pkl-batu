@@ -7,6 +7,8 @@ use App\Models\Keberatan;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use RuntimeException;
 
@@ -50,7 +52,10 @@ class KeberatanService
             'adminid' => $admin->id,
         ]);
 
-        return $keberatan->refresh()->load(['permohonan.userPublic', 'ppidPembantu', 'admin']);
+        $keberatan = $keberatan->refresh()->load(['permohonan.userPublic', 'ppidPembantu', 'admin']);
+        $this->queueEmailToPelaksana($keberatan, $admin);
+
+        return $keberatan;
     }
 
     public function jawabPembantu(int $id, Authorization $admin, array $data, ?UploadedFile $fileJawabanPembantu = null): Keberatan
@@ -93,7 +98,10 @@ class KeberatanService
             }
         });
 
-        return $keberatan->refresh()->load(['permohonan.userPublic', 'ppidPembantu', 'admin']);
+        $keberatan = $keberatan->refresh()->load(['permohonan.userPublic', 'ppidPembantu', 'admin']);
+        $this->queueEmailToAdminUtama($keberatan, $admin);
+
+        return $keberatan;
     }
 
     public function proses(int $id, Authorization $admin): Keberatan
@@ -112,6 +120,33 @@ class KeberatanService
         ]);
 
         return $keberatan->refresh();
+    }
+
+    public function tolak(int $id, Authorization $admin, string $alasan): Keberatan
+    {
+        $this->ensureAdminUtama($admin);
+        $keberatan = $this->keberatan->newQuery()->findOrFail($id);
+
+        if (! $keberatan->isDiajukan()) {
+            throw new AuthorizationException(
+                'Keberatan hanya dapat ditolak langsung ketika status masih Diajukan.'
+            );
+        }
+
+        $keberatan->update([
+            'hasil' => Keberatan::HASIL_DITOLAK,
+            'jenis_tindak_lanjut' => Keberatan::TINDAK_LANJUT_PENJELASAN,
+            'tanggapan' => trim($alasan),
+            'tanggal_tanggapan' => now()->toDateString(),
+            'tanggal_selesai' => now()->toDateString(),
+            'adminid' => $admin->id,
+            'status' => Keberatan::STATUS_SELESAI,
+        ]);
+
+        $keberatan = $keberatan->refresh()->load(['permohonan.userPublic', 'ppidPembantu', 'admin']);
+        $this->queueEmailToCitizen($keberatan);
+
+        return $keberatan;
     }
 
     public function selesaikan(int $id, Authorization $admin, array $data, ?UploadedFile $fileTanggapan = null): Keberatan
@@ -170,7 +205,56 @@ class KeberatanService
             }
         });
 
-        return $keberatan->refresh()->load(['permohonan.userPublic', 'ppidPembantu', 'admin']);
+        $keberatan = $keberatan->refresh()->load(['permohonan.userPublic', 'ppidPembantu', 'admin']);
+        $this->queueEmailToCitizen($keberatan);
+
+        return $keberatan;
+    }
+
+    private function queueEmailToPelaksana(Keberatan $keberatan, Authorization $actor): void
+    {
+        $emails = Authorization::query()
+            ->where('role', 2)
+            ->where('ppid_pembantuid', $keberatan->ppid_pembantuid)
+            ->where('id', '!=', $actor->id)
+            ->pluck('email')
+            ->filter(fn($email): bool => filter_var($email, FILTER_VALIDATE_EMAIL));
+
+        foreach ($emails as $email) {
+            Mail::to($email)->queue(new \App\Mail\KeberatanDiteruskanMail($keberatan));
+        }
+    }
+
+    private function queueEmailToAdminUtama(Keberatan $keberatan, Authorization $actor): void
+    {
+        $emails = Authorization::query()
+            ->where('role', 1)
+            ->where('id', '!=', $actor->id)
+            ->pluck('email')
+            ->filter(fn($email): bool => filter_var($email, FILTER_VALIDATE_EMAIL));
+
+        foreach ($emails as $email) {
+            Mail::to($email)->queue(new \App\Mail\KeberatanJawabanMail($keberatan));
+        }
+    }
+
+    private function queueEmailToCitizen(Keberatan $keberatan): void
+    {
+        $email = strtolower(trim((string) (
+            $keberatan->permohonan?->email_pemohon
+            ?: $keberatan->permohonan?->userPublic?->email
+        )));
+
+        if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            Log::warning('Email hasil keberatan tidak dikirim karena email warga tidak valid.', [
+                'keberatan_id' => $keberatan->id,
+                'email' => $email,
+            ]);
+
+            return;
+        }
+
+        Mail::to($email)->queue(new \App\Mail\KeberatanSelesaiMail($keberatan));
     }
 
     private function ensureAdminUtama(Authorization $admin): void

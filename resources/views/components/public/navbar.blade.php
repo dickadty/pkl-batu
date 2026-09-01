@@ -47,136 +47,69 @@
             </a>
 
             {{-- Menu --}}
-            <div class="hidden lg:flex items-center gap-6 xl:gap-8 text-[0.875rem] font-medium">
-
+            <div
+                class="hidden min-w-0 flex-1 items-center justify-center gap-4 lg:flex xl:gap-7 text-[0.875rem] font-medium">
                 @foreach ($menus as $menu)
                     @if ($menu->children->count())
-                        <div class="relative group">
-
+                        <div class="relative shrink-0 group">
                             <button type="button"
-                                class="
-                                navbar-link
-                                inline-flex items-center gap-1
-                                text-[0.875rem]
-                                font-medium
-                                transition
-
-                                {{ $isHome ? 'text-white hover:text-emerald-700' : 'text-slate-700 hover:text-emerald-700' }}
-                            ">
-
+                                class="navbar-link inline-flex items-center gap-1 whitespace-nowrap text-[0.875rem] font-medium transition {{ $isHome ? 'text-white hover:text-emerald-700' : 'text-slate-700 hover:text-emerald-700' }}">
                                 {{ $menu->nama }}
-
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2">
-
+                                    fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                                     <path d="M6 9l6 6l6-6" />
-
                                 </svg>
-
                             </button>
 
                             <div
-                                class="pointer-events-none absolute left-0 top-full pt-2 hidden w-50 group-hover:block group-hover:pointer-events-auto z-50">
-
+                                class="pointer-events-none absolute left-0 top-full z-50 hidden w-56 pt-2 group-hover:pointer-events-auto group-hover:block">
                                 <div class="rounded-xl border border-slate-200 bg-white p-3 shadow-xl">
-
                                     @foreach ($menu->children as $child)
-                                        <a href="{{ $child->link }}"
-                                            @if ($child->tipe === 'url') target="_blank"
-                                            rel="noopener noreferrer" @endif
-                                            class="block rounded-lg px-2 py-1 text-[0.875rem] transition hover:text-emerald-700">
-
-                                    @if($child->children->count())
-
-                                        <div class="relative group/child">
-
-                                            <a
-                                                href="{{ $child->link }}"
-                                                @if($child->tipe === 'url')
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                @endif
-                                                class="flex items-center justify-between gap-2 rounded-lg px-2 py-1 text-[0.875rem] transition hover:text-emerald-700">
-
-                                                <span>{{ $child->nama }}</span>
-
-                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                    class="h-4 w-4"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    stroke-width="2">
-                                                    <path d="M9 6l6 6l-6 6"/>
-                                                </svg>
-
-                                            </a>
-
-                                            <div class="pointer-events-none absolute left-full top-0 ml-2 hidden w-52 group-hover/child:block group-hover/child:pointer-events-auto z-50">
-
-                                                <div class="rounded-xl border border-slate-200 bg-white p-3 shadow-xl">
-
-                                                    @foreach($child->children as $grandChild)
-
-                                                        <a
-                                                            href="{{ $grandChild->link }}"
-                                                            @if($grandChild->tipe === 'url')
-                                                                target="_blank"
-                                                                rel="noopener noreferrer"
-                                                            @endif
-                                                            class="block rounded-lg px-2 py-1 text-[0.875rem] transition hover:text-emerald-700">
-
-                                                            {{ $grandChild->nama }}
-
-                                                        </a>
-
-                                                    @endforeach
-
+                                        @if ($child->children->count())
+                                            <div class="relative group/child">
+                                                <a href="{{ $child->link }}"
+                                                    @if ($child->tipe === 'url') target="_blank" rel="noopener noreferrer" @endif
+                                                    class="flex items-center justify-between gap-2 rounded-lg px-2 py-2 text-[0.875rem] text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700">
+                                                    <span>{{ $child->nama }}</span>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0"
+                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                        stroke-width="2" aria-hidden="true">
+                                                        <path d="M9 6l6 6l-6 6" />
+                                                    </svg>
+                                                </a>
+                                                <div
+                                                    class="pointer-events-none absolute left-full top-0 z-50 hidden w-56 pl-2 group-hover/child:pointer-events-auto group-hover/child:block">
+                                                    <div
+                                                        class="rounded-xl border border-slate-200 bg-white p-3 shadow-xl">
+                                                        @foreach ($child->children as $grandChild)
+                                                            <a href="{{ $grandChild->link }}"
+                                                                @if ($grandChild->tipe === 'url') target="_blank" rel="noopener noreferrer" @endif
+                                                                class="block rounded-lg px-2 py-2 text-[0.875rem] text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700">
+                                                                {{ $grandChild->nama }}
+                                                            </a>
+                                                        @endforeach
+                                                    </div>
                                                 </div>
-
                                             </div>
-
-                                        </div>
-
-                                    @else
-
-                                        <a
-                                            href="{{ $child->link }}"
-                                            @if($child->tipe === 'url')
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                            @endif
-                                            class="block rounded-lg px-2 py-1 text-[0.875rem] transition hover:text-emerald-700">
-
-                                            {{ $child->nama }}
-
-                                        </a>
-
-                                    @endif
-
-                                @endforeach
-
+                                        @else
+                                            <a href="{{ $child->link }}"
+                                                @if ($child->tipe === 'url') target="_blank" rel="noopener noreferrer" @endif
+                                                class="block rounded-lg px-2 py-2 text-[0.875rem] text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700">
+                                                {{ $child->nama }}
+                                            </a>
+                                        @endif
+                                    @endforeach
+                                </div>
                             </div>
-
                         </div>
                     @else
                         <a href="{{ $menu->link }}"
-                            @if ($menu->tipe === 'url') target="_blank"
-                            rel="noopener noreferrer" @endif
-                            class="
-                            navbar-link
-                            text-[0.875rem]
-                            font-medium
-                            transition
-
-                            {{ $isHome ? 'text-white hover:text-emerald-700' : 'text-slate-700 hover:text-emerald-700' }}
-                        ">
-
+                            @if ($menu->tipe === 'url') target="_blank" rel="noopener noreferrer" @endif
+                            class="navbar-link shrink-0 whitespace-nowrap text-[0.875rem] font-medium transition {{ $isHome ? 'text-white hover:text-emerald-700' : 'text-slate-700 hover:text-emerald-700' }}">
                             {{ $menu->nama }}
-
                         </a>
                     @endif
                 @endforeach
-
             </div>
 
             {{-- Login --}}

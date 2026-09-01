@@ -1635,6 +1635,13 @@ Route::prefix('admin')
                             ->name('teruskan');
 
                         Route::post(
+                            '/{id}/tolak',
+                            'tolak'
+                        )
+                            ->whereNumber('id')
+                            ->name('tolak');
+
+                        Route::post(
                             '/{id}/proses',
                             'proses'
                         )

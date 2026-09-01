@@ -337,6 +337,45 @@ class KeberatanController extends Controller
         }
     }
 
+    public function tolak(Request $request, int $id): RedirectResponse
+    {
+        $admin = auth('admin')->user();
+
+        abort_unless($admin instanceof Authorization, 401);
+
+        $validated = $request->validate(
+            [
+                'alasan_penolakan' => ['required', 'string', 'min:10', 'max:5000'],
+            ],
+            [
+                'alasan_penolakan.required' => 'Alasan penolakan wajib diisi.',
+                'alasan_penolakan.min' => 'Alasan penolakan minimal 10 karakter.',
+                'alasan_penolakan.max' => 'Alasan penolakan maksimal 5.000 karakter.',
+            ]
+        );
+
+        try {
+            $this->keberatanService->tolak(
+                $id,
+                $admin,
+                $validated['alasan_penolakan']
+            );
+
+            return redirect()
+                ->route('admin.keberatan.show', ['id' => $id])
+                ->with('success', 'Keberatan berhasil ditolak dan hasilnya tersedia untuk warga.');
+        } catch (AuthorizationException | RuntimeException $exception) {
+            return back()->withInput()->with('error', $exception->getMessage());
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return back()->withInput()->with(
+                'error',
+                'Terjadi kesalahan saat menolak keberatan.'
+            );
+        }
+    }
+
     public function selesaikan(
         Request $request,
         int $id

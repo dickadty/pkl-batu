@@ -8,9 +8,9 @@ use App\Services\Publik\KeberatanService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\BinaryFileResponse;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class KeberatanController extends Controller
 {
@@ -19,20 +19,24 @@ class KeberatanController extends Controller
         protected KeberatanService $keberatanService
     ) {}
 
+
     /**
      * Menampilkan daftar keberatan warga.
      */
     public function index(
         Request $request
     ): View {
+
         $user = $this->authService
             ->getLoggedUser();
+
 
         abort_unless(
             $user,
             401,
             'Sesi warga tidak ditemukan.'
         );
+
 
         $validated = $request->validate([
             'per_page' => [
@@ -42,10 +46,12 @@ class KeberatanController extends Controller
             ],
         ]);
 
+
         $perPage = (int) (
             $validated['per_page']
             ?? 15
         );
+
 
         $keberatan = $this
             ->keberatanService
@@ -53,6 +59,7 @@ class KeberatanController extends Controller
                 $user,
                 $perPage
             );
+
 
         return view(
             'pages.public.keberatan.index',
@@ -63,6 +70,7 @@ class KeberatanController extends Controller
         );
     }
 
+
     /**
      * Menampilkan form keberatan.
      */
@@ -71,11 +79,13 @@ class KeberatanController extends Controller
         $user = $this->authService
             ->getLoggedUser();
 
+
         abort_unless(
             $user,
             401,
             'Sesi warga tidak ditemukan.'
         );
+
 
         $permohonanList = $this
             ->keberatanService
@@ -83,15 +93,16 @@ class KeberatanController extends Controller
                 $user
             );
 
+
         return view(
             'pages.public.keberatan.create',
             [
                 'user' => $user,
-                'permohonanList' =>
-                $permohonanList,
+                'permohonanList' => $permohonanList,
             ]
         );
     }
+
 
     /**
      * Menyimpan keberatan.
@@ -99,14 +110,17 @@ class KeberatanController extends Controller
     public function store(
         Request $request
     ): RedirectResponse {
+
         $user = $this->authService
             ->getLoggedUser();
+
 
         abort_unless(
             $user,
             401,
             'Sesi warga tidak ditemukan.'
         );
+
 
         $validated = $request->validate(
             [
@@ -127,30 +141,9 @@ class KeberatanController extends Controller
                     'min:20',
                     'max:5000',
                 ],
-            ],
-            [
-                'permohonanid.required' =>
-                'Permohonan wajib dipilih.',
-
-                'permohonanid.integer' =>
-                'Permohonan tidak valid.',
-
-                'permohonanid.exists' =>
-                'Permohonan tidak ditemukan.',
-
-                'alasan.required' =>
-                'Alasan keberatan wajib diisi.',
-
-                'alasan.string' =>
-                'Alasan keberatan harus berupa teks.',
-
-                'alasan.min' =>
-                'Alasan keberatan minimal 20 karakter.',
-
-                'alasan.max' =>
-                'Alasan keberatan maksimal 5.000 karakter.',
             ]
         );
+
 
         $keberatan = $this
             ->keberatanService
@@ -158,6 +151,7 @@ class KeberatanController extends Controller
                 $user,
                 $validated
             );
+
 
         return redirect()
             ->route(
@@ -172,14 +166,17 @@ class KeberatanController extends Controller
             );
     }
 
+
     /**
      * Menampilkan detail keberatan.
      */
     public function show(
         int $id
     ): View {
+
         $user = $this->authService
             ->getLoggedUser();
+
 
         abort_unless(
             $user,
@@ -187,12 +184,14 @@ class KeberatanController extends Controller
             'Sesi warga tidak ditemukan.'
         );
 
+
         $keberatan = $this
             ->keberatanService
             ->getDetailForUser(
                 $id,
                 $user
             );
+
 
         return view(
             'pages.public.keberatan.show',
@@ -203,13 +202,17 @@ class KeberatanController extends Controller
         );
     }
 
+
     /**
-     * Mengunduh dokumen tanggapan keberatan milik warga.
+     * Mengunduh dokumen tanggapan keberatan.
      */
     public function file(
         int $id
     ): BinaryFileResponse {
-        $user = $this->authService->getLoggedUser();
+
+        $user = $this->authService
+            ->getLoggedUser();
+
 
         abort_unless(
             $user,
@@ -217,28 +220,43 @@ class KeberatanController extends Controller
             'Sesi warga tidak ditemukan.'
         );
 
-        $keberatan = $this->keberatanService->getDetailForUser(
-            $id,
-            $user
-        );
+
+        $keberatan = $this
+            ->keberatanService
+            ->getDetailForUser(
+                $id,
+                $user
+            );
+
 
         abort_unless(
-            $keberatan->isSelesai() && filled($keberatan->file_tanggapan),
+            $keberatan->isSelesai()
+                && filled($keberatan->file_tanggapan),
             404,
             'Dokumen tanggapan tidak ditemukan.'
         );
 
+
         $disk = Storage::disk('local');
 
+
         abort_unless(
-            $disk->exists($keberatan->file_tanggapan),
+            $disk->exists(
+                $keberatan->file_tanggapan
+            ),
             404,
             'Dokumen tanggapan tidak ditemukan pada penyimpanan.'
         );
 
+
         return response()->download(
-            $disk->path($keberatan->file_tanggapan),
-            $keberatan->nama_file_tanggapan ?: basename($keberatan->file_tanggapan)
+            $disk->path(
+                $keberatan->file_tanggapan
+            ),
+            $keberatan->nama_file_tanggapan
+                ?: basename(
+                    $keberatan->file_tanggapan
+                )
         );
     }
 }
