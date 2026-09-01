@@ -529,7 +529,7 @@
 
                     <td class="px-4 py-3.5 sm:px-6">
 
-                        <button type="button" @click="toggleRow(@js((string) $item->id))"
+                        <button type="button" @click="handleRowSelect(@js((string) $item->id))"
                             class="
                                 flex
                                 h-5
@@ -540,11 +540,11 @@
                                 border-[1.25px]
                                 transition
                             "
-                            :class="isSelected(@js((string) $item->id)) ?
+                            :class="isRowSelected(@js((string) $item->id)) ?
                                 'border-blue-500 bg-blue-500' :
                                 'border-gray-300 bg-white dark:border-gray-700 dark:bg-transparent'"
                             aria-label="Pilih data {{ $item->nama }}">
-                            <svg x-cloak x-show="isSelected(@js((string) $item->id))" width="14" height="14"
+                            <svg x-cloak x-show="isRowSelected(@js((string) $item->id))" width="14" height="14"
                                 viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M11.67 3.5L5.25 9.92L2.33 7" stroke="white" stroke-width="1.9"
                                     stroke-linecap="round" stroke-linejoin="round" />
