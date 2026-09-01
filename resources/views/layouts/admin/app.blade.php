@@ -46,8 +46,7 @@
             if (!Alpine.store('theme')) {
                 Alpine.store('theme', {
                     theme: document.documentElement.classList.contains('dark') ?
-                        'dark' :
-                        'light',
+                        'dark' : 'light',
 
                     toggle() {
                         this.theme = this.theme === 'dark' ?
@@ -76,13 +75,13 @@
              */
             if (!Alpine.store('sidebar')) {
                 Alpine.store('sidebar', {
-                    isExpanded: window.innerWidth >= 1280,
+                    isExpanded: window.innerWidth >= 1024,
                     isMobileOpen: false,
                     isHovered: false,
-                    isDesktop: window.innerWidth >= 1280,
+                    isDesktop: window.innerWidth >= 1024,
 
                     init() {
-                        this.isDesktop = window.innerWidth >= 1280;
+                        this.isDesktop = window.innerWidth >= 1024;
                         this.isExpanded = this.isDesktop;
 
                         window.addEventListener('resize', () => {
@@ -91,7 +90,7 @@
                     },
 
                     handleResize() {
-                        const desktopNow = window.innerWidth >= 1280;
+                        const desktopNow = window.innerWidth >= 1024;
 
                         /*
                          * State hanya diubah ketika berpindah
@@ -111,7 +110,7 @@
                      * Dipakai tombol toggle utama.
                      */
                     toggle() {
-                        if (window.innerWidth < 1280) {
+                        if (window.innerWidth < 1024) {
                             this.toggleMobileOpen();
                             return;
                         }
@@ -135,7 +134,7 @@
 
                     setHovered(value) {
                         if (
-                            window.innerWidth >= 1280 &&
+                            window.innerWidth >= 1024 &&
                             !this.isExpanded
                         ) {
                             this.isHovered = Boolean(value);
@@ -182,7 +181,7 @@
     @stack('styles')
 </head>
 
-<body x-data
+<body x-data class="admin-site"
     class="
         min-h-full
         overflow-x-hidden
@@ -206,7 +205,7 @@
                 inset-0
                 z-40
                 bg-gray-900/50
-                xl:hidden
+                lg:hidden
             ">
         </div>
 
@@ -227,8 +226,8 @@
                 ease-in-out
             "
             :class="{
-                'xl:ml-[272px]': $store.sidebar.isDesktopWide(),
-                'xl:ml-[82px]': !$store.sidebar.isDesktopWide()
+                'lg:ml-[272px]': $store.sidebar.isDesktopWide(),
+                'lg:ml-[82px]': !$store.sidebar.isDesktopWide()
             }">
             {{-- Header --}}
             @include('layouts.app-header')

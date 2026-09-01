@@ -288,6 +288,65 @@ layer(base);
             -webkit-overflow-scrolling: touch;
         }
     }
+
+    .admin-site {
+        overflow-x: hidden;
+    }
+
+    .admin-site main,
+    .admin-site main > div {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .admin-site img,
+    .admin-site video,
+    .admin-site iframe {
+        max-width: 100%;
+    }
+
+    .admin-site .overflow-x-auto {
+        max-width: 100%;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    @media (min-width: 768px) and (max-width: 1023px) {
+        .admin-site main {
+            padding: 1.25rem;
+        }
+
+        .admin-site [class*="xl:grid-cols-"] {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 767px) {
+        .admin-site main {
+            padding: 1rem;
+        }
+
+        .admin-site [class*="xl:grid-cols-"],
+        .admin-site [class*="lg:grid-cols-"],
+        .admin-site [class*="md:grid-cols-"],
+        .admin-site [class*="sm:grid-cols-"] {
+            grid-template-columns: minmax(0, 1fr);
+        }
+
+        .admin-site [class*="sm:flex-row"],
+        .admin-site [class*="md:flex-row"],
+        .admin-site [class*="lg:flex-row"],
+        .admin-site [class*="xl:flex-row"] {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .admin-site input,
+        .admin-site select,
+        .admin-site textarea,
+        .admin-site button {
+            max-width: 100%;
+        }
+    }
 }
 
 @utility menu-item {

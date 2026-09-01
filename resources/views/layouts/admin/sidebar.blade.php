@@ -440,7 +440,7 @@
         'w-[272px]': $store.sidebar.isWide(),
         'w-[82px]': $store.sidebar.isCompact(),
         'translate-x-0': $store.sidebar.isMobileOpen,
-        '-translate-x-full xl:translate-x-0':
+        '-translate-x-full lg:translate-x-0':
             !$store.sidebar.isMobileOpen
     }"
     @mouseenter="$store.sidebar.setHovered(true)" @mouseleave="$store.sidebar.setHovered(false)">
@@ -459,7 +459,7 @@
             dark:border-gray-800
         "
         :class="$store.sidebar.isCompact() ?
-            'xl:justify-center' :
+            'lg:justify-center' :
             'justify-start'">
         <a href="{{ route('admin.dashboard') }}" class="flex min-w-0 items-center overflow-hidden"
             aria-label="Dashboard PPID Kota Batu" @click="closeMobileSidebar()">
@@ -538,7 +538,7 @@
                     px-3
                 "
                 :class="$store.sidebar.isCompact() ?
-                    'xl:justify-center' :
+                    'lg:justify-center' :
                     'justify-start'">
                 <template x-if="$store.sidebar.isWide()">
                     <span
@@ -590,7 +590,7 @@
                             {{ $dashboardActive ? 'menu-item-active' : 'menu-item-inactive' }}
                         "
                         :class="$store.sidebar.isCompact() ?
-                            'xl:justify-center' :
+                            'lg:justify-center' :
                             'justify-start'">
                         <span
                             class="
@@ -638,7 +638,7 @@
                                     {{ $visitorActive ? 'menu-item-active' : 'menu-item-inactive' }}
                                 "
                             :class="$store.sidebar.isCompact() ?
-                                'xl:justify-center' :
+                                'lg:justify-center' :
                                 'justify-start'">
                             <span
                                 class="
@@ -691,7 +691,7 @@
                                 'menu-item-inactive',
                             
                                 $store.sidebar.isCompact() ?
-                                'xl:justify-center' :
+                                'lg:justify-center' :
                                 'justify-start'
                             ]">
                             <span
@@ -830,7 +830,7 @@
                                 'menu-item-inactive',
                             
                                 $store.sidebar.isCompact() ?
-                                'xl:justify-center' :
+                                'lg:justify-center' :
                                 'justify-start'
                             ]">
                             <span
@@ -969,7 +969,7 @@
                                 'menu-item-inactive',
                             
                                 $store.sidebar.isCompact() ?
-                                'xl:justify-center' :
+                                'lg:justify-center' :
                                 'justify-start'
                             ]">
                             <span
@@ -1108,7 +1108,7 @@
                                 'menu-item-inactive',
                             
                                 $store.sidebar.isCompact() ?
-                                'xl:justify-center' :
+                                'lg:justify-center' :
                                 'justify-start'
                             ]">
                             <span
@@ -1244,7 +1244,7 @@
                                     {{ $permohonanActive ? 'menu-item-active' : 'menu-item-inactive' }}
                                 "
                             :class="$store.sidebar.isCompact() ?
-                                'xl:justify-center' :
+                                'lg:justify-center' :
                                 'justify-start'">
                             <span
                                 class="
@@ -1330,7 +1330,7 @@
                                     {{ $keberatanActive ? 'menu-item-active' : 'menu-item-inactive' }}
                                 "
                             :class="$store.sidebar.isCompact() ?
-                                'xl:justify-center' :
+                                'lg:justify-center' :
                                 'justify-start'">
                             <span
                                 class="
@@ -1380,7 +1380,7 @@
                                     {{ $notifikasiActive ? 'menu-item-active' : 'menu-item-inactive' }}
                                 "
                             :class="$store.sidebar.isCompact() ?
-                                'xl:justify-center' :
+                                'lg:justify-center' :
                                 'justify-start'">
                             <span
                                 class="
@@ -1466,7 +1466,7 @@
                                     {{ $chatActive ? 'menu-item-active' : 'menu-item-inactive' }}
                                 "
                             :class="$store.sidebar.isCompact() ?
-                                'xl:justify-center' :
+                                'lg:justify-center' :
                                 'justify-start'">
                             <span
                                 class="
@@ -1556,7 +1556,7 @@
                     : 'menu-item-inactive' }}
             "
                             :class="$store.sidebar.isCompact() ?
-                                'xl:justify-center' :
+                                'lg:justify-center' :
                                 'justify-start'">
 
                             <span class="flex h-6 w-6 shrink-0 items-center justify-center">
@@ -1739,7 +1739,7 @@
                     hidden
                     justify-center
                     py-2
-                    xl:flex
+                    lg:flex
                 "
                 title="{{ $adminDisplayName }}">
                 <div
