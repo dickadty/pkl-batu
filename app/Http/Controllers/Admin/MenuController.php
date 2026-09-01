@@ -39,7 +39,7 @@ class MenuController extends Controller
         ->orderBy('nama')
         ->get();
 
-    $parents = Menu::whereNull('parent_id')
+    $parents = Menu::with('parent')
         ->orderBy('sort_order')
         ->get();
 
@@ -104,10 +104,20 @@ class MenuController extends Controller
             ->orderBy('nama')
             ->get();
 
-        $parents = Menu::whereNull('parent_id')
+        $parents = Menu::with('parent')
             ->where('id', '!=', $menu->id)
             ->orderBy('sort_order')
             ->get();
+
+        $parents = $parents->reject(function ($parent) use ($menu) {
+            $current = $menu;
+
+            while ($current && $current->parent_id) {
+                $current = $current->parent;
+            }
+
+            return $parent->id === $menu->id || $parent->id === $menu->parent_id || $parent->full_path === $menu->full_path;
+        })->values();
 
         return view(
             'pages.admin.menu.edit',

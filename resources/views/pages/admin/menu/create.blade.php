@@ -187,7 +187,7 @@
                                 value="{{ $parent->id }}"
                                 {{ old('parent_id')==$parent->id?'selected':'' }}>
 
-                                {{ $parent->nama }}
+                                {{ $parent->full_path }}
 
                             </option>
 

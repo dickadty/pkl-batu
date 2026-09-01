@@ -44,6 +44,19 @@ public function children()
         ->orderBy('sort_order');
 }
 
+public function getFullPathAttribute(): string
+{
+    $segments = [];
+    $menu = $this;
+
+    while ($menu) {
+        $segments[] = $menu->nama;
+        $menu = $menu->parent;
+    }
+
+    return implode(' > ', array_reverse($segments));
+}
+
 public function getLinkAttribute()
 {
     if ($this->page) {

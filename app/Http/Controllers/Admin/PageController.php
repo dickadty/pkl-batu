@@ -172,6 +172,13 @@ class PageController extends Controller
             Storage::disk('public')->delete($page->gambar);
         }
 
+        if (
+            $page->file &&
+            Storage::disk('public')->exists($page->file)
+        ) {
+            Storage::disk('public')->delete($page->file);
+        }
+
         $page->delete();
 
         return redirect()

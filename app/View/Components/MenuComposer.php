@@ -16,7 +16,15 @@ class MenuComposer
                 $query->where('is_active', 1)
                     ->with([
                         'page',
-                        'module'
+                        'module',
+                        'children' => function ($childQuery) {
+                            $childQuery->where('is_active', 1)
+                                ->with([
+                                    'page',
+                                    'module'
+                                ])
+                                ->orderBy('sort_order');
+                        }
                     ])
                     ->orderBy('sort_order');
             }

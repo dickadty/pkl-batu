@@ -51,9 +51,11 @@ use App\Http\Controllers\Publik\HomeController;
 use App\Http\Controllers\Publik\InformasiController;
 use App\Http\Controllers\Publik\KeberatanController as PublikKeberatanController;
 use App\Http\Controllers\Publik\KtpOcrController;
+use App\Http\Controllers\Publik\PageController as PublikPageController;
 use App\Http\Controllers\Publik\PengadaanController as PublikPengadaanController;
 use App\Http\Controllers\Publik\PermohonanController as PublikPermohonanController;
 use App\Http\Controllers\Publik\PesanController as PublikPesanController;
+use App\Http\Controllers\Publik\PpidPembantuController as PublikPpidPembantuController;
 use App\Http\Controllers\Publik\ProkerController as PublikProkerController;
 use App\Http\Controllers\Publik\SurveyController as PublikSurveyController;
 
@@ -162,8 +164,13 @@ Route::post(
 
 Route::get(
     '/page/{slug}',
-    [PageController::class, 'show']
+    [PublikPageController::class, 'show']
 )->name('public.pages.show');
+
+Route::get(
+    '/page/{slug}/file',
+    [PublikPageController::class, 'file']
+)->name('public.pages.file');
 
 
 /*
@@ -223,6 +230,14 @@ Route::prefix('program-kerja')
 | INFORMASI PUBLIK
 |--------------------------------------------------------------------------
 */
+
+Route::prefix('ppid-pelaksana')
+    ->name('public.ppid-pelaksana.')
+    ->controller(PublikPpidPembantuController::class)
+    ->group(function (): void {
+        Route::get('/', 'index')->name('index');
+        Route::get('/{slug}', 'show')->name('show');
+    });
 
 Route::prefix('informasi')
     ->name('public.informasi.')
