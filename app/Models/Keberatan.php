@@ -38,23 +38,31 @@ class Keberatan extends Model
     protected $fillable = [
         'no_keberatan',
         'permohonanid',
+        'ppid_pembantuid',
+        'catatan_utama',
         'alasan',
         'status',
         'hasil',
         'jenis_tindak_lanjut',
         'tanggapan',
+        'jawaban_pembantu',
         'file_tanggapan',
+        'file_jawaban_pembantu',
         'nama_file_tanggapan',
+        'nama_file_jawaban_pembantu',
         'tanggal_pengajuan',
         'tanggal_diproses',
+        'tanggal_jawab_pembantu',
         'tanggal_tanggapan',
         'tanggal_selesai',
         'adminid',
     ];
 
     protected $casts = [
+        'ppid_pembantuid' => 'integer',
         'tanggal_pengajuan' => 'date',
         'tanggal_diproses' => 'date',
+        'tanggal_jawab_pembantu' => 'date',
         'tanggal_tanggapan' => 'date',
         'tanggal_selesai' => 'date',
     ];
@@ -101,6 +109,15 @@ class Keberatan extends Model
         return $this->belongsTo(
             Authorization::class,
             'adminid'
+        );
+    }
+
+    public function ppidPembantu(): BelongsTo
+    {
+        return $this->belongsTo(
+            PpidPembantu::class,
+            'ppid_pembantuid',
+            'id'
         );
     }
 

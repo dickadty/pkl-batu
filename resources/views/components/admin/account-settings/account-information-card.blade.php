@@ -3,7 +3,7 @@
 @php
     $roleLabel = match ((int) $admin->role) {
         1 => 'Admin PPID Utama',
-        2 => 'Admin PPID Pembantu',
+        2 => 'Admin PPID Pelaksana',
         default => 'Administrator',
     };
 
@@ -285,8 +285,7 @@
                     </span>
 
                     <input id="account_ppid" type="text"
-                        value="{{ $ppidPembantu !== '' ? $ppidPembantu : 'Belum ditentukan' }}"
-                        disabled
+                        value="{{ $ppidPembantu !== '' ? $ppidPembantu : 'Belum ditentukan' }}" disabled
                         class="
                             h-11
                             w-full

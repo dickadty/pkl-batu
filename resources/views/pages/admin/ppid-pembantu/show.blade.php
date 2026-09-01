@@ -1,6 +1,6 @@
 @extends('layouts.admin.app')
 
-@section('title', 'Detail PPID Pembantu')
+@section('title', 'Detail PPID Pelaksana')
 
 @section('content')
     @php
@@ -40,8 +40,8 @@
     @endphp
 
     <div class="space-y-6">
-        <x-admin.page-header title="Detail PPID Pembantu"
-            description="Lihat profil, kategori, keterangan, website, kontak, dan alamat unit PPID Pembantu."
+        <x-admin.page-header title="Detail PPID Pelaksana"
+            description="Lihat profil, kategori, keterangan, website, kontak, dan alamat unit PPID Pelaksana."
             :breadcrumbs="[
                 [
                     'label' => 'Dashboard',
@@ -49,7 +49,7 @@
                     'icon' => 'ri-dashboard-line',
                 ],
                 [
-                    'label' => 'PPID Pembantu',
+                    'label' => 'PPID Pelaksana',
                     'url' => route('admin.ppid-pembantu.index'),
                 ],
                 [

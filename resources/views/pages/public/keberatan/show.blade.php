@@ -91,9 +91,8 @@
 
         $fileTanggapan = filled($keberatan->file_tanggapan) ? ltrim((string) $keberatan->file_tanggapan, '/') : null;
 
-        $fileTanggapanUrl = $fileTanggapan
-            ? \Illuminate\Support\Facades\Storage::disk('public')->url($fileTanggapan)
-            : null;
+        $fileTanggapanUrl =
+            $fileTanggapan && $isSelesai ? route('public.keberatan.file', ['id' => $keberatan->id]) : null;
 
         $fileTanggapanName = $fileTanggapan ? basename($fileTanggapan) : null;
 

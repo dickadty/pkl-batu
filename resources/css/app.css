@@ -203,6 +203,93 @@ layer(base);
     }
 }
 
+@layer utilities {
+    [x-cloak] {
+        display: none !important;
+    }
+
+    .public-site {
+        overflow-x: hidden;
+    }
+
+    .public-site img,
+    .public-site video,
+    .public-site iframe {
+        max-width: 100%;
+    }
+
+    .public-site table {
+        max-width: 100%;
+    }
+
+    @media (min-width: 768px) and (max-width: 1023px) {
+        .public-site main > section,
+        .public-site main > div {
+            max-width: 100%;
+        }
+
+        .public-site [class*="lg:grid-cols-3"] {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .public-site [class*="lg:col-span-2"] {
+            grid-column: span 2 / span 2;
+        }
+
+        .public-site [class*="lg:flex-row"] {
+            flex-direction: column;
+            align-items: stretch;
+        }
+    }
+
+    @media (max-width: 767px) {
+        .public-site main > section,
+        .public-site main > div {
+            max-width: 100%;
+        }
+
+        .public-site [class*="lg:grid-cols-3"],
+        .public-site [class*="md:grid-cols-2"],
+        .public-site [class*="sm:grid-cols-2"] {
+            grid-template-columns: minmax(0, 1fr);
+        }
+
+        .public-site [class*="lg:col-span-2"] {
+            grid-column: auto;
+        }
+
+        .public-site [class*="sm:flex-row"],
+        .public-site [class*="md:flex-row"],
+        .public-site [class*="lg:flex-row"] {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .public-site [class*="px-6"],
+        .public-site [class*="px-8"] {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+
+        .public-site h1 {
+            overflow-wrap: anywhere;
+        }
+
+        .public-site input,
+        .public-site select,
+        .public-site textarea,
+        .public-site button,
+        .public-site a {
+            max-width: 100%;
+        }
+
+        .public-site .overflow-x-auto {
+            max-width: 100vw;
+            -webkit-overflow-scrolling: touch;
+        }
+    }
+}
+
 @utility menu-item {
     @apply relative flex items-center w-full gap-3 px-3 py-2 font-medium rounded-lg text-theme-sm;
 }

@@ -33,7 +33,8 @@ class KeberatanService
         return $this->keberatan
             ->newQuery()
             ->with([
-                'permohonan.ppidPembantu',
+                'permohonan',
+                'ppidPembantu',
                 'admin',
             ])
             ->whereHas(
@@ -94,7 +95,8 @@ class KeberatanService
         return $this->keberatan
             ->newQuery()
             ->with([
-                'permohonan.ppidPembantu',
+                'permohonan',
+                'ppidPembantu',
                 'admin',
             ])
             ->whereHas(
@@ -199,6 +201,7 @@ class KeberatanService
                     ->refresh()
                     ->load([
                         'permohonan.ppidPembantu',
+                        'ppidPembantu',
                         'admin',
                     ]);
             }

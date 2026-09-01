@@ -32,7 +32,7 @@
 
         if ($isAdminUtama) {
             $statCards[] = [
-                'label' => 'PPID Pembantu',
+                'label' => 'PPID Pelaksana',
                 'value' => $stats['total_ppid_pembantu'] ?? 0,
                 'icon' => 'ri-government-line',
                 'icon_class' => 'bg-blue-100 text-blue-600 dark:bg-blue-500/15 dark:text-blue-400',
@@ -138,7 +138,7 @@
                     @if ($isAdminUtama)
                         Admin PPID Utama
                     @else
-                        Admin PPID Pembantu
+                        Admin PPID Pelaksana
 
                         @if ($admin->ppidPembantu)
                             <span class="text-gray-400 dark:text-gray-500">

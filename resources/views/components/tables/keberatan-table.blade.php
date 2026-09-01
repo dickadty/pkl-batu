@@ -531,7 +531,7 @@
 
             $nomorPermohonan = data_get($item, 'permohonan.no_pemohon') ?? '-';
 
-            $ppidName = data_get($item, 'permohonan.ppidPembantu.nama') ?? '-';
+            $ppidName = data_get($item, 'ppidPembantu.nama') ?? '-';
 
             /*
             |--------------------------------------------------------------------------

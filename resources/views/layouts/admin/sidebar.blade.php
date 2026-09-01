@@ -19,7 +19,7 @@
 
     $roleLabel = match ($adminRole) {
         1 => 'Admin Utama',
-        2 => 'Admin PPID Pembantu',
+        2 => 'Admin PPID Pelaksana',
         default => 'Administrator',
     };
 
@@ -53,6 +53,8 @@
 
     $notifikasiActive = request()->routeIs('admin.notifikasi.*');
 
+    $visitorActive = request()->routeIs('admin.visitor.*');
+
     $chatActive = request()->routeIs('admin.pesan-masuk.*');
 
     /* Helper Filter Menu */
@@ -80,14 +82,14 @@
     $masterMenus = $filterMenus(
         collect([
             [
-                'label' => 'Daftar PPID Pembantu',
+                'label' => 'Daftar PPID Pelaksana',
                 'route' => 'admin.ppid-pembantu.index',
                 'active' => ['admin.ppid-pembantu.index', 'admin.ppid-pembantu.show', 'admin.ppid-pembantu.edit'],
                 'icon' => 'ri-government-line',
                 'roles' => [1],
             ],
             [
-                'label' => 'Tambah PPID Pembantu',
+                'label' => 'Tambah PPID Pelaksana',
                 'route' => 'admin.ppid-pembantu.create',
                 'active' => ['admin.ppid-pembantu.create'],
                 'icon' => 'ri-add-circle-line',
@@ -608,6 +610,55 @@
                         </span>
                     </a>
                 </li>
+
+                {{-- ====================================================
+                STATISTIK KUNJUNGAN
+                ===================================================== --}}
+
+                @if (Route::has('admin.visitor.index'))
+                    <li>
+                        <a href="{{ route('admin.visitor.index') }}" title="Statistik Kunjungan"
+                            @click="closeMobileSidebar()"
+                            class="
+                                    menu-item
+                                    group
+                                    flex
+                                    min-h-10
+                                    w-full
+                                    items-center
+                                    gap-3
+                                    rounded-lg
+                                    px-3
+                                    py-2
+                                    text-[13px]
+                                    font-medium
+                                    leading-5
+                                    transition-colors
+                                    duration-200
+                                    {{ $visitorActive ? 'menu-item-active' : 'menu-item-inactive' }}
+                                "
+                            :class="$store.sidebar.isCompact() ?
+                                'xl:justify-center' :
+                                'justify-start'">
+                            <span
+                                class="
+                                        flex
+                                        h-6
+                                        w-6
+                                        shrink-0
+                                        items-center
+                                        justify-center
+                                        {{ $visitorActive ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}
+                                    ">
+                                <i class="ri-bar-chart-box-line text-lg"></i>
+                            </span>
+
+                            <span x-cloak x-show="$store.sidebar.isWide()" class="min-w-0 flex-1 truncate">
+                                Statistik Kunjungan
+                            </span>
+                        </a>
+                    </li>
+                @endif
 
                 {{-- ====================================================
                 MASTER DATA

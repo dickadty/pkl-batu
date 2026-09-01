@@ -20,13 +20,13 @@
     @stack('styles')
 </head>
 
-<body class="min-h-screen bg-slate-50 text-slate-800">
+<body class="public-site min-h-screen bg-slate-50 text-slate-800">
 
     @include('components.public.navbar')
 
     <main class="{{ request()->is('/') ? '' : 'pt-28' }}">
-    @yield('content')
-</main>
+        @yield('content')
+    </main>
 
     @include('components.public.footer')
 

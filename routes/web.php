@@ -26,23 +26,8 @@ use App\Http\Controllers\Admin\PpidPembantuController;
 use App\Http\Controllers\Admin\ProkerController;
 use App\Http\Controllers\Admin\SliderController;
 use App\Http\Controllers\Admin\SurveyController as AdminSurveyController;
-
-
-/*
-|--------------------------------------------------------------------------
-| AUTH CONTROLLER
-|--------------------------------------------------------------------------
-*/
-
+use App\Http\Controllers\Admin\VisitorController;
 use App\Http\Controllers\Auth\UnifiedLoginController;
-
-
-/*
-|--------------------------------------------------------------------------
-| PUBLIC CONTROLLERS
-|--------------------------------------------------------------------------
-*/
-
 use App\Http\Controllers\Publik\AccountActivationController;
 use App\Http\Controllers\Publik\AuthController as PublikAuthController;
 use App\Http\Controllers\Publik\BeritaController as PublikBeritaController;
@@ -56,14 +41,6 @@ use App\Http\Controllers\Publik\PermohonanController as PublikPermohonanControll
 use App\Http\Controllers\Publik\PesanController as PublikPesanController;
 use App\Http\Controllers\Publik\ProkerController as PublikProkerController;
 use App\Http\Controllers\Publik\SurveyController as PublikSurveyController;
-
-
-/*
-|--------------------------------------------------------------------------
-| LARAVEL
-|--------------------------------------------------------------------------
-*/
-
 use Illuminate\Support\Facades\Route;
 
 
@@ -647,6 +624,13 @@ Route::prefix('keberatan')
         )
             ->whereNumber('id')
             ->name('show');
+
+        Route::get(
+            '/{id}/file',
+            'file'
+        )
+            ->whereNumber('id')
+            ->name('file');
     });
 
 
@@ -1267,6 +1251,24 @@ Route::prefix('admin')
 
 
             /*
+|--------------------------------------------------------------------------
+| STATISTIK KUNJUNGAN
+|--------------------------------------------------------------------------
+*/
+
+            Route::prefix('visitor')
+                ->name('visitor.')
+                ->controller(VisitorController::class)
+                ->group(function (): void {
+
+
+                    Route::get(
+                        '/',
+                        'index'
+                    )->name('index');
+                });
+
+            /*
             |--------------------------------------------------------------------------
             | INFORMASI PUBLIK
             |--------------------------------------------------------------------------
@@ -1611,12 +1613,18 @@ Route::prefix('admin')
                     )->group(function (): void {
 
                         Route::post(
+                            '/{id}/teruskan',
+                            'teruskan'
+                        )
+                            ->whereNumber('id')
+                            ->name('teruskan');
+
+                        Route::post(
                             '/{id}/proses',
                             'proses'
                         )
                             ->whereNumber('id')
                             ->name('proses');
-
 
                         Route::post(
                             '/{id}/selesaikan',
@@ -1624,6 +1632,18 @@ Route::prefix('admin')
                         )
                             ->whereNumber('id')
                             ->name('selesaikan');
+                    });
+
+                    Route::middleware(
+                        'admin.role:2'
+                    )->group(function (): void {
+
+                        Route::post(
+                            '/{id}/jawab-pembantu',
+                            'jawabPembantu'
+                        )
+                            ->whereNumber('id')
+                            ->name('jawab-pembantu');
                     });
                 });
         });

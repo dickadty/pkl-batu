@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Authorization;
 use App\Models\Keberatan;
+use App\Models\PpidPembantu;
 use App\Services\Admin\KeberatanService;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\RedirectResponse;
@@ -39,6 +40,7 @@ class KeberatanController extends Controller
         $query = Keberatan::query()
             ->with([
                 'permohonan',
+                'ppidPembantu',
                 'admin',
             ]);
 
@@ -50,14 +52,9 @@ class KeberatanController extends Controller
             (int) $admin->role === 2
             && filled($admin->ppid_pembantuid)
         ) {
-            $query->whereHas(
-                'permohonan',
-                function ($permohonanQuery) use ($admin): void {
-                    $permohonanQuery->where(
-                        'ppid_pembantuid',
-                        (int) $admin->ppid_pembantuid
-                    );
-                }
+            $query->where(
+                'ppid_pembantuid',
+                (int) $admin->ppid_pembantuid
             );
         }
 
@@ -109,6 +106,13 @@ class KeberatanController extends Controller
             'pages.admin.keberatan.index',
             [
                 'keberatans' => $keberatans,
+                'ppidPembantuList' => PpidPembantu::query()
+                    ->when(
+                        (int) $admin->role === 2,
+                        fn($query) => $query->where('id', (int) $admin->ppid_pembantuid)
+                    )
+                    ->orderBy('nama')
+                    ->get(),
                 'search' => $search,
                 'status' => $status,
                 'statusOptions' => [
@@ -140,12 +144,168 @@ class KeberatanController extends Controller
             [
                 'admin' => $admin,
                 'keberatan' => $keberatan,
+                'ppidPembantuList' => PpidPembantu::query()
+                    ->orderBy('nama')
+                    ->get(),
                 'hasilOptions' =>
                 Keberatan::hasilOptions(),
                 'tindakLanjutOptions' =>
                 Keberatan::tindakLanjutOptions(),
             ]
         );
+    }
+
+    public function teruskan(
+        Request $request,
+        int $id
+    ): RedirectResponse {
+        $admin = auth('admin')->user();
+
+        abort_unless(
+            $admin instanceof Authorization,
+            401
+        );
+
+        $validated = $request->validate(
+            [
+                'ppid_pembantuid' => [
+                    'required',
+                    'integer',
+                    'exists:ppid_pembantu,id',
+                ],
+                'catatan_utama' => [
+                    'nullable',
+                    'string',
+                    'max:2000',
+                ],
+            ],
+            [
+                'ppid_pembantuid.required' =>
+                'Unit PPID Pelaksana wajib dipilih.',
+
+                'ppid_pembantuid.integer' =>
+                'Unit PPID Pelaksana tidak valid.',
+
+                'ppid_pembantuid.exists' =>
+                'Unit PPID Pelaksana yang dipilih tidak ditemukan.',
+
+                'catatan_utama.max' =>
+                'Catatan utama maksimal 2000 karakter.',
+            ]
+        );
+
+        try {
+            $this->keberatanService->teruskan(
+                id: $id,
+                admin: $admin,
+                data: $validated
+            );
+
+            return redirect()
+                ->route(
+                    'admin.keberatan.show',
+                    ['id' => $id]
+                )
+                ->with(
+                    'success',
+                    'Keberatan berhasil diteruskan ke PPID Pelaksana.'
+                );
+        } catch (
+            AuthorizationException | RuntimeException $exception
+        ) {
+            return back()->withInput()->with(
+                'error',
+                $exception->getMessage()
+            );
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return back()->withInput()->with(
+                'error',
+                'Terjadi kesalahan saat meneruskan keberatan.'
+            );
+        }
+    }
+
+    public function jawabPembantu(
+        Request $request,
+        int $id
+    ): RedirectResponse {
+        $admin = auth('admin')->user();
+
+        abort_unless(
+            $admin instanceof Authorization,
+            401
+        );
+
+        $validated = $request->validate(
+            [
+                'tanggapan' => [
+                    'required',
+                    'string',
+                    'min:10',
+                    'max:10000',
+                ],
+                'file_tanggapan' => [
+                    'nullable',
+                    'file',
+                    'mimes:pdf,doc,docx,xls,xlsx',
+                    'max:10240',
+                ],
+            ],
+            [
+                'tanggapan.required' =>
+                'Jawaban PPID Pelaksana wajib diisi.',
+
+                'tanggapan.min' =>
+                'Jawaban PPID Pelaksana minimal 10 karakter.',
+
+                'tanggapan.max' =>
+                'Jawaban PPID Pelaksana maksimal 10.000 karakter.',
+
+                'file_tanggapan.file' =>
+                'Dokumen jawaban tidak valid.',
+
+                'file_tanggapan.mimes' =>
+                'Dokumen harus berformat PDF, DOC, DOCX, XLS, atau XLSX.',
+
+                'file_tanggapan.max' =>
+                'Ukuran dokumen maksimal 10 MB.',
+            ]
+        );
+
+        try {
+            $this->keberatanService->jawabPembantu(
+                id: $id,
+                admin: $admin,
+                data: $validated,
+                fileJawabanPembantu: $request->file('file_tanggapan')
+            );
+
+            return redirect()
+                ->route(
+                    'admin.keberatan.show',
+                    ['id' => $id]
+                )
+                ->with(
+                    'success',
+                    'Jawaban PPID Pelaksana berhasil dikirim.'
+                );
+        } catch (
+            AuthorizationException | RuntimeException $exception
+        ) {
+            return back()->withInput()->with(
+                'error',
+                $exception->getMessage()
+            );
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return back()->withInput()->with(
+                'error',
+                'Terjadi kesalahan saat mengirim jawaban PPID Pelaksana.'
+            );
+        }
     }
 
     public function proses(int $id): RedirectResponse
@@ -158,27 +318,15 @@ class KeberatanController extends Controller
         );
 
         try {
-            $this->keberatanService->proses(
-                $id,
-                $admin
-            );
+            $this->keberatanService->proses($id, $admin);
 
             return redirect()
-                ->route(
-                    'admin.keberatan.show',
-                    ['id' => $id]
-                )
-                ->with(
-                    'success',
-                    'Keberatan berhasil diproses.'
-                );
+                ->route('admin.keberatan.show', ['id' => $id])
+                ->with('success', 'Keberatan berhasil diproses.');
         } catch (
             AuthorizationException | RuntimeException $exception
         ) {
-            return back()->with(
-                'error',
-                $exception->getMessage()
-            );
+            return back()->with('error', $exception->getMessage());
         } catch (Throwable $exception) {
             report($exception);
 
