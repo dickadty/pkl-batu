@@ -1,5 +1,15 @@
 @php
     $isHome = request()->is('/');
+
+    $resolveMenuLink = static function ($menu): string {
+        $menuName = strtolower(trim((string) data_get($menu, 'nama')));
+
+        if (Auth::guard('public')->check() && str_contains($menuName, 'permohonan informasi')) {
+            return route('public.permohonan.index');
+        }
+
+        return (string) data_get($menu, 'link', url('/'));
+    };
 @endphp
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
@@ -67,7 +77,7 @@
                                     @foreach ($menu->children as $child)
                                         @if ($child->children->count())
                                             <div class="relative group/child">
-                                                <a href="{{ $child->link }}"
+                                                <a href="{{ $resolveMenuLink($child) }}"
                                                     @if ($child->tipe === 'url') target="_blank" rel="noopener noreferrer" @endif
                                                     class="flex items-center justify-between gap-2 rounded-lg px-2 py-2 text-[0.875rem] text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700">
                                                     <span>{{ $child->nama }}</span>
@@ -82,7 +92,7 @@
                                                     <div
                                                         class="rounded-xl border border-slate-200 bg-white p-3 shadow-xl">
                                                         @foreach ($child->children as $grandChild)
-                                                            <a href="{{ $grandChild->link }}"
+                                                            <a href="{{ $resolveMenuLink($grandChild) }}"
                                                                 @if ($grandChild->tipe === 'url') target="_blank" rel="noopener noreferrer" @endif
                                                                 class="block rounded-lg px-2 py-2 text-[0.875rem] text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700">
                                                                 {{ $grandChild->nama }}
@@ -92,7 +102,7 @@
                                                 </div>
                                             </div>
                                         @else
-                                            <a href="{{ $child->link }}"
+                                            <a href="{{ $resolveMenuLink($child) }}"
                                                 @if ($child->tipe === 'url') target="_blank" rel="noopener noreferrer" @endif
                                                 class="block rounded-lg px-2 py-2 text-[0.875rem] text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700">
                                                 {{ $child->nama }}
@@ -103,7 +113,7 @@
                             </div>
                         </div>
                     @else
-                        <a href="{{ $menu->link }}"
+                        <a href="{{ $resolveMenuLink($menu) }}"
                             @if ($menu->tipe === 'url') target="_blank" rel="noopener noreferrer" @endif
                             class="navbar-link shrink-0 whitespace-nowrap text-[0.875rem] font-medium transition {{ $isHome ? 'text-white hover:text-emerald-700' : 'text-slate-700 hover:text-emerald-700' }}">
                             {{ $menu->nama }}
@@ -170,7 +180,7 @@
                     <p class="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-400">
                         {{ $menu->nama }}</p>
                     @foreach ($menu->children as $child)
-                        <a href="{{ $child->link }}"
+                        <a href="{{ $resolveMenuLink($child) }}"
                             @if ($child->tipe === 'url') target="_blank" rel="noopener noreferrer" @endif
                             class="block rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-emerald-50 hover:text-emerald-700">
                             {{ $child->nama }}
@@ -178,7 +188,7 @@
                     @endforeach
                 </div>
             @else
-                <a href="{{ $menu->link }}"
+                <a href="{{ $resolveMenuLink($menu) }}"
                     @if ($menu->tipe === 'url') target="_blank" rel="noopener noreferrer" @endif
                     class="block rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-emerald-50 hover:text-emerald-700">
                     {{ $menu->nama }}

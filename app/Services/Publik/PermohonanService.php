@@ -7,6 +7,7 @@ use App\Models\Authorization;
 use App\Models\Permohonan;
 use App\Models\UserPublic;
 use App\Notifications\NotifikasiSistem;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\QueryException;
 use Illuminate\Filesystem\FilesystemAdapter;
@@ -29,11 +30,12 @@ class PermohonanService
     ) {}
 
     /**
-     * Mengambil seluruh permohonan milik warga.
+     * Mengambil daftar permohonan milik warga.
      */
     public function getByUser(
         UserPublic $user
-    ): Collection {
+    ): LengthAwarePaginator {
+
         return $this->permohonan
             ->newQuery()
             ->where(
@@ -41,7 +43,10 @@ class PermohonanService
                 $user->id
             )
             ->orderByDesc('id')
-            ->get();
+            ->paginate(
+                request('per_page', 15)
+            )
+            ->withQueryString();
     }
 
     /**
