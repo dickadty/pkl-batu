@@ -55,6 +55,8 @@
 
     $visitorActive = request()->routeIs('admin.visitor.*');
 
+    $downloadActive = request()->routeIs('admin.download.*');
+
     $chatActive = request()->routeIs('admin.pesan-masuk.*');
 
     /* Helper Filter Menu */
@@ -656,6 +658,62 @@
                             <span x-cloak x-show="$store.sidebar.isWide()" class="min-w-0 flex-1 truncate">
                                 Statistik Kunjungan
                             </span>
+                        </a>
+                    </li>
+                @endif
+
+                {{-- ====================================================
+HISTORI DOWNLOAD
+===================================================== --}}
+
+                @if (Route::has('admin.download.index'))
+                    <li>
+                        <a href="{{ route('admin.download.index') }}" title="Histori Download"
+                            @click="closeMobileSidebar()"
+                            class="
+            menu-item
+            group
+            flex
+            min-h-10
+            w-full
+            items-center
+            gap-3
+            rounded-lg
+            px-3
+            py-2
+            text-[13px]
+            font-medium
+            leading-5
+            transition-colors
+            duration-200
+            {{ $downloadActive ? 'menu-item-active' : 'menu-item-inactive' }}
+        "
+                            :class="$store.sidebar.isCompact() ?
+                                'lg:justify-center' :
+                                'justify-start'">
+
+                            <span
+                                class="
+                flex
+                h-6
+                w-6
+                shrink-0
+                items-center
+                justify-center
+                {{ $downloadActive ? 'menu-item-icon-active' : 'menu-item-icon-inactive' }}
+            ">
+
+                                <i class="ri-download-cloud-line text-lg"></i>
+
+                            </span>
+
+
+                            <span x-cloak x-show="$store.sidebar.isWide()" class="min-w-0 flex-1 truncate">
+
+                                Histori Download
+
+                            </span>
+
                         </a>
                     </li>
                 @endif

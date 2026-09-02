@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\BeritaController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DokumentasiController as AdminInformasiPublikController;
+use App\Http\Controllers\Admin\DownloadController;
 use App\Http\Controllers\Admin\FaqController as AdminFaqController;
 use App\Http\Controllers\Admin\KategoriInformasiController;
 use App\Http\Controllers\Admin\KeberatanController as AdminKeberatanController;
@@ -1274,6 +1275,24 @@ Route::prefix('admin')
             Route::prefix('visitor')
                 ->name('visitor.')
                 ->controller(VisitorController::class)
+                ->group(function (): void {
+
+
+                    Route::get(
+                        '/',
+                        'index'
+                    )->name('index');
+                });
+
+            /*
+            |--------------------------------------------------------------------------
+            | HISTORI DOWNLOAD INFORMASI PUBLIK
+            |--------------------------------------------------------------------------
+            */
+
+            Route::prefix('download')
+                ->name('download.')
+                ->controller(DownloadController::class)
                 ->group(function (): void {
 
 

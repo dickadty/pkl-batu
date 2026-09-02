@@ -552,7 +552,7 @@
         ">
                             Surat Kuasa
 
-                            <span id="surat-kuasa-required" class="hidden text-red-500">
+                            <span id="surat-kuasa-nullable" class="hidden text-red-500">
                                 *
                             </span>
                         </label>

@@ -208,6 +208,74 @@ layer(base);
         display: none !important;
     }
 
+    .admin-site {
+        background:
+            radial-gradient(
+                circle at top left,
+                rgba(59, 130, 246, 0.08),
+                transparent 28%
+            ),
+            linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+    }
+
+    html.dark .admin-site {
+        background:
+            radial-gradient(
+                circle at top left,
+                rgba(59, 130, 246, 0.14),
+                transparent 28%
+            ),
+            linear-gradient(180deg, #020817 0%, #0f172a 100%);
+    }
+
+    .dark .admin-site .bg-white,
+    html.dark .admin-site .bg-white {
+        background-color: rgba(15, 23, 42, 0.96) !important;
+    }
+
+    .dark .admin-site .bg-gray-50,
+    html.dark .admin-site .bg-gray-50 {
+        background-color: rgba(15, 23, 42, 0.7) !important;
+    }
+
+    .dark .admin-site .bg-gray-100,
+    html.dark .admin-site .bg-gray-100 {
+        background-color: rgba(30, 41, 59, 0.7) !important;
+    }
+
+    .dark .admin-site .border-gray-200,
+    .dark .admin-site .border-gray-100,
+    html.dark .admin-site .border-gray-200,
+    html.dark .admin-site .border-gray-100 {
+        border-color: rgba(51, 65, 85, 0.9) !important;
+    }
+
+    .dark .admin-site .text-gray-900,
+    html.dark .admin-site .text-gray-900 {
+        color: rgba(248, 250, 252, 0.98) !important;
+    }
+
+    .dark .admin-site .text-gray-700,
+    .dark .admin-site .text-gray-600,
+    .dark .admin-site .text-gray-500,
+    html.dark .admin-site .text-gray-700,
+    html.dark .admin-site .text-gray-600,
+    html.dark .admin-site .text-gray-500 {
+        color: rgba(203, 213, 225, 0.96) !important;
+    }
+
+    .dark .admin-site .text-gray-400,
+    .dark .admin-site .text-gray-300,
+    html.dark .admin-site .text-gray-400,
+    html.dark .admin-site .text-gray-300 {
+        color: rgba(148, 163, 184, 0.95) !important;
+    }
+
+    .dark .admin-site .ring-gray-100,
+    html.dark .admin-site .ring-gray-100 {
+        box-shadow: 0 0 0 1px rgba(51, 65, 85, 0.8) !important;
+    }
+
     .public-site {
         overflow-x: hidden;
     }
