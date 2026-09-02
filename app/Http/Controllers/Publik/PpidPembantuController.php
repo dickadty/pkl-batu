@@ -48,7 +48,23 @@ class PpidPembantuController extends Controller
     public function show(string $slug): View
     {
         $ppidPembantu = PpidPembantu::query()
-            ->with('kategoriPpid')
+            ->with([
+                'kategoriPpid',
+                'dokumentasi' => function ($query) {
+                    $query
+                        ->with('kategori')
+                        ->where('is_verifikasi', 1)
+                        ->whereHas('kategori', function ($kategoriQuery) {
+                            $kategoriQuery->whereIn('sifat', [
+                                'berkala',
+                                'setiap_saat',
+                                'serta_merta',
+                            ]);
+                        })
+                        ->orderByDesc('tahun')
+                        ->orderByDesc('id');
+                },
+            ])
             ->where('slug', $slug)
             ->firstOrFail();
 

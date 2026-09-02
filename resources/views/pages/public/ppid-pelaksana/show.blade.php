@@ -54,91 +54,125 @@
 
     <section class="relative z-30 -mt-18 pb-10">
         <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-            <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-                <div class="grid gap-5 p-4 md:p-6 lg:grid-cols-[220px_minmax(0,1fr)]">
-                    <div class="flex flex-col items-center rounded-2xl bg-slate-50 p-4 text-center ring-1 ring-slate-200">
-                        <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-100 text-2xl font-bold text-emerald-700 shadow-sm">
-                            @if (!empty($ppidPembantu->icon))
-                                <i class="{{ $ppidPembantu->icon }}" aria-hidden="true"></i>
-                            @else
-                                {{ strtoupper(mb_substr($ppidPembantu->nama, 0, 1)) }}
-                            @endif
-                        </div>
 
-                        <div class="mt-3 w-full space-y-2 text-left">
-                            <div class="rounded-xl bg-white px-3 py-2 text-[11px] text-slate-600">
-                                <span class="font-semibold text-slate-700">Kategori:</span>
-                                <br>
-                                {{ $ppidPembantu->kategoriPpid?->kategori ?? '-' }}
-                            </div>
-
-                            @if (!empty($ppidPembantu->telp))
-                                <div class="rounded-xl bg-white px-3 py-2 text-[11px] text-slate-600">
-                                    <span class="font-semibold text-slate-700">Telepon:</span>
-                                    <br>
-                                    {{ $ppidPembantu->telp }}
-                                </div>
-                            @endif
-
-                            @if (!empty($websiteUrl))
-                                <a href="{{ $websiteUrl }}" target="_blank" rel="noopener noreferrer" class="block rounded-xl bg-emerald-600 px-3 py-2 text-center text-[11px] font-semibold text-white transition hover:bg-emerald-700">
-                                    Kunjungi Website
-                                </a>
-                            @endif
-                        </div>
-                    </div>
-
-                    <div>
-                        <div class="flex flex-col gap-3 border-b border-slate-200 pb-3 sm:flex-row sm:items-center sm:justify-between">
-                            <div>
-                                <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-emerald-700">Unit PPID</p>
-                                <h2 class="mt-2 text-xl font-bold text-slate-800 sm:text-2xl">{{ $ppidPembantu->nama }}</h2>
-                            </div>
-
-                            @if (!empty($websiteUrl))
-                                <a href="{{ $websiteUrl }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-700 transition hover:border-emerald-300 hover:text-emerald-700">
-                                    <i class="ri-global-line"></i>
-                                    Website Resmi
-                                </a>
-                            @endif
-                        </div>
-
-                        @if (!empty($ppidPembantu->keterangan))
-                            <div class="mt-4 rounded-2xl bg-slate-50 p-4">
-                                <h3 class="text-sm font-bold text-slate-800">Keterangan</h3>
-                                <p class="mt-2 text-sm leading-6 text-slate-600">
-                                    {{ $ppidPembantu->keterangan }}
-                                </p>
-                            </div>
-                        @endif
-
-                        <div class="mt-4 grid gap-4 md:grid-cols-2">
-                            @if (!empty($ppidPembantu->alamat))
-                                <div class="rounded-2xl border border-slate-200 bg-white p-4">
-                                    <h4 class="text-sm font-bold text-slate-800">Alamat</h4>
-                                    <p class="mt-2 text-sm leading-6 text-slate-600">
-                                        {{ $ppidPembantu->alamat }}
-                                    </p>
-                                </div>
-                            @endif
-
-                            @if (!empty($ppidPembantu->telp))
-                                <div class="rounded-2xl border border-slate-200 bg-white p-4">
-                                    <h4 class="text-sm font-bold text-slate-800">Kontak</h4>
-                                    <p class="mt-2 text-sm leading-6 text-slate-600">
-                                        {{ $ppidPembantu->telp }}
-                                    </p>
-                                    @if ($phone)
-                                        <a href="tel:{{ $phone }}" class="mt-3 inline-flex items-center gap-2 text-xs font-medium text-emerald-700 hover:underline">
-                                            <i class="ri-phone-line"></i>
-                                            Hubungi sekarang
-                                        </a>
-                                    @endif
-                                </div>
-                            @endif
-                        </div>
-                    </div>
+            <div class="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+                <div class="border-b border-slate-200 px-4 py-4 md:px-6">
+                    <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-emerald-700">Data PPID Pelaksana</p>
+                    <h2 class="mt-1 text-lg font-bold text-slate-800">Informasi lengkap unit</h2>
                 </div>
+
+                <dl class="grid gap-x-6 gap-y-4 p-4 text-sm sm:grid-cols-2 md:p-6">
+                    <div>
+                        <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">ID</dt>
+                        <dd class="mt-1 text-slate-700">{{ $ppidPembantu->id }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Nama</dt>
+                        <dd class="mt-1 text-slate-700">{{ $ppidPembantu->nama }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Kategori PPID</dt>
+                        <dd class="mt-1 text-slate-700">{{ $ppidPembantu->kategoriPpid?->kategori ?? '-' }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">ID Kategori PPID</dt>
+                        <dd class="mt-1 text-slate-700">{{ $ppidPembantu->kategori_ppidid ?? '-' }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Slug</dt>
+                        <dd class="mt-1 break-all text-slate-700">{{ $ppidPembantu->slug ?? '-' }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Website</dt>
+                        <dd class="mt-1 break-all text-slate-700">
+                            @if ($websiteUrl)
+                                <a href="{{ $websiteUrl }}" target="_blank" rel="noopener noreferrer" class="text-emerald-700 hover:underline">{{ $ppidPembantu->linkweb }}</a>
+                            @else
+                                -
+                            @endif
+                        </dd>
+                    </div>
+                    <div>
+                        <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Telepon</dt>
+                        <dd class="mt-1 text-slate-700">{{ $ppidPembantu->telp ?? '-' }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Alamat</dt>
+                        <dd class="mt-1 text-slate-700">{{ $ppidPembantu->alamat ?? '-' }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Ikon</dt>
+                        <dd class="mt-1 text-slate-700">{{ $ppidPembantu->icon ?? '-' }}</dd>
+                    </div>
+                    <div class="sm:col-span-2">
+                        <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Keterangan</dt>
+                        <dd class="mt-1 leading-6 text-slate-700">{{ $ppidPembantu->keterangan ?? '-' }}</dd>
+                    </div>
+                </dl>
+            </div>
+
+            <div class="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+                <div class="flex flex-col gap-1 border-b border-slate-200 px-4 py-4 md:px-6 sm:flex-row sm:items-end sm:justify-between">
+                    <div>
+                        <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-emerald-700">Informasi Publik</p>
+                        <h2 class="mt-1 text-lg font-bold text-slate-800">Dokumentasi {{ $ppidPembantu->nama }}</h2>
+                    </div>
+                    <span class="text-xs text-slate-500">{{ $ppidPembantu->dokumentasi->count() }} dokumen</span>
+                </div>
+
+                @if ($ppidPembantu->dokumentasi->isNotEmpty())
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-slate-200 text-left">
+                            <thead class="bg-slate-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Judul Informasi</th>
+                                    <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Kategori</th>
+                                    <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Sifat</th>
+                                    <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Tahun</th>
+                                    <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Tanggal Upload</th>
+                                    <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-600 text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                @foreach ($ppidPembantu->dokumentasi as $dokumen)
+                                    @php
+                                        $tanggalUpload = $dokumen->tanggal
+                                            ? (is_numeric($dokumen->tanggal)
+                                                ? \Carbon\Carbon::createFromTimestamp((int) $dokumen->tanggal)->translatedFormat('d F Y')
+                                                : \Carbon\Carbon::parse($dokumen->tanggal)->translatedFormat('d F Y'))
+                                            : '-';
+                                    @endphp
+                                    <tr>
+                                        <td class="px-4 py-4 align-top">
+                                            <div class="font-semibold text-slate-800">{{ $dokumen->nama }}</div>
+                                            <div class="mt-1 max-w-xl text-xs leading-5 text-slate-500">{{ $dokumen->ringkasan ?: 'Belum terdapat ringkasan dokumen.' }}</div>
+                                        </td>
+                                        <td class="px-4 py-4 align-top text-sm text-slate-600">{{ $dokumen->kategori?->nama ?? 'Tanpa Kategori' }}</td>
+                                        <td class="px-4 py-4 align-top">
+                                            <span class="inline-flex rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-800">
+                                                {{ str_replace('_', ' ', ucfirst(str_replace('-', ' ', $dokumen->kategori?->sifat ?? 'berkala'))) }}
+                                            </span>
+                                        </td>
+                                        <td class="px-4 py-4 align-top text-sm text-slate-600">{{ $dokumen->tahun ?? '-' }}</td>
+                                        <td class="px-4 py-4 align-top text-sm text-slate-600">{{ $tanggalUpload }}</td>
+                                        <td class="px-4 py-4 align-top">
+                                            <div class="flex items-center justify-center gap-2">
+                                                <a href="{{ route('public.informasi.show', $dokumen->slug) }}" class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-300 text-slate-600 transition hover:border-green-700 hover:text-green-700" title="Lihat detail" aria-label="Lihat detail {{ $dokumen->nama }}">
+                                                    <i class="ri-eye-line" aria-hidden="true"></i>
+                                                </a>
+                                                <a href="{{ route('public.informasi.download', $dokumen->id) }}" class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-green-800 text-white transition hover:bg-green-950" title="Download dokumen" aria-label="Download {{ $dokumen->nama }}">
+                                                    <i class="ri-download-2-line" aria-hidden="true"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @else
+                    <p class="px-4 py-10 text-center text-sm text-slate-500 md:px-6">Belum ada informasi publik terverifikasi yang diunggah oleh unit ini.</p>
+                @endif
             </div>
         </div>
     </section>
