@@ -126,8 +126,7 @@
      */
     init() {
         const ids = Array.isArray(this.rowIds) ?
-            this.rowIds :
-            [];
+            this.rowIds : [];
 
         this.rowIds = [
             ...new Set(
@@ -292,12 +291,12 @@
         'overflow-visible',
         'rounded-2xl',
         'border',
-        'border-gray-200',
-        'bg-white',
+        'border-slate-200',
+        'bg-white/95',
         'pt-4',
         'shadow-sm',
-        'dark:border-white/[0.05]',
-        'dark:bg-white/[0.03]',
+        'dark:border-slate-800',
+        'dark:bg-slate-900/95',
         'dark:shadow-none',
     ]) }}>
     {{-- ============================================================
@@ -429,17 +428,19 @@
                         class="
                             absolute
                             right-0
+                            left-0
                             z-50
                             mt-2
-                            w-72
+                            w-auto
                             rounded-xl
                             border
-                            border-gray-200
+                            border-slate-200
                             bg-white
                             p-4
                             shadow-lg
-                            dark:border-gray-700
-                            dark:bg-gray-800
+                            dark:border-slate-700
+                            dark:bg-slate-800
+                            sm:left-auto
                             sm:w-80
                         ">
                         {{ $filter }}
@@ -579,10 +580,10 @@
             <tbody
                 class="
                     divide-y
-                    divide-gray-100
+                    divide-slate-200
                     bg-white
-                    dark:divide-white/[0.05]
-                    dark:bg-transparent
+                    dark:divide-slate-800
+                    dark:bg-slate-900/40
                 ">
                 {{ $slot }}
             </tbody>

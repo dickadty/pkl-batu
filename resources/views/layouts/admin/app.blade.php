@@ -181,16 +181,8 @@
     @stack('styles')
 </head>
 
-<body x-data class="admin-site"
-    class="
-        min-h-full
-        overflow-x-hidden
-        bg-gray-100
-        text-gray-900
-        antialiased
-        dark:bg-gray-900
-        dark:text-gray-100
-    ">
+<body x-data
+    class="admin-site min-h-full overflow-x-hidden bg-slate-100 text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100">
     <div class="min-h-screen">
         {{-- ============================================================
             MOBILE BACKDROP

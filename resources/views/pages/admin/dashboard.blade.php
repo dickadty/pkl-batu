@@ -44,24 +44,24 @@
             'label' => 'Total Informasi',
             'value' => $stats['total_informasi'] ?? 0,
             'icon' => 'ri-file-list-3-line',
-            'icon_class' => 'bg-indigo-100 text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-400',
-            'value_class' => 'text-gray-900 dark:text-white',
+            'icon_class' => 'bg-indigo-100 text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-300',
+            'value_class' => 'text-slate-900 dark:text-white',
         ];
 
         $statCards[] = [
             'label' => 'Menunggu Verifikasi',
             'value' => $stats['informasi_menunggu'] ?? 0,
             'icon' => 'ri-time-line',
-            'icon_class' => 'bg-yellow-100 text-yellow-600 dark:bg-yellow-500/15 dark:text-yellow-400',
-            'value_class' => 'text-yellow-500 dark:text-yellow-400',
+            'icon_class' => 'bg-yellow-100 text-yellow-600 dark:bg-yellow-500/15 dark:text-yellow-300',
+            'value_class' => 'text-amber-600 dark:text-amber-300',
         ];
 
         $statCards[] = [
             'label' => 'Terverifikasi',
             'value' => $stats['informasi_terverifikasi'] ?? 0,
             'icon' => 'ri-checkbox-circle-line',
-            'icon_class' => 'bg-green-100 text-green-600 dark:bg-green-500/15 dark:text-green-400',
-            'value_class' => 'text-green-600 dark:text-green-400',
+            'icon_class' => 'bg-green-100 text-green-600 dark:bg-green-500/15 dark:text-green-300',
+            'value_class' => 'text-emerald-600 dark:text-emerald-300',
         ];
 
         if ($isAdminUtama) {
@@ -70,29 +70,29 @@
                     'label' => 'Permohonan',
                     'value' => $stats['total_permohonan'] ?? 0,
                     'icon' => 'ri-inbox-line',
-                    'icon_class' => 'bg-purple-100 text-purple-600 dark:bg-purple-500/15 dark:text-purple-400',
-                    'value_class' => 'text-gray-900 dark:text-white',
+                    'icon_class' => 'bg-purple-100 text-purple-600 dark:bg-purple-500/15 dark:text-purple-300',
+                    'value_class' => 'text-slate-900 dark:text-white',
                 ],
                 [
                     'label' => 'Keberatan',
                     'value' => $stats['total_keberatan'] ?? 0,
                     'icon' => 'ri-error-warning-line',
-                    'icon_class' => 'bg-orange-100 text-orange-600 dark:bg-orange-500/15 dark:text-orange-400',
-                    'value_class' => 'text-gray-900 dark:text-white',
+                    'icon_class' => 'bg-orange-100 text-orange-600 dark:bg-orange-500/15 dark:text-orange-300',
+                    'value_class' => 'text-slate-900 dark:text-white',
                 ],
                 [
                     'label' => 'Pesan Masuk',
                     'value' => $stats['total_pesan_masuk'] ?? 0,
                     'icon' => 'ri-mail-line',
-                    'icon_class' => 'bg-cyan-100 text-cyan-600 dark:bg-cyan-500/15 dark:text-cyan-400',
-                    'value_class' => 'text-gray-900 dark:text-white',
+                    'icon_class' => 'bg-cyan-100 text-cyan-600 dark:bg-cyan-500/15 dark:text-cyan-300',
+                    'value_class' => 'text-slate-900 dark:text-white',
                 ],
                 [
                     'label' => 'Download',
                     'value' => $stats['total_download'] ?? 0,
                     'icon' => 'ri-download-cloud-2-line',
-                    'icon_class' => 'bg-emerald-100 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400',
-                    'value_class' => 'text-gray-900 dark:text-white',
+                    'icon_class' => 'bg-emerald-100 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-300',
+                    'value_class' => 'text-slate-900 dark:text-white',
                 ],
             ]);
         }
@@ -193,7 +193,7 @@
             class="
                 grid
                 grid-cols-1
-                gap-5
+                gap-4
                 sm:grid-cols-2
                 xl:grid-cols-4
             ">
@@ -202,17 +202,21 @@
                     class="
                         rounded-2xl
                         border
-                        border-gray-200
-                        bg-white
-                        p-5
+                        border-slate-200
+                        bg-white/95
+                        p-4
                         shadow-sm
+                        ring-1
+                        ring-slate-100
                         transition
                         duration-200
                         hover:-translate-y-0.5
                         hover:shadow-md
-                        dark:border-gray-800
-                        dark:bg-gray-800
+                        dark:border-slate-800
+                        dark:bg-slate-900/95
+                        dark:ring-slate-800/80
                         dark:shadow-none
+                        sm:p-5
                     ">
                     <div class="flex items-start justify-between gap-4">
                         <div class="min-w-0">
@@ -230,9 +234,10 @@
                             <h2
                                 class="
                                     mt-3
-                                    text-3xl
+                                    text-2xl
                                     font-bold
                                     tracking-tight
+                                    sm:text-3xl
                                     {{ $card['value_class'] }}
                                 ">
                                 {{ number_format((int) $card['value'], 0, ',', '.') }}
