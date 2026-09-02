@@ -24,9 +24,8 @@ export default defineConfig({
         strictPort: true,
 
         hmr: {
-            host: "thousands-wrestling-brother-able.trycloudflare.com",
-            protocol: "wss",
-            clientPort: 443,
+            host: "localhost",
+            port: 5173,
         },
 
         watch: {

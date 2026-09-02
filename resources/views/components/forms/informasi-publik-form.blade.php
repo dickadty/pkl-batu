@@ -81,6 +81,8 @@
 
     $kategoriOptions = $kategoriList->pluck('nama', 'id')->toArray();
 
+    $kategoriSifatOptions = $kategoriList->pluck('sifat', 'id')->toArray();
+
 @endphp
 
 <x-common.component-card :title="$title">
@@ -145,6 +147,7 @@
         <form action="{{ $action }}" method="POST" enctype="multipart/form-data" x-data="{
             submitting: false,
             selectedKategori: @js($kategoriValue),
+            kategoriSifat: @js($kategoriSifatOptions),
             selectedPpid: @js($ppidPembantuValue),
             fileName: @js($currentFileName ?? ''),
             initialFileName: @js($currentFileName ?? ''),
@@ -153,6 +156,12 @@
         
             updateSummaryLength(event) {
                 this.summaryLength = event.target.value.length;
+            },
+
+            formatSifat(sifat) {
+                return (sifat || '')
+                    .replaceAll('_', ' ')
+                    .replace(/\b\w/g, karakter => karakter.toUpperCase());
             },
         
             handleFile(event) {
@@ -622,6 +631,21 @@ x
                                 Pilih kategori informasi publik.
                             </p>
                         @enderror
+
+                        <div
+                            x-show="kategoriSifat[selectedKategori]"
+                            x-cloak
+                            class="mt-2 flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300"
+                        >
+                            <i class="ri-price-tag-3-line text-brand-500 dark:text-brand-400"></i>
+                            <span>
+                                Sifat informasi:
+                                <strong
+                                    class="font-semibold text-gray-800 dark:text-white/90"
+                                    x-text="formatSifat(kategoriSifat[selectedKategori])"
+                                ></strong>
+                            </span>
+                        </div>
                     </div>
 
                     {{-- PPID Pembantu --}}
