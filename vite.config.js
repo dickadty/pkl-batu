@@ -28,7 +28,7 @@ export default defineConfig({
         strictPort: true,
 
         hmr: {
-            host: "britney-table-luis-ladder.trycloudflare.com",
+            host: "thousands-wrestling-brother-able.trycloudflare.com",
             protocol: "wss",
             clientPort: 443,
         },

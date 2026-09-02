@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Publik;
 
 use App\Http\Controllers\Controller;
+use App\Models\Download;
 use App\Services\Publik\InformasiService;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
@@ -201,19 +202,38 @@ class InformasiController extends Controller
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | DOWNLOAD FILE
-    |--------------------------------------------------------------------------
-    |
-    | response()->download() membuat browser mengunduh file.
-    |
-    */
-
     public function download(int $id): BinaryFileResponse
     {
+        /*
+    |--------------------------------------------------------------------------
+    | Validasi dokumen dan ambil lokasi file
+    |--------------------------------------------------------------------------
+    */
+
         $path = $this->informasiService
             ->getVerifiedDownloadPath($id);
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | Simpan histori download
+    |--------------------------------------------------------------------------
+    */
+
+        Download::create([
+            'tujuan' => request()->ip(),
+
+            'tanggal' => time(),
+
+            'dokumentasiid' => $id,
+        ]);
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | Download file
+    |--------------------------------------------------------------------------
+    */
 
         return response()->download($path);
     }
