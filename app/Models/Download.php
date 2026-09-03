@@ -2,15 +2,21 @@
 
 namespace App\Models;
 
+
 use Illuminate\Database\Eloquent\Model;
 
 class Download extends Model
 {
 
+
     protected $table = 'download';
 
 
+
     public $timestamps = false;
+
+
+
 
 
     protected $fillable = [
@@ -23,27 +29,43 @@ class Download extends Model
 
     ];
 
+    protected $casts = [
 
+        'tanggal' => 'integer'
+
+    ];
 
     public function dokumentasi()
     {
 
         return $this->belongsTo(
+
             Dokumentasi::class,
-            'dokumentasiid'
+
+            'dokumentasiid',
+
+            'id'
+
         );
     }
-
-
 
     public function getTanggalFormatAttribute()
     {
 
-        return $this->tanggal
-            ? date(
-                'd-m-Y H:i:s',
-                $this->tanggal
-            )
-            : '-';
+
+        if (!$this->tanggal) {
+
+            return '-';
+        }
+
+
+
+        return date(
+
+            'd F Y H:i',
+
+            $this->tanggal
+
+        );
     }
 }
