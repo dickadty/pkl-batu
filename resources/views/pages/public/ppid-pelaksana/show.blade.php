@@ -61,8 +61,10 @@
                     <h2 class="mt-1 text-lg font-bold text-slate-800">Informasi lengkap unit</h2>
                 </div>
 
-                <dl>
-slate-700">{{ $ppidPembantu->id }}</dd>
+                <dl class="grid gap-x-6 gap-y-4 p-4 text-sm sm:grid-cols-2 md:p-6">
+                    <div>
+                        <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">ID</dt>
+                        <dd class="mt-1 text-slate-700">{{ $ppidPembantu->id }}</dd>
                     </div>
                     <div>
                         <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Nama</dt>
@@ -70,7 +72,15 @@ slate-700">{{ $ppidPembantu->id }}</dd>
                     </div>
                     <div>
                         <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Kategori PPID</dt>
-                        <dd class="mt-1 text-slate-700">{{ $ppidPembantu->kategori0">{{ $ppidPembantu-l text-slate-700">{{ $ppidPembantu->slug ?? '-' }}</dd>
+                        <dd class="mt-1 text-slate-700">{{ $ppidPembantu->kategoriPpid?->kategori ?? '-' }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">ID Kategori PPID</dt>
+                        <dd class="mt-1 text-slate-700">{{ $ppidPembantu->kategori_ppidid ?? '-' }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Slug</dt>
+                        <dd class="mt-1 break-all text-slate-700">{{ $ppidPembantu->slug ?? '-' }}</dd>
                     </div>
                     <div>
                         <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Website</dt>
@@ -90,7 +100,7 @@ slate-700">{{ $ppidPembantu->id }}</dd>
                         <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Alamat</dt>
                         <dd class="mt-1 text-slate-700">{{ $ppidPembantu->alamat ?? '-' }}</dd>
                     </div>
-                    <Logo
+                    <div>
                         <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Ikon</dt>
                         <dd class="mt-1 text-slate-700">{{ $ppidPembantu->icon ?? '-' }}</dd>
                     </div>

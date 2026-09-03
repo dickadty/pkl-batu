@@ -17,6 +17,27 @@
     * {
         font-family: 'Poppins', sans-serif;
     }
+
+    .submenu-scroll-2 {
+        max-height: 17rem;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(15, 118, 110, 0.5) transparent;
+    }
+
+    .submenu-scroll-2::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .submenu-scroll-2::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .submenu-scroll-2::-webkit-scrollbar-thumb {
+        background: rgba(15, 118, 110, 0.5);
+        border-radius: 9999px;
+    }
 </style>
 
 <!-- Main navbar -->
@@ -90,7 +111,7 @@
                                                 <div
                                                     class="pointer-events-none absolute left-full top-0 z-50 hidden w-56 pl-2 group-hover/child:pointer-events-auto group-hover/child:block">
                                                     <div
-                                                        class="rounded-xl border border-slate-200 bg-white p-3 shadow-xl">
+                                                        class="submenu-scroll-2 rounded-xl border border-slate-200 bg-white p-3 shadow-xl">
                                                         @foreach ($child->children as $grandChild)
                                                             <a href="{{ $resolveMenuLink($grandChild) }}"
                                                                 @if ($grandChild->tipe === 'url') target="_blank" rel="noopener noreferrer" @endif
