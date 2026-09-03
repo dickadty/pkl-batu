@@ -148,9 +148,6 @@ class PermohonanController extends Controller
 
             ],
 
-
-
-
             'rincian' => [
 
                 'required',
